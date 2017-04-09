@@ -1,5 +1,6 @@
 ''' just try and get a response'''
 
+import json
 from datetime import date
 
 import requests
@@ -23,22 +24,23 @@ def get_live_scores():
     return request
 
 
-def get_fixtures():
+def get_season_fixtures():
     fixtures_url = 'competitions/{id}/fixtures'.format(id=426)
     request = requests.get(BASE_URL+fixtures_url, headers=HEADERS)
     fixtures = request.json()['fixtures']
     return fixtures
 
 
-def todays_fixtures_only(fixtures):
-    dates = [fixture_date(fix) for fix in fixtures]
+def get_todays_fixtures():
+    ''' Return json encoded list of today's fixtures '''
+
     today = date.today()
-    todays_fixtures = [f for f, d in zip(fixtures, dates) if d == today]
+    fixtures = get_season_fixtures()
+    dates = [fixture_date(fix) for fix in fixtures]
+    todays_fixtures = [f for f, date in zip(fixtures, dates) if date == today]
+
     return todays_fixtures
 
 
 if __name__ == '__main__':
-    FIXTURES = get_fixtures()
-    TODAYS_GAMES = todays_fixtures_only(FIXTURES)
-    import ipdb; ipdb.set_trace()
-
+    pass

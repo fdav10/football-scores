@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title> Scores for {{date}} </title>
+  </head>
+  <body>
+    {% for fixture in fixtures %}
+    <h1>{{fixture.homeTeamName}} {{fixture.result.goalsHomeTeam}} - {{fixture.result.goalsAwayTeam}} {{fixture.awayTeamName}}</h1>
+    {% endfor %}
+  </body>
+</html>
