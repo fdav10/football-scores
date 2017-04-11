@@ -5,6 +5,8 @@ from datetime import date, datetime
 
 import requests
 
+from utilities import datetime_string_make_aware
+
 
 class FootballData():
 
@@ -51,6 +53,8 @@ class SoccerSportsOpenData():
     Calls to the Soccer-Sports Open Data API
 
     http://api.football-data.org/v1/
+    
+    get prefix indicates an API call
     '''
 
     def __init__(self):
@@ -62,40 +66,65 @@ class SoccerSportsOpenData():
 
     def get_all_rounds_in_season(self, id_league='premier-league', id_season='16-17'):
         ''' Return all fixtures for a season '''
+
         fixtures_url = 'leagues/{}/seasons/{}/rounds'.format(id_league, id_season)
         request = requests.get(self.base_url+fixtures_url, headers=self.headers)
         rounds = request.json()['data']['rounds']
-        return rounds
 
-    def get_all_games_in_season(self, id_league='premier-league', id_season='16-17'):
+        return self._make_dates_aware(rounds, date_keys=('start_date', 'end_date'))
+
+    def all_games_in_season(self, id_league='premier-league', id_season='16-17'):
         rounds = self.get_all_rounds_in_season(id_league, id_season)
         all_games = []
         for round_ in rounds[:5]:
             all_games += self.get_round_matches(round_['round_slug'], id_league, id_season)
-        import ipdb; ipdb.set_trace()
+
+        return all_games
 
     def get_round_matches(self, id_round, id_league='premier-league', id_season='16-17'):
         matches_url = 'leagues/{}/seasons/{}/rounds/{}/matches'.format(
             id_league, id_season, id_round)
         request = requests.get(self.base_url+matches_url, headers=self.headers)
-        return request.json()['data']['matches']
+        matches = request.json()['data']['matches']
 
-    def get_todays_fixtures(self, seasons_fixtures):
-        pass
-        #TODO got to here
+        return self._make_dates_aware(matches, date_keys=('date_match',))
 
-    def get_current_round(self):
+    def todays_fixtures(self, id_league='premier-league', id_season='16-17'):
         today = date.today()
-        rounds = self.get_all_rounds_in_season()
-        round_dates = [self._round_datetime_brackets(round_) for round_ in rounds]
+        today = date(2017, 4, 8)
+        active_rounds = self.active_rounds(id_league, id_season)
+        id_rounds = [round_['round_slug'] for round_ in active_rounds]
 
-    def _round_datetime_brackets(self, round):
-        naives = [round['start_date'], round['end_date']]
-        round_dates = []
-        for naive in naives:
-            round_dates.append(datetime.strptime(naive, self.dt_format).astimezone().date())
+        active_fixtures = []
+        for id_ in id_rounds:
+            active_fixtures += self.get_round_matches(id_, id_league, id_season)
+        #active_fixtures = self.all_games_in_season()
 
-        return round_dates
+        todays_fixtures = [f for f in active_fixtures if f['date_match'].date() == today]
+        import ipdb; ipdb.set_trace()
+
+
+    def active_rounds(self, id_league='premier-league', id_season='16-17'):
+        ''' Return rounds which include today's date '''
+
+        today = date.today()
+        today = date(2017, 4, 8)
+        rounds = self.get_all_rounds_in_season(id_league, id_season)
+        round_dates = [[r['start_date'].date(), r['end_date'].date()] for r in rounds]
+        active_rounds = [
+            r for r, d in zip(rounds, round_dates) if d[0] <= today <= d[1]]
+
+        return active_rounds
+
+    def _make_dates_aware(self, list_with_dates, date_keys):
+        ''' Convert date-time strings into Python datetime objects '''
+
+        for dict_ in list_with_dates:
+            for key in date_keys:
+                date = dict_[key]
+                dict_[key] = datetime_string_make_aware(date, self.dt_format)
+
+        return list_with_dates
 
 
 if __name__ == '__main__':
@@ -103,4 +132,4 @@ if __name__ == '__main__':
     print (fbdata_lookup.get_todays_fixtures(), '\n')
 
     sssod = SoccerSportsOpenData()
-    print (sssod.get_all_games_in_season())
+    print (sssod.todays_fixtures())
