@@ -1,6 +1,7 @@
 #!usr/bin/env python3
 ''' Interfaces to football score APIs '''
 
+import os
 from datetime import date, datetime
 
 import requests
@@ -17,7 +18,7 @@ class FootballData():
 
     def __init__(self):
         self.base_url = 'http://api.football-data.org/v1/'
-        self.headers = {'X-Auth-Token': '8d476a94d095407b93c0b26732a6216f'}
+        self.headers = {'X-Auth-Token': os.environ['football_data_key']}
         self.dt_format = "%Y-%m-%dT%H:%M:%SZ"
 
     def get_season_fixtures(self, season_id=426):
@@ -61,7 +62,7 @@ class SoccerSportsOpenData():
     def __init__(self):
         self.base_url = 'https://sportsop-soccer-sports-open-data-v1.p.mashape.com/v1/'
         self.headers = {
-            'X-Mashape-Key': '8jU1jkN7P9mshbHyDD99iEelcw83p1028gFjsnou67N6cEMWR4',
+            'X-Mashape-Key': os.environ['ssod_key'],
             'Accept': 'application/json'}
         self.dt_format = '%Y-%m-%dT%H:%M:%S%z'
 
