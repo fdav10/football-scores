@@ -16,7 +16,7 @@ def test():
 
 @app.route("/scores")
 def todays_fixtures():
-    premier_league = SSOD()
+    premier_league = SSOD(id_league='premier-league', id_season='16-17')
     pl_games = premier_league.todays_fixtures_page_ready()
 
     return render_template(
