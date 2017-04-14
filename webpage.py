@@ -3,6 +3,7 @@
 
 from flask import Flask, render_template
 
+from utilities import start_logging
 from api_request import SoccerSportsOpenData as SSOD
 
 
@@ -27,4 +28,5 @@ def todays_fixtures():
 
 
 if __name__ == '__main__':
+    start_logging()
     app.run()

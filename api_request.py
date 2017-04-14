@@ -3,16 +3,14 @@
 
 import os
 import logging
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 import requests
 
-from utilities import datetime_string_make_aware, save_json, load_json
+from utilities import datetime_string_make_aware, save_json, load_json, start_logging
 
 
 logger = logging.getLogger(__name__)
-logger.addHandler(logging.StreamHandler())
-logger.setLevel('INFO')
 
 
 class FootballData():
@@ -74,19 +72,16 @@ class SoccerSportsOpenData():
             'Accept': 'application/json'}
         self.dt_format = '%Y-%m-%dT%H:%M:%S%z'
 
-    def check_cache_else_request(self, url, description=None):
+    def check_cache_else_request(self, url, cache_expiry=0, description=None):
         try:
-            local_request = load_json(url.replace('/', '_'))
-            logger.info('{} matches loaded from file'.format(description))
+            local_request = load_json(url.replace('/', '_')+'.json')
             return local_request
         except FileNotFoundError:
             request = requests.get(self.base_url+url, headers=self.headers).json()
-            save_json(request, url.replace('/', '_'))
-            logger.info('{} matches requested from SSOD'.format(description))
+            save_json(request, url.replace('/', '_')+'.json', cache_expiry)
             return request
-            
+
     def _todays_fixtures(self):
-        logger.info('Getting today\'s fixtures')
         today = date.today()
         today = date(2017, 4, 8)
         active_rounds = self._active_rounds()
@@ -113,23 +108,26 @@ class SoccerSportsOpenData():
         return active_rounds
 
     def _get_matches_in_round(self, id_round):
-
+        minutes_to_cache_expire = 0.5
         matches_url = 'leagues/{}/seasons/{}/rounds/{}/matches'.format(
             self.id_league, self.id_season, id_round)
 
-        matches = self.check_cache_else_request(matches_url, id_round)['data']['matches']
+        matches = self.check_cache_else_request(
+            matches_url, minutes_to_cache_expire, id_round)['data']['matches']
         return self._make_dates_aware(matches, date_keys=('date_match',))
 
     def _get_rounds_in_season(self):
         ''' Return all fixtures for a season. '''
-
+        minutes_to_cache_expire = 5
         fixtures_url = 'leagues/{}/seasons/{}/rounds'.format(self.id_league, self.id_season)
-        rounds = self.check_cache_else_request(fixtures_url, self.id_season)['data']['rounds']
+        rounds = self.check_cache_else_request(
+            fixtures_url, minutes_to_cache_expire, self.id_season)['data']['rounds']
 
         return self._make_dates_aware(rounds, date_keys=('start_date', 'end_date'))
 
     def todays_fixtures_page_ready(self):
         todays_fixtures = []
+        logger.info('Today\'s fixtures requested')
         for fixture in self._todays_fixtures():
             todays_fixtures.append({
                 'team_home': fixture['home']['team'],
@@ -139,6 +137,7 @@ class SoccerSportsOpenData():
                 'time_kick_off': '15:00',
                 'time_elapsed': '90',
             })
+        logger.info('Today\'s fixtures retrieved')
         return todays_fixtures
 
     def _make_dates_aware(self, list_with_dates, date_keys):
@@ -153,5 +152,7 @@ class SoccerSportsOpenData():
 
 
 if __name__ == '__main__':
+    start_logging()
+
     sssod = SoccerSportsOpenData(id_league='premier-league', id_season='16-17')
     sssod.todays_fixtures_page_ready()
