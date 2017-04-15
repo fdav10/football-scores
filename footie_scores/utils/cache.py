@@ -4,7 +4,7 @@ import os
 import json
 import logging
 
-from utils.time import stime_from_now, json_expiry_as_datime, time_elapsed_from
+from footie_scores.utils.time import stime_from_now, json_expiry_as_datime, time_elapsed_from
 
 
 logger = logging.getLogger(__name__)

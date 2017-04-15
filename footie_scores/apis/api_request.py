@@ -3,13 +3,13 @@
 
 import os
 import logging
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 
 import requests
 
-from utils.log import start_logging
-from utils.cache import save_json, load_json
-from utils.time import datetime_string_make_aware
+from footie_scores.utils.log import start_logging
+from footie_scores.utils.cache import save_json, load_json
+from footie_scores.utils.time import datetime_string_make_aware
 
 
 logger = logging.getLogger(__name__)
@@ -85,7 +85,6 @@ class SoccerSportsOpenData():
 
     def _todays_fixtures(self):
         today = date.today()
-        today = date(2017, 4, 8)
         active_rounds = self._active_rounds()
         id_rounds = [round_['round_slug'] for round_ in active_rounds]
 
@@ -94,6 +93,7 @@ class SoccerSportsOpenData():
             active_fixtures += self._get_matches_in_round(id_)
 
         todays_fixtures = [f for f in active_fixtures if f['date_match'].date() == today]
+        import ipdb; ipdb.set_trace()
         return todays_fixtures
 
     def _active_rounds(self):
@@ -101,7 +101,6 @@ class SoccerSportsOpenData():
         logger.info('Getting active rounds')
 
         today = date.today()
-        today = date(2017, 4, 8)
         rounds = self._get_rounds_in_season()
         round_dates = [[r['start_date'].date(), r['end_date'].date()] for r in rounds]
         active_rounds = [

@@ -3,8 +3,8 @@
 
 from flask import Flask, render_template
 
-from utils.utilities import start_logging
-from apis.api_request import SoccerSportsOpenData as SSOD
+from footie_scores.utils.utilities import start_logging
+from footie_scores.apis.api_request import SoccerSportsOpenData as SSOD
 
 
 app = Flask(__name__)
