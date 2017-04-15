@@ -15,6 +15,23 @@ from footie_scores.utils.time import datetime_string_make_aware
 logger = logging.getLogger(__name__)
 
 
+class FootballAPICaller():
+    def __init__():
+        self.base_url = None
+        self.headers = None
+
+    def check_cache_else_request(self, url, cache_expiry=0, description=None):
+        try:
+            local_request = load_json(url.replace('/', '_')+'.json')
+            return local_request
+        except FileNotFoundError:
+            import ipdb; ipdb.set_trace()
+            request = requests.get(self.base_url+url, headers=self.headers).json()
+            save_json(request, url.replace('/', '_')+'.json', cache_expiry)
+            return request
+
+
+
 class FootballData():
     '''
     Calls to the football-data API
@@ -93,7 +110,6 @@ class SoccerSportsOpenData():
             active_fixtures += self._get_matches_in_round(id_)
 
         todays_fixtures = [f for f in active_fixtures if f['date_match'].date() == today]
-        import ipdb; ipdb.set_trace()
         return todays_fixtures
 
     def _active_rounds(self):
@@ -109,13 +125,28 @@ class SoccerSportsOpenData():
         return active_rounds
 
     def _get_matches_in_round(self, id_round):
-        minutes_to_cache_expire = 0.5
+
+        minutes_to_cache_expire = 0.1
         matches_url = 'leagues/{}/seasons/{}/rounds/{}/matches'.format(
             self.id_league, self.id_season, id_round)
-
         matches = self.check_cache_else_request(
             matches_url, minutes_to_cache_expire, id_round)['data']['matches']
+
+        for match in matches:
+            match.update(self._get_match_details(id_round, match['match_slug']))
+
+        import ipdb; ipdb.set_trace()
         return self._make_dates_aware(matches, date_keys=('date_match',))
+
+    def _get_match_details(self, id_round, id_match):
+
+        minutes_to_cache_expire = 0.1
+        match_url = 'leagues/{}/seasons/{}/rounds/{}/matches/{}'.format(
+            self.id_league, self.id_season, id_round, id_match)
+        match_details = self.check_cache_else_request(
+            match_url, minutes_to_cache_expire, id_round)
+
+        return match_details
 
     def _get_rounds_in_season(self):
         ''' Return all fixtures for a season. '''
@@ -151,9 +182,74 @@ class SoccerSportsOpenData():
 
         return list_with_dates
 
+class Heisenbug(FootballAPICaller):
+    '''
+    Calls to the Premier League High Scores API
+
+    https://market.mashape.com/heisenbug/premier-league-live-scores/overview
+    '''
+
+    def __init__(self, id_league='premierleague', id_season='2016-17'):
+        self.id_league = id_league
+        self.id_season = id_season
+        self.base_url = 'https://heisenbug-premier-league-live-scores-v1.p.mashape.com/api/'
+        self.headers = {
+            'X-Mashape-Key': os.environ['heisenbug_key'],
+            'Accept': 'application/json'}
+
+    def get_season_fixtures(self):
+        minutes_to_cache_expiry = 60 * 24
+        fixtures = []
+
+        for match_day in range(38):
+            fixtures_url = self.base_url + '{}?matchday={}&season={}'.format(
+                self.id_league, match_day+1, self.id_season)
+            fixture = self.check_cache_else_request(fixtures_url, minutes_to_cache_expiry)
+            fixtures += fixture
+            import ipdb; ipdb.set_trace()
+        import ipdb; ipdb.set_trace()
+
+
+class FootballAPI(FootballAPICaller):
+    '''
+    Calls to the Football-API API
+
+    https://football-api.com/
+    '''
+
+    def __init__(self, id_league='1204', id_season=''):
+        self.id_league = id_league
+        self.id_season = id_season
+        self.base_url = 'http://api.football-api.com/2.0/'
+        self.headers = None
+        self.key = os.environ['football_api_key']
+
+    def get_competitions(self):
+        competitions_url = 'competitions?Authorization=' + self.key
+        return self.check_cache_else_request(competitions_url)
+
+    def get_season_fixtures(self):
+        minutes_to_cache_expiry = 60 * 24
+        fixtures = []
+
+        for match_day in range(38):
+            fixtures_url = self.base_url + '{}?matchday={}&season={}'.format(
+                self.id_league, match_day+1, self.id_season)
+            fixture = self.check_cache_else_request(fixtures_url, minutes_to_cache_expiry)
+            fixtures += fixture
+            import ipdb; ipdb.set_trace()
+        import ipdb; ipdb.set_trace()
+
 
 if __name__ == '__main__':
     start_logging()
 
-    sssod = SoccerSportsOpenData(id_league='premier-league', id_season='16-17')
-    sssod.todays_fixtures_page_ready()
+    #sssod = SoccerSportsOpenData(id_league='premier-league', id_season='16-17')
+    #sssod.todays_fixtures_page_ready()
+    PL = FootballAPI()
+    PL.get_competitions()
+
+    def _todays_fixtures(self):
+        pass
+
+
