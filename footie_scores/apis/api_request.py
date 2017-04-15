@@ -7,7 +7,7 @@ from datetime import date, datetime, timedelta
 
 import requests
 
-from utilities import datetime_string_make_aware, save_json, load_json, start_logging
+from utils.utilities import datetime_string_make_aware, save_json, load_json, start_logging
 
 
 logger = logging.getLogger(__name__)
