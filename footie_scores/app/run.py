@@ -4,7 +4,8 @@
 from flask import Flask, render_template
 
 from footie_scores.utils.log import start_logging
-from footie_scores.apis.api_request import FootballAPI
+from footie_scores.apis.football_api import FootballAPI
+from footie_scores.apis.football_data import FootballData
 
 
 app = Flask(__name__)

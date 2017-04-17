@@ -5,8 +5,6 @@ import os
 import logging
 from datetime import date
 
-import requests
-
 from footie_scores.utils.log import start_logging
 from footie_scores.apis.base import FootballAPICaller
 
@@ -26,18 +24,10 @@ class FootballAPI(FootballAPICaller):
         self.id_league = id_league
         self.id_season = id_season
         self.base_url = 'http://api.football-api.com/2.0/'
-        self.headers = None
         self.key = os.environ['football_api_key']
+        self.headers = None
         self.url_suffix = 'Authorization=' + self.key
         self.date_format = '%d.%m.%Y'
-        self.match_page_ready_map = {
-            'team_home': 'localteam_name',
-            'team_away': 'visitorteam_name',
-            'score_home': 'localteam_score',
-            'score_away': 'visitorteam_score',
-            'time_kick_off': 'time',
-            'time_elapsed': 'timer',
-        }
 
     def _get_competitions(self):
         minutes_to_cache_expiry = 60 * 24
@@ -69,6 +59,20 @@ class FootballAPI(FootballAPICaller):
 
         return self._this_league_only(self.id_league, active_fixtures)
 
+    def _make_fixtures_page_ready(self, fixtures):
+        match_page_ready_map = {
+            'team_home': 'localteam_name',
+            'team_away': 'visitorteam_name',
+            'score_home': 'localteam_score',
+            'score_away': 'visitorteam_score',
+            'time_kick_off': 'time',
+            'time_elapsed': 'timer',
+        }
+        page_ready_fixtures = [
+            {y: f[z] for y, z in match_page_ready_map.items()}
+            for f in fixtures]
+        return page_ready_fixtures
+
     def _this_league_only(self, league_id, matches):
         return [m for m in matches if m['comp_id'] == league_id]
 
@@ -82,6 +86,5 @@ class FootballAPI(FootballAPICaller):
 
 if __name__ == '__main__':
     start_logging()
-    PL = FootballAPI()
-    print (PL.page_ready_todays_fixtures())
-    import ipdb; ipdb.set_trace()
+    fa = FootballAPI()
+    print (fa.page_ready_todays_fixtures())

@@ -9,7 +9,7 @@ import requests
 from footie_scores.utils.cache import save_json, load_json, embed_in_dict_if_not_dict
 
 
-class FootballAPICaller():
+class FootballAPICaller(object):
     '''
     Base class for classes which call specific football score APIs.
 
@@ -18,7 +18,7 @@ class FootballAPICaller():
     def __init__(self):
         self.base_url = None
         self.headers = None
-        self.url_suffix = None
+        self.url_suffix = ""
         self.match_page_ready_map = None
 
     def check_cache_else_request(self, url, cache_expiry):
@@ -40,17 +40,14 @@ class FootballAPICaller():
         todays = self._todays_fixtures()
         return self._make_fixtures_page_ready(todays)
 
-    def _make_fixtures_page_ready(self, fixtures):
-        page_ready_fixtures = [
-            {y: f[z] for y, z in self.match_page_ready_map.items()}
-            for f in fixtures]
-        return page_ready_fixtures
-
     def _todays_fixtures(self):
         return self._get_fixtures_for_date(date.today())
 
+    def _make_fixtures_page_ready(self, arg):
+        raise NotImplementedError("Implemented in child classes - base class should not be instantiated")
+
     def _get_fixtures_for_date(self, arg):
-        raise NotImplementedError
+        raise NotImplementedError("Implemented in child classes - base class should not be instantiated")
 
     def _is_valid_response(self, response):
-        raise NotImplementedError
+        raise NotImplementedError("Implemented in child classes - base class should not be instantiated")
