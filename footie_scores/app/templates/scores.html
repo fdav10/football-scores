@@ -7,8 +7,11 @@
   <body>
     {% for game in games %}
 	<h1>{{game.team_home}} {{game.score_home}} - {{game.score_away}} {{game.team_away}}</h1>
-	    {% for event in events %}
-		<p></p>
+	    {% for event in game.home_events %}
+		<p>{{event.player}} {{event.time}}</p>
+	    {% endfor %}
+	    {% for event in game.away_events %}
+		<p>{{event.player}} {{event.time}}</p>
 	    {% endfor %}
     {% endfor %}
   </body>

@@ -86,4 +86,4 @@ class FootballData(FootballAPICaller):
 if __name__ == '__main__':
     start_logging()
     fd = FootballData()
-    print (fd.page_ready_todays_fixtures())
+    print(fd.page_ready_todays_fixtures())

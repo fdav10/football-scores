@@ -21,6 +21,7 @@ class FootballAPI(FootballAPICaller):
     '''
 
     def __init__(self, id_league='1204', id_season=''):
+        super().__init__()
         self.id_league = id_league
         self.id_season = id_season
         self.base_url = 'http://api.football-api.com/2.0/'
@@ -38,7 +39,7 @@ class FootballAPI(FootballAPICaller):
         )
 
     def _get_fixtures_for_date(self, date_):
-        minutes_to_cache_expiry = 0.2
+        minutes_to_cache_expiry = 60 * 24
         today = date_.strftime(self.date_format)
         fixtures_url = 'matches?comp_id={}&match_date={}&'.format(
             self.id_league, today)
@@ -60,18 +61,31 @@ class FootballAPI(FootballAPICaller):
         return self._this_league_only(self.id_league, active_fixtures)
 
     def _make_fixtures_page_ready(self, fixtures):
-        match_page_ready_map = {
-            'team_home': 'localteam_name',
-            'team_away': 'visitorteam_name',
-            'score_home': 'localteam_score',
-            'score_away': 'visitorteam_score',
-            'time_kick_off': 'time',
-            'time_elapsed': 'timer',
-        }
         page_ready_fixtures = [
-            {y: f[z] for y, z in match_page_ready_map.items()}
+            {
+                'team_home': f['localteam_name'],
+                'team_away': f['visitorteam_name'],
+                'score_home': f['localteam_score'],
+                'score_away': f['visitorteam_score'],
+                'time_kick_off': f['time'],
+                'time_elapsed': f['timer'],
+                'home_events': self._make_events_page_ready('localteam', f['events']),
+                'away_events': self._make_events_page_ready('visitorteam', f['events']),
+            }
             for f in fixtures]
+
         return page_ready_fixtures
+
+    def _make_events_page_ready(self, team, fixture_events):
+        filter_keys = ('goal',)
+        events = [e for e in fixture_events if e['team'] == team and e['type'] in filter_keys]
+        for e in events:
+            if e['extra_min'] != '':
+                e['time'] = e['minute'] + ' + ' + e['extra_min']
+            else:
+                e['time'] = e['minute']
+
+        return events
 
     def _this_league_only(self, league_id, matches):
         return [m for m in matches if m['comp_id'] == league_id]
@@ -87,4 +101,5 @@ class FootballAPI(FootballAPICaller):
 if __name__ == '__main__':
     start_logging()
     fa = FootballAPI()
-    print (fa.page_ready_todays_fixtures())
+    #print (fa.page_ready_todays_fixtures())
+    print(fa.page_ready_finished_fixtures(date(year=2017, month=4, day=15)))

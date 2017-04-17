@@ -55,7 +55,6 @@ class FootballAPICaller(object):
 
     def page_ready_finished_fixtures(self, date):
         fixtures = self._get_fixtures_for_date(date)
-        import ipdb; ipdb.set_trace()
         return self._make_fixtures_page_ready(fixtures)
 
     def _todays_fixtures(self):
