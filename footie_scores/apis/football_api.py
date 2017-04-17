@@ -39,7 +39,7 @@ class FootballAPI(FootballAPICaller):
         )
 
     def _get_fixtures_for_date(self, date_):
-        minutes_to_cache_expiry = 60 * 24
+        minutes_to_cache_expiry = 0.1
         today = date_.strftime(self.date_format)
         fixtures_url = 'matches?comp_id={}&match_date={}&'.format(
             self.id_league, today)
@@ -51,7 +51,7 @@ class FootballAPI(FootballAPICaller):
         return self._this_league_only(self.id_league, todays_fixtures)
 
     def _get_active_fixtures(self):
-        minutes_to_cache_expiry = 0.2
+        minutes_to_cache_expiry = 0.1
         fixtures_url = 'matches?'
         active_fixtures = self.check_cache_else_request(
             fixtures_url,

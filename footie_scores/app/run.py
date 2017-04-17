@@ -22,16 +22,19 @@ def test():
 def todays_fixtures():
     premier_league = FootballAPI(id_league='1204')
     pl_games = premier_league.page_ready_todays_fixtures()
-
     return games_template(pl_games, date.today())
 
+@app.route("/current_games")
+def active_fixtures():
+    premier_league = FootballAPI(id_league='1204')
+    pl_games = premier_league.page_ready_active_fixtures()
+    return games_template(pl_games, date.today())
 
 @app.route("/past_games")
 def past_fixtures():
     date_ = date(year=2017, month=4, day=15)
     premier_league = FootballAPI(id_league='1204')
     pl_games = premier_league.page_ready_finished_fixtures(date_)
-
     return games_template(pl_games, date_)
 
 
