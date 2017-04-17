@@ -1,5 +1,6 @@
 ''' Make webpage from API requests '''
 
+from datetime import date
 
 from flask import Flask, render_template
 
@@ -9,6 +10,7 @@ from footie_scores.apis.football_data import FootballData
 
 
 app = Flask(__name__)
+DATEFORMAT = "%A %d %B %y" # e.g. Sunday 16 April 2017
 
 
 @app.route("/test")
@@ -16,7 +18,7 @@ def test():
     return "It worked!"
 
 
-@app.route("/scores")
+@app.route("/todays_games")
 def todays_fixtures():
     premier_league = FootballAPI(id_league='1204')
     pl_games = premier_league.page_ready_todays_fixtures()
@@ -24,6 +26,18 @@ def todays_fixtures():
     return render_template(
         'scores.html',
         date='today',
+        games=pl_games,
+    )
+
+@app.route("/past_games")
+def past_fixtures():
+    date_ = date(year=2017, month=4, day=16)
+    premier_league = FootballAPI(id_league='1204')
+    pl_games = premier_league.page_ready_finished_fixtures(date_)
+
+    return render_template(
+        'scores.html',
+        date=date_.strftime(DATEFORMAT),
         games=pl_games,
     )
 

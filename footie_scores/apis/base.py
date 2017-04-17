@@ -22,6 +22,19 @@ class FootballAPICaller(object):
         self.match_page_ready_map = None
 
     def check_cache_else_request(self, url, cache_expiry):
+        '''
+        Request a url but check local cache first.
+
+        If a response is found in the cache then this is returned and no
+        request is made to the API. If a request is made to the API
+        then the response is saved in the cache.  An expiry time is
+        attached to each file in the cache and cache files are checked
+        to see if they've expired before they're returned.
+
+        Some APIs return lists.  Dicts are preferable because this
+        allows the expiry timestamp to be attached.  When a list is
+        returned it's embedded in a dict under the key 'data'.
+        '''
         request_url = self.base_url + url + self.url_suffix
         cache_filename = url.replace('/', '_')+'.json'
         try:
@@ -40,14 +53,22 @@ class FootballAPICaller(object):
         todays = self._todays_fixtures()
         return self._make_fixtures_page_ready(todays)
 
+    def page_ready_finished_fixtures(self, date):
+        fixtures = self._get_fixtures_for_date(date)
+        import ipdb; ipdb.set_trace()
+        return self._make_fixtures_page_ready(fixtures)
+
     def _todays_fixtures(self):
         return self._get_fixtures_for_date(date.today())
 
     def _make_fixtures_page_ready(self, arg):
-        raise NotImplementedError("Implemented in child classes - base class should not be instantiated")
+        raise NotImplementedError(
+            "Implemented in child classes - base class should not be instantiated")
 
     def _get_fixtures_for_date(self, arg):
-        raise NotImplementedError("Implemented in child classes - base class should not be instantiated")
+        raise NotImplementedError(
+            "Implemented in child classes - base class should not be instantiated")
 
     def _is_valid_response(self, response):
-        raise NotImplementedError("Implemented in child classes - base class should not be instantiated")
+        raise NotImplementedError(
+            "Implemented in child classes - base class should not be instantiated")
