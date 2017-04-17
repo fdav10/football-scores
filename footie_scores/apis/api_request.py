@@ -8,29 +8,49 @@ from datetime import date, datetime
 import requests
 
 from footie_scores.utils.log import start_logging
-from footie_scores.utils.cache import save_json, load_json
 from footie_scores.utils.time import datetime_string_make_aware
+from footie_scores.utils.cache import save_json, load_json, embed_in_dict_if_not_dict
 
 
 logger = logging.getLogger(__name__)
 
 
 class FootballAPICaller():
-    def __init__():
+    def __init__(self):
         self.base_url = None
         self.headers = None
+        self.url_suffix = None
+        self.match_page_ready_map = None
 
-    def check_cache_else_request(self, url, cache_expiry=0, description=None):
+    def check_cache_else_request(self, url, cache_expiry):
+        request_url = self.base_url + url + self.url_suffix
         try:
-            local_request = load_json(url.replace('/', '_')+'.json')
-            return local_request
+            local_response = load_json(url.replace('/', '_')+'.json')
+            response = local_response
         except FileNotFoundError:
-            import ipdb; ipdb.set_trace()
-            request = requests.get(self.base_url+url, headers=self.headers).json()
-            save_json(request, url.replace('/', '_')+'.json', cache_expiry)
-            return request
+            raw_response = requests.get(request_url, headers=self.headers)
+            response = embed_in_dict_if_not_dict(raw_response.json(), key='data')
+            save_json(response, url.replace('/', '_')+'.json', cache_expiry)
 
+        assert self._is_valid_response(response), "Error in request to %s\nResponse: %s" %(
+            request_url, response)
+        return response
 
+    def page_ready_todays_fixtures(self):
+        todays = self._todays_fixtures()
+        return self._make_fixtures_page_ready(todays)
+
+    def _make_fixtures_page_ready(self, fixtures):
+        page_ready_fixtures = [
+            {y: f[z] for y, z in self.match_page_ready_map.items()}
+            for f in fixtures]
+        return page_ready_fixtures
+
+    def _todays_fixtures(self):
+        raise NotImplementedError
+
+    def _is_valid_response(self, response):
+        raise NotImplementedError
 
 class FootballData():
     '''
@@ -42,7 +62,7 @@ class FootballData():
     def __init__(self):
         self.base_url = 'http://api.football-data.org/v1/'
         self.headers = {'X-Auth-Token': os.environ['football_data_key']}
-        self.dt_format = "%Y-%m-%dT%H:%M:%SZ"
+        self.datetime_format = "%Y-%m-%dT%H:%M:%SZ"
 
     def get_season_fixtures(self, season_id=426):
         '''
@@ -65,7 +85,7 @@ class FootballData():
     def _fixture_datetime(self, fixture):
         ''' datetime.datetime object for fixture '''
         raw = fixture['date']
-        return datetime.strptime(raw, self.dt_format)
+        return datetime.strptime(raw, self.datetime_format)
 
     def _fixture_date(self, fixture):
         ''' datetime.date object for fixture '''
@@ -73,7 +93,7 @@ class FootballData():
         return f_datetime.date()
 
 
-class SoccerSportsOpenData():
+class SoccerSportsOpenData(FootballAPICaller):
     '''
     Calls to the Soccer-Sports Open Data API
 
@@ -89,7 +109,16 @@ class SoccerSportsOpenData():
         self.headers = {
             'X-Mashape-Key': os.environ['ssod_key'],
             'Accept': 'application/json'}
+        self.date_format = '%Y-%m-%dT%H:%M:%S%z'
         self.dt_format = '%Y-%m-%dT%H:%M:%S%z'
+        self.match_page_ready_map = {
+            'team_home': ('home', 'team'),
+            'team_away': ('away', 'team'),
+            'score_home': ('home', 'goals'),
+            'score_away': ('away', 'goals'),
+            'time_kick_off': ('TODO',),
+            'time_elapsed': ('TODO',),
+            }
 
     def check_cache_else_request(self, url, cache_expiry=0, description=None):
         try:
@@ -135,7 +164,6 @@ class SoccerSportsOpenData():
         for match in matches:
             match.update(self._get_match_details(id_round, match['match_slug']))
 
-        import ipdb; ipdb.set_trace()
         return self._make_dates_aware(matches, date_keys=('date_match',))
 
     def _get_match_details(self, id_round, id_match):
@@ -156,21 +184,6 @@ class SoccerSportsOpenData():
             fixtures_url, minutes_to_cache_expire, self.id_season)['data']['rounds']
 
         return self._make_dates_aware(rounds, date_keys=('start_date', 'end_date'))
-
-    def todays_fixtures_page_ready(self):
-        todays_fixtures = []
-        logger.info('Today\'s fixtures requested')
-        for fixture in self._todays_fixtures():
-            todays_fixtures.append({
-                'team_home': fixture['home']['team'],
-                'team_away': fixture['away']['team'],
-                'score_home': fixture['home']['goals'],
-                'score_away': fixture['away']['goals'],
-                'time_kick_off': '15:00',
-                'time_elapsed': '90',
-            })
-        logger.info('Today\'s fixtures retrieved')
-        return todays_fixtures
 
     def _make_dates_aware(self, list_with_dates, date_keys):
         ''' Convert date-time strings into Python datetime objects '''
@@ -206,8 +219,6 @@ class Heisenbug(FootballAPICaller):
                 self.id_league, match_day+1, self.id_season)
             fixture = self.check_cache_else_request(fixtures_url, minutes_to_cache_expiry)
             fixtures += fixture
-            import ipdb; ipdb.set_trace()
-        import ipdb; ipdb.set_trace()
 
 
 class FootballAPI(FootballAPICaller):
@@ -223,33 +234,68 @@ class FootballAPI(FootballAPICaller):
         self.base_url = 'http://api.football-api.com/2.0/'
         self.headers = None
         self.key = os.environ['football_api_key']
+        self.url_suffix = 'Authorization=' + self.key
+        self.date_format = '%d.%m.%Y'
+        self.match_page_ready_map = {
+            'team_home': 'localteam_name',
+            'team_away': 'visitorteam_name',
+            'score_home': 'localteam_score',
+            'score_away': 'visitorteam_score',
+            'time_kick_off': 'time',
+            'time_elapsed': 'timer',
+        }
 
     def get_competitions(self):
-        competitions_url = 'competitions?Authorization=' + self.key
-        return self.check_cache_else_request(competitions_url)
-
-    def get_season_fixtures(self):
         minutes_to_cache_expiry = 60 * 24
-        fixtures = []
+        competitions_url = 'competitions?'
+        return self.check_cache_else_request(
+            competitions_url,
+            minutes_to_cache_expiry,
+        )
 
-        for match_day in range(38):
-            fixtures_url = self.base_url + '{}?matchday={}&season={}'.format(
-                self.id_league, match_day+1, self.id_season)
-            fixture = self.check_cache_else_request(fixtures_url, minutes_to_cache_expiry)
-            fixtures += fixture
-            import ipdb; ipdb.set_trace()
-        import ipdb; ipdb.set_trace()
+    def _todays_fixtures(self):
+        return self._get_fixtures_for_date(date.today())
+
+    def _get_fixtures_for_date(self, date_):
+        minutes_to_cache_expiry = 0.2
+        today = date_.strftime(self.date_format)
+        fixtures_url = 'matches?comp_id={}&match_date={}&'.format(
+            self.id_league, today)
+        todays_fixtures = self.check_cache_else_request(
+            fixtures_url,
+            minutes_to_cache_expiry,
+        )['data']
+
+        return self._this_league_only(self.id_league, todays_fixtures)
+
+    def _get_active_fixtures(self):
+        minutes_to_cache_expiry = 0.2
+        fixtures_url = 'matches?'
+        active_fixtures = self.check_cache_else_request(
+            fixtures_url,
+            minutes_to_cache_expiry,
+        )['data']
+
+        return self._this_league_only(self.id_league, active_fixtures)
+
+    def _this_league_only(self, league_id, matches):
+        return [m for m in matches if m['comp_id'] == league_id]
+
+    def _is_valid_response(self, response):
+        try:
+            assert isinstance(response, dict) and response['status'] == 'error'
+            return False
+        except (AssertionError, KeyError):
+            return True
 
 
 if __name__ == '__main__':
     start_logging()
 
     #sssod = SoccerSportsOpenData(id_league='premier-league', id_season='16-17')
-    #sssod.todays_fixtures_page_ready()
+    #print (sssod.page_ready_todays_fixtures())
+
     PL = FootballAPI()
-    PL.get_competitions()
-
-    def _todays_fixtures(self):
-        pass
-
+    print (PL.page_ready_todays_fixtures())
+    import ipdb; ipdb.set_trace()
 

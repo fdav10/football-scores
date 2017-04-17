@@ -3,8 +3,8 @@
 
 from flask import Flask, render_template
 
-from footie_scores.utils.utilities import start_logging
-from footie_scores.apis.api_request import SoccerSportsOpenData as SSOD
+from footie_scores.utils.log import start_logging
+from footie_scores.apis.api_request import FootballAPI
 
 
 app = Flask(__name__)
@@ -17,8 +17,8 @@ def test():
 
 @app.route("/scores")
 def todays_fixtures():
-    premier_league = SSOD(id_league='premier-league', id_season='16-17')
-    pl_games = premier_league.todays_fixtures_page_ready()
+    premier_league = FootballAPI(id_league='1204')
+    pl_games = premier_league.page_ready_todays_fixtures()
 
     return render_template(
         'scores.html',

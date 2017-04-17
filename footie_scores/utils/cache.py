@@ -10,7 +10,7 @@ from footie_scores.utils.time import stime_from_now, json_expiry_as_datime, time
 logger = logging.getLogger(__name__)
 
 
-def purge_cache_of_expired_before_load(load_func):
+def purge_cache_of_expired(load_func):
     def purge_cache_and_run(filename, folder='data'):
         data = load_func(filename, folder)
         expiry = json_expiry_as_datime(data)
@@ -20,6 +20,8 @@ def purge_cache_of_expired_before_load(load_func):
                 filename, abs(elapsed.total_seconds())))
             remove_from_cache(filename, folder)
             raise FileNotFoundError
+        else:
+            logger.info('%s retreived from cache' %filename)
         return data
     return purge_cache_and_run
 
@@ -41,12 +43,11 @@ def save_json(data, filename, cache_expiry, folder='data'):
         logger.info('%s added to cache' %filename)
 
 
-@purge_cache_of_expired_before_load
+@purge_cache_of_expired
 def load_json(filename, folder='data'):
     ensure_folder_exists(folder)
     with open(os.path.join(folder, filename)) as json_file:
         data = json.load(json_file)
-        logger.info('%s retreived from cache' %filename)
     return data
 
 
@@ -54,6 +55,15 @@ def ensure_folder_exists(folder):
     if not os.path.isdir(folder):
         os.mkdir(folder)
 
+
 def remove_from_cache(filename, folder='data'):
     os.remove(os.path.join(folder, filename))
-    logger.info('Cache file deleted {}'.format(filename))
+    logger.info('%s cache file deleted ' %filename)
+
+
+def embed_in_dict_if_not_dict(data, key):
+    try:
+        assert type(data) is dict
+    except AssertionError:
+        data = {key: data}
+    return data
