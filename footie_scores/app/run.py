@@ -43,6 +43,13 @@ def past_fixtures():
     cl_games = champions_league.page_ready_finished_fixtures(date_)
     return games_template(cl_games, date_)
 
+@app.route("/prem")
+def prem_fixtures():
+    date_ = date(year=2017, month=4, day=15)
+    premier_league = FootballAPI(id_league='1204')
+    pl_games = premier_league.page_ready_finished_fixtures(date_)
+    return games_template(pl_games, date_)
+
 
 def games_template(games, date_):
     return render_template(
