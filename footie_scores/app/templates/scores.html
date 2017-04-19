@@ -1,18 +1,34 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title> Scores for {{date}} </title>
+    <title> Scores for 16/01/2017 </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Arimo" rel="stylesheet">
   </head>
   <body>
     {% for game in games %}
-	<h1>{{game.team_home}} {{game.score_home}} - {{game.score_away}} {{game.team_away}}</h1>
-	    {% for event in game.home_events %}
-		<p>{{event.player}} {{event.time}}</p>
-	    {% endfor %}
-	    {% for event in game.away_events %}
-		<p>{{event.player}} {{event.time}}</p>
-	    {% endfor %}
+    <div class="game">
+      <div class="score">
+    	<div class="home_score">
+    	  <h1>{{game.team_home}} {{game.score_home}}</h1>
+    	</div>
+    	<div class="away_score">
+    	  <h1>{{game.score_away}} {{game.team_away}}</h1>
+	</div>
+      </div>
+      <div class="events">
+      	<div class="home_events">
+      	  {% for event in game.home_events %}
+      	    <p>{{event.player}} {{event.time}}</p>
+      	  {% endfor %}
+      	</div>
+      	<div class="away_events">
+      	  {% for event in game.away_events %}
+      	    <p>{{event.time}} {{event.player}}</p>
+      	  {% endfor %}
+      	</div>
+      </div>
+    </div>
     {% endfor %}
   </body>
 </html>
