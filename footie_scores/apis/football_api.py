@@ -11,7 +11,30 @@ from footie_scores.apis.base import FootballAPICaller
 
 logger = logging.getLogger(__name__)
 
-
+LEAGUE_ID_MAP = {
+    'champions league': '1005',
+    'europa league': '1007',
+    'austria': '1093',
+    'belgium': '1102',
+    'czechoslovakia': '1184',
+    'england cup': '1198',
+    'england league cup': '1199',
+    'england': '1204',
+    'england 2nd': '1205',
+    'france': '1221',
+    'germany': '1229',
+    'greece': '1232',
+    'italy 2nd': '1265',
+    'italy': '1269',
+    'netherlands': '1322',
+    'portugal': '1352',
+    'spain cup': '1397',
+    'spain': '1399',
+    'switzerland': '1408',
+    'turkey': '1425',
+    'ukraine': '1428',
+    'russia': '1457',
+}
 
 class FootballAPI(FootballAPICaller):
     '''
