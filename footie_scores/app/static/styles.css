@@ -6,7 +6,8 @@
 }
 
 body {
-    background: LightGrey;
+    /* background: LightGrey; */
+    background: Gainsboro;
 }
 
 .game {

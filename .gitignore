@@ -7,3 +7,5 @@ __pycache__
 data/
 profile.txt
 *.egg-info/
+
+footie_scores/app/static/scores_trial.html
