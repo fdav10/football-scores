@@ -6,29 +6,36 @@
     <link href="https://fonts.googleapis.com/css?family=Arimo" rel="stylesheet">
   </head>
   <body>
-    {% for game in games %}
+    {% for comp in competitions %}
+    {% if comp.fixtures %}
+    <h1> {{comp.name}} </h1>
+    {% for fixture in comp.fixtures %}
     <div class="game">
       <div class="score">
-    	<div class="home_score">
-    	  <p>{{game.team_home}} {{game.score_home}}</p>
-    	</div>
-    	<div class="away_score">
-    	  <p>{{game.score_away}} {{game.team_away}}</p>
+	<div class="home_score">
+	  <p>{{fixture.team_home}} {{fixture.score_home}}</p>
+	</div>
+	<div class="away_score">
+	  <p>{{fixture.score_away}} {{fixture.team_away}}</p>
 	</div>
       </div>
+      {% if fixture.home_events or fixture.away_events %}
       <div class="events">
-      	<div class="home_events">
-      	  {% for event in game.home_events %}
-      	    <p>{{event.player}} {{event.time}}</p>
-      	  {% endfor %}
-      	</div>
-      	<div class="away_events">
-      	  {% for event in game.away_events %}
-      	    <p>{{event.time}} {{event.player}}</p>
-      	  {% endfor %}
-      	</div>
+	<div class="home_events">
+	    {% for event in fixture.home_events %}
+		<p>{{event.player}} {{event.time}}</p>
+	    {% endfor %}
+	</div>
+	<div class="away_events">
+		{% for event in fixture.away_events %}
+		    <p>{{event.time}} {{event.player}}</p>
+		{% endfor %}
+	</div>
       </div>
+      {% endif %}
     </div>
+    {% endfor %}
+    {% endif %}
     {% endfor %}
   </body>
 </html>

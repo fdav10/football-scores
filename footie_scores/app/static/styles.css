@@ -19,13 +19,13 @@ body {
     position: relative;
     top: 50px;
     border-radius: 4px;
+    padding-top: 15px;
+    padding-bottom: 15px;
 }
 
 .score {
     width: 100%;
     white-space: nowrap;
-    padding-top: 15px;
-    padding-bottom: 5px;
     color: DodgerBlue;
     font-size: 24px;
 }
@@ -48,7 +48,7 @@ body {
     color: #716d6d;
     width: 100%;
     white-space: nowrap;
-    padding-bottom: 15px;
+    padding-top: 5px;
 }
 
 .home_events, .away_events  {

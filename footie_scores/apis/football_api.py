@@ -38,8 +38,8 @@ LEAGUE_ID_MAP = {
 
 MINUTES_TO_CACHE_EXPIRY = {
     'competitions': 60 * 24,
-    'game_active': 0.2,
-    'game_past': 5,
+    'game_active': 60 * 24,
+    'game_past': 60 * 24,
 }
 
 class FootballAPI(FootballAPICaller):
