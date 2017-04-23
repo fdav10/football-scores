@@ -10,60 +10,91 @@ body {
     background: Gainsboro;
 }
 
+.competition {
+    width: 80%;
+    position: relative;
+    top: 50px;
+    margin: auto;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding: 15px;
+    background: #bdc1c5;
+    border-radius: 4px;
+    font-size: 24px;
+    text-transform: uppercase;
+    color: DodgerBlue;
+    font-style: italic;
+}
+
 .game {
-    width: 600px;
+    width: 80%;
+    padding-bottom: 15px;
     margin: auto;
     margin-top: 15px;
     margin-bottom: 15px;
     background: white;
-    position: relative;
-    top: 50px;
     border-radius: 4px;
     padding-top: 15px;
-    padding-bottom: 15px;
+    position: relative;
+    text-transform: none;
+    font-style: normal;
 }
 
 .score {
     width: 100%;
     white-space: nowrap;
-    color: DodgerBlue;
-    font-size: 24px;
 }
 
-.home_score, .away_score {
-    width: 50%;
+.home_team, .away_team, .scoreline {
+    width: 45%;
     text-align: right;
     display: inline-block;
-    padding-right: 10px;
     white-space: normal;
+    padding-right: 5px;
 }
 
-.away_score {
-    padding-left: 10px;
-    padding-right: 0px;
+.away_team {
     text-align: left;
+    position: absolute;
+    right: 0px;
+    padding-right: 0px;
+    padding-left: 5px;
+}
+
+.scoreline {
+    width: 10%;
+    text-align: center;
+    position: absolute;
+    padding-right: 0px;
 }
 
 .events {
+    position: relative;
     color: #716d6d;
     width: 100%;
     white-space: nowrap;
     padding-top: 5px;
+    display: inline-block;
 }
 
 .home_events, .away_events  {
+    width: 45%;
     font-size: 12px;
     line-height: 1.4em;
-    width: 50%;
-    text-align: right;
-    display: inline-block;
-    padding-right: 15px;
     white-space: normal;
     vertical-align: top;
+    overflow: auto;
 }
 
+.home_events  {
+    text-align: right;
+    padding-right: 5px;
+    position: relative;
+    float: left;
+}
 .away_events  {
     text-align: left;
-    padding-left: 15px;
-    padding-right: 0px;
+    padding-left: 5px;
+    position: relative;
+    float: right;
 }

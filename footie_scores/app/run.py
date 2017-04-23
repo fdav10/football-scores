@@ -12,17 +12,17 @@ from footie_scores.apis.football_data import FootballData
 
 app = Flask(__name__)
 DATEFORMAT = "%A %d %B %y" # e.g. Sunday 16 April 2017
-DEFAULT_COMPETITIONS = (
-    'champions league',
-    'europa league',
-    'england cup',
-    'england',
-    'france',
-    'germany',
-    'italy',
-    'portugal',
-    'spain',
-    )
+COMPETITIONS = [
+    {'api_name': 'champions league', 'print_name': 'Champions League'},
+    {'api_name': 'europa league', 'print_name': 'Europa League'},
+    {'api_name': 'england cup', 'print_name': 'FA Cup'},
+    {'api_name': 'england', 'print_name': 'Premier League'},
+    {'api_name': 'france', 'print_name': 'Ligue 1'},
+    {'api_name': 'germany', 'print_name': 'Bundesliga'},
+    {'api_name': 'italy', 'print_name': 'Serie A'},
+    {'api_name': 'portugal', 'print_name': 'Primeira Liga'},
+    {'api_name': 'spain', 'print_name': 'La Liga'},
+]
 
 
 @app.route("/test")
@@ -32,7 +32,7 @@ def test():
 
 @app.route("/todays_games")
 def todays_fixtures():
-    fixtures = competition_fixtures(DEFAULT_COMPETITIONS)
+    fixtures = competition_fixtures(COMPETITIONS)
     return games_template(fixtures, date.today())
 
 @app.route("/prem")

@@ -35,14 +35,14 @@ AVAILABLE_COMPETITIONS = set((
 
 def competition_fixtures(competitions):
     fixtures = []
-    for competition_name in competitions:
-        comp = FootballAPI(competition_name)
+    for competition in competitions:
+        comp_api = FootballAPI(competition['api_name'])
         try:
-            comp_fixtures = comp.page_ready_todays_fixtures()
+            comp_fixtures = comp_api.page_ready_todays_fixtures()
         except:
             comp_fixtures = []
         fixtures.append({
-            'name': competition_name,
+            'name': competition['print_name'],
             'fixtures': comp_fixtures
         })
     return fixtures

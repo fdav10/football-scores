@@ -8,33 +8,38 @@
   <body>
     {% for comp in competitions %}
     {% if comp.fixtures %}
-    <h1> {{comp.name}} </h1>
-    {% for fixture in comp.fixtures %}
-    <div class="game">
-      <div class="score">
-	<div class="home_score">
-	  <p>{{fixture.team_home}} {{fixture.score_home}}</p>
+    <div class="competition">
+      <p> {{comp.name}} </p>
+      {% for fixture in comp.fixtures %}
+      <div class="game">
+	<div class="score">
+	  <div class="home_team">
+	    <p>{{fixture.team_home}}</p>
+	  </div>
+	  <div class="scoreline">
+	    <p>{{fixture.score_home}} - {{fixture.score_away}}</p>
+	  </div>
+	  <div class="away_team">
+	    <p>{{fixture.team_away}}</p>
+	  </div>
 	</div>
-	<div class="away_score">
-	  <p>{{fixture.score_away}} {{fixture.team_away}}</p>
-	</div>
-      </div>
-      {% if fixture.home_events or fixture.away_events %}
-      <div class="events">
-	<div class="home_events">
+	{% if fixture.home_events or fixture.away_events %}
+	<div class="events">
+	  <div class="home_events">
 	    {% for event in fixture.home_events %}
-		<p>{{event.player}} {{event.time}}</p>
+	    <p>{{event.player}} {{event.time}}</p>
 	    {% endfor %}
+	  </div>
+	  <div class="away_events">
+	    {% for event in fixture.away_events %}
+	    <p>{{event.time}} {{event.player}}</p>
+	    {% endfor %}
+	  </div>
 	</div>
-	<div class="away_events">
-		{% for event in fixture.away_events %}
-		    <p>{{event.time}} {{event.player}}</p>
-		{% endfor %}
-	</div>
+	{% endif %}
       </div>
-      {% endif %}
+      {% endfor %}
     </div>
-    {% endfor %}
     {% endif %}
     {% endfor %}
   </body>
