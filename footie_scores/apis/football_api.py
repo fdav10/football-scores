@@ -43,9 +43,9 @@ class FootballAPI(FootballAPICaller):
     https://football-api.com/
     '''
 
-    def __init__(self, id_league='1204', id_season=''):
+    def __init__(self, competition, id_season=''):
         super().__init__()
-        self.id_league = id_league
+        self.id_league = LEAGUE_ID_MAP[competition]
         self.id_season = id_season
         self.base_url = 'http://api.football-api.com/2.0/'
         self.key = os.environ['football_api_key']

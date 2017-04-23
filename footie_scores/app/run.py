@@ -20,8 +20,8 @@ def test():
 
 @app.route("/todays_games")
 def todays_fixtures():
-    premier_league = FootballAPI(id_league='1204')
-    champions_league = FootballAPI(id_league='1005')
+    premier_league = FootballAPI('england')
+    #champions_league = FootballAPI(id_league='1005')
     pl_games = premier_league.page_ready_todays_fixtures()
     #cl_games = champions_league.page_ready_todays_fixtures()
     return games_template(pl_games, date.today())
