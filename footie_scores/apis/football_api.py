@@ -36,6 +36,12 @@ LEAGUE_ID_MAP = {
     'russia': '1457',
 }
 
+MINUTES_TO_CACHE_EXPIRY = {
+    'competitions': 60 * 24,
+    'game_active': 0.2,
+    'game_past': 5,
+}
+
 class FootballAPI(FootballAPICaller):
     '''
     Calls to the Football-API API
@@ -54,7 +60,7 @@ class FootballAPI(FootballAPICaller):
         self.date_format = '%d.%m.%Y'
 
     def _get_competitions(self):
-        minutes_to_cache_expiry = 60 * 24
+        minutes_to_cache_expiry = MINUTES_TO_CACHE_EXPIRY['competitions']
         competitions_url = 'competitions?'
         return self.check_cache_else_request(
             competitions_url,
@@ -62,7 +68,7 @@ class FootballAPI(FootballAPICaller):
         )
 
     def _get_fixtures_for_date(self, date_):
-        minutes_to_cache_expiry = 0.1
+        minutes_to_cache_expiry = MINUTES_TO_CACHE_EXPIRY['game_past']
         today = date_.strftime(self.date_format)
         fixtures_url = 'matches?comp_id={}&match_date={}&'.format(
             self.id_league, today)
@@ -74,7 +80,7 @@ class FootballAPI(FootballAPICaller):
         return self._this_league_only(self.id_league, todays_fixtures)
 
     def _get_active_fixtures(self):
-        minutes_to_cache_expiry = 0.1
+        minutes_to_cache_expiry = MINUTES_TO_CACHE_EXPIRY['game_active']
         fixtures_url = 'matches?'
         active_fixtures = self.check_cache_else_request(
             fixtures_url,
