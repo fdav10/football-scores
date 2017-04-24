@@ -94,6 +94,7 @@ class FootballAPI(FootballAPICaller):
             {
                 'team_home': f['localteam_name'],
                 'team_away': f['visitorteam_name'],
+                'score': self._format_score(f),
                 'score_home': f['localteam_score'],
                 'score_away': f['visitorteam_score'],
                 'time_kick_off': f['time'],
@@ -115,6 +116,15 @@ class FootballAPI(FootballAPICaller):
                 e['time'] = e['minute']
 
         return events
+
+    def _format_score(self, fixture):
+        home_score = fixture['localteam_score']
+        away_score = fixture['visitorteam_score']
+        if home_score == '?' and away_score == '?':
+            score = fixture['time']
+        else:
+            score = '{} - {}'.format(home_score, away_score)
+        return score
 
     def _this_league_only(self, league_id, matches):
         return [m for m in matches if m['comp_id'] == league_id]

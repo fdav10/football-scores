@@ -40,6 +40,7 @@ def competition_fixtures(competitions):
         try:
             comp_fixtures = comp_api.page_ready_todays_fixtures()
         except:
+            # TODO catch custom error for no fixtures available
             comp_fixtures = []
         fixtures.append({
             'name': competition['print_name'],
