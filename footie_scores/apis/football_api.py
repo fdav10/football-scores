@@ -39,8 +39,8 @@ LEAGUE_ID_MAP = {
 
 MINUTES_TO_CACHE_EXPIRY = {
     'competitions': 60 * 24,
-    'game_active': .2,
-    'game_past': 5,
+    'game_active': 1,
+    'game_past': 1,
 }
 
 class FootballAPI(FootballAPICaller):
@@ -70,6 +70,7 @@ class FootballAPI(FootballAPICaller):
         )
 
     def _get_fixtures_for_date(self, date_):
+        # TODO games in the past and active games aren't differentiated here
         minutes_to_cache_expiry = MINUTES_TO_CACHE_EXPIRY['game_past']
         today = date_.strftime(self.date_format)
         fixtures_url = 'matches?comp_id={}&match_date={}&'.format(
@@ -91,6 +92,14 @@ class FootballAPI(FootballAPICaller):
 
         return self._this_league_only(self.id_league, active_fixtures)
 
+    def _get_commentary_for_fixture(self, fixture_id):
+        minutes_to_cache_expiry = MINUTES_TO_CACHE_EXPIRY['game_active']
+        commentary_url = 'commentaries/{}?'.format(fixture_id)
+        commentary = self.check_cache_else_request(
+            commentary_url,
+            minutes_to_cache_expiry)
+        return commentary
+
     def _make_fixtures_page_ready(self, fixtures):
         page_ready_fixtures = [
             {
@@ -103,6 +112,9 @@ class FootballAPI(FootballAPICaller):
                 'time_elapsed': f['timer'],
                 'home_events': self._make_events_page_ready('localteam', f['events']),
                 'away_events': self._make_events_page_ready('visitorteam', f['events']),
+                'id': f['id'],
+                'home_lineup': None,
+                'away_lineup': None,
             }
             for f in fixtures]
 
