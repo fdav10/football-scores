@@ -63,6 +63,9 @@ class FootballAPICaller(object):
         fixtures = self._get_active_fixtures()
         return self._make_fixtures_page_ready(fixtures)
 
+    def page_ready_fixture_details(self, fixture_id):
+        return self._get_commentary_for_fixture(fixture_id)
+
     def _todays_fixtures(self):
         return self._get_fixtures_for_date(date.today())
 
@@ -71,6 +74,10 @@ class FootballAPICaller(object):
             "Implemented in child classes - base class should not be instantiated")
 
     def _get_active_fixtures(self):
+        raise NotImplementedError(
+            "Implemented in child classes - base class should not be instantiated")
+
+    def _get_commentary_for_fixture(self, arg):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 

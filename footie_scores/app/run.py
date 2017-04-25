@@ -32,8 +32,14 @@ def test():
 
 @app.route("/todays_games")
 def todays_fixtures():
+    # TODO active fixtures are sometimes shown as not yet kicked off
     fixtures = competition_fixtures(COMPETITIONS)
     return games_template(fixtures, date.today())
+
+@app.route("/details/<fixture_id>")
+def match_details(fixture_id):
+    fixture_details = FootballAPI().page_ready_fixture_details(fixture_id)
+    return details_template(fixture_details)
 
 @app.route("/prem")
 def prem_fixtures():
@@ -48,6 +54,13 @@ def games_template(competitions, date_):
         'scores.html',
         date=date_.strftime(DATEFORMAT),
         competitions=competitions,
+    )
+
+
+def details_template(details):
+    return render_template(
+        'details.html',
+        details=details,
     )
 
 

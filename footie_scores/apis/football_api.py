@@ -35,6 +35,7 @@ LEAGUE_ID_MAP = {
     'turkey': '1425',
     'ukraine': '1428',
     'russia': '1457',
+    None: None,
 }
 
 MINUTES_TO_CACHE_EXPIRY = {
@@ -50,7 +51,7 @@ class FootballAPI(FootballAPICaller):
     https://football-api.com/
     '''
 
-    def __init__(self, competition, id_season=''):
+    def __init__(self, competition=None, id_season=''):
         super().__init__()
         self.id_league = LEAGUE_ID_MAP[competition]
         self.id_season = id_season
@@ -93,12 +94,16 @@ class FootballAPI(FootballAPICaller):
         return self._this_league_only(self.id_league, active_fixtures)
 
     def _get_commentary_for_fixture(self, fixture_id):
+        # TODO class requires competition ID but this method doesn't.
+        # Would be useful to be able to call this method without
+        # instantiating the class with a competition ID. Stop-gap
+        # solution is to allow class instantiated with competition=None.
         minutes_to_cache_expiry = MINUTES_TO_CACHE_EXPIRY['game_active']
         commentary_url = 'commentaries/{}?'.format(fixture_id)
         commentary = self.check_cache_else_request(
             commentary_url,
             minutes_to_cache_expiry)
-        return commentary
+        return self._make_commentary_page_ready(commentary)
 
     def _make_fixtures_page_ready(self, fixtures):
         page_ready_fixtures = [
@@ -130,6 +135,13 @@ class FootballAPI(FootballAPICaller):
                 e['time'] = e['minute']
 
         return events
+
+    def _make_commentary_page_ready(self, commentary):
+        page_ready_commentary = {
+            'lineup_home': commentary['lineup']['localteam'],
+            'lineup_away': commentary['lineup']['visitorteam'],
+        }
+        return page_ready_commentary
 
     def _format_fixture_score(self, fixture):
         home_score = fixture['localteam_score']
