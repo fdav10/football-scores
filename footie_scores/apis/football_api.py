@@ -3,10 +3,11 @@
 
 import os
 import logging
-from datetime import date
+from datetime import datetime, date
 
 from footie_scores.utils.log import start_logging
 from footie_scores.apis.base import FootballAPICaller
+from footie_scores.utils.time import datetime_string_make_aware
 
 
 logger = logging.getLogger(__name__)
@@ -58,6 +59,7 @@ class FootballAPI(FootballAPICaller):
         self.headers = None
         self.url_suffix = 'Authorization=' + self.key
         self.date_format = '%d.%m.%Y'
+        self.time_format = '%H:%M'
 
     def _get_competitions(self):
         minutes_to_cache_expiry = MINUTES_TO_CACHE_EXPIRY['competitions']
@@ -94,10 +96,10 @@ class FootballAPI(FootballAPICaller):
             {
                 'team_home': f['localteam_name'],
                 'team_away': f['visitorteam_name'],
-                'score': self._format_score(f),
+                'score': self._format_fixture_score(f),
                 'score_home': f['localteam_score'],
                 'score_away': f['visitorteam_score'],
-                'time_kick_off': f['time'],
+                'time_kick_off': self._format_fixture_time(f),
                 'time_elapsed': f['timer'],
                 'home_events': self._make_events_page_ready('localteam', f['events']),
                 'away_events': self._make_events_page_ready('visitorteam', f['events']),
@@ -117,7 +119,7 @@ class FootballAPI(FootballAPICaller):
 
         return events
 
-    def _format_score(self, fixture):
+    def _format_fixture_score(self, fixture):
         home_score = fixture['localteam_score']
         away_score = fixture['visitorteam_score']
         if home_score == '?' and away_score == '?':
@@ -125,6 +127,11 @@ class FootballAPI(FootballAPICaller):
         else:
             score = '{} - {}'.format(home_score, away_score)
         return score
+
+    def _format_fixture_time(self, fixture):
+        # TODO make sure this outputs in local time zone (my local for now)
+        dt_time = datetime_string_make_aware(fixture['time'], self.time_format)
+        return dt_time
 
     def _this_league_only(self, league_id, matches):
         return [m for m in matches if m['comp_id'] == league_id]

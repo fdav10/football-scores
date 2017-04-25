@@ -20,6 +20,8 @@ class FootballAPICaller(object):
         self.headers = None
         self.url_suffix = ""
         self.match_page_ready_map = None
+        self.date_format = None
+        self.time_format = None
 
     def check_cache_else_request(self, url, cache_expiry):
         '''

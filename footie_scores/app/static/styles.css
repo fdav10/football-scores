@@ -27,6 +27,7 @@ body {
 }
 
 .game {
+    position: static;
     width: 80%;
     padding-bottom: 15px;
     margin: auto;
@@ -35,7 +36,6 @@ body {
     background: white;
     border-radius: 4px;
     padding-top: 15px;
-    position: relative;
     text-transform: none;
     font-style: normal;
 }
