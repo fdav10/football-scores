@@ -10,6 +10,7 @@ body {
     background: Gainsboro;
 }
 
+
 .competition {
     width: 80%;
     position: relative;
@@ -97,4 +98,20 @@ body {
     padding-left: 5px;
     position: relative;
     float: right;
+}
+
+/* .match_details { */
+/*     position: relative; */
+/* } */
+
+.match_details, a {
+    margin: 5px;
+    padding: 2px;
+    display: inline-block;
+    position: relative;
+    text-align: center;
+    font-size: 14px;
+    text-decoration: none;
+    /* background: DodgerBlue; */
+    color: DarkOrange;
 }
