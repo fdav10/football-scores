@@ -156,10 +156,15 @@ class FootballAPI(FootballAPICaller):
         return score
 
     def _format_fixture_time(self, fixture):
-        # TODO make sure this outputs in local time zone (my local for now)
-        date_ = dt.datetime.strptime(fixture['formatted_date'], self.date_format)
-        time_ = dt.datetime.strptime(fixture['time'], self.time_format).time()
-        dt_ = dt.datetime.combine(date_, time_)
+        ''' API returns dates in UTC timezone so convert to local timezone (i.e UK).
+
+        Date seems to need to be involved otherwise there's a bug (?)
+        where changing the timezone offsets the minutes rather than
+        hours.
+        '''
+        f_date = dt.datetime.strptime(fixture['formatted_date'], self.date_format)
+        f_time = dt.datetime.strptime(fixture['time'], self.time_format).time()
+        dt_ = dt.datetime.combine(f_date, f_time)
         utc_time = pytz.utc.localize(dt_)
         local_tz = pytz.timezone('Europe/London')
         local_time = utc_time.astimezone(local_tz)
