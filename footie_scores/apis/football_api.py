@@ -3,7 +3,9 @@
 
 import os
 import logging
-from datetime import datetime, date
+import datetime as dt
+
+import pytz
 
 from footie_scores.utils.log import start_logging
 from footie_scores.apis.base import FootballAPICaller
@@ -147,15 +149,21 @@ class FootballAPI(FootballAPICaller):
         home_score = fixture['localteam_score']
         away_score = fixture['visitorteam_score']
         if home_score == '?' and away_score == '?':
-            score = fixture['time']
+            # score = self._format_fixture_time(fixture['time'])
+            score = self._format_fixture_time(fixture)
         else:
             score = '{} - {}'.format(home_score, away_score)
         return score
 
     def _format_fixture_time(self, fixture):
         # TODO make sure this outputs in local time zone (my local for now)
-        dt_time = datetime_string_make_aware(fixture['time'], self.time_format)
-        return dt_time
+        date_ = dt.datetime.strptime(fixture['formatted_date'], self.date_format)
+        time_ = dt.datetime.strptime(fixture['time'], self.time_format).time()
+        dt_ = dt.datetime.combine(date_, time_)
+        utc_time = pytz.utc.localize(dt_)
+        local_tz = pytz.timezone('Europe/London')
+        local_time = utc_time.astimezone(local_tz)
+        return local_time.strftime('%H:%M')
 
     def _this_league_only(self, league_id, matches):
         return [m for m in matches if m['comp_id'] == league_id]

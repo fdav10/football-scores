@@ -33,6 +33,7 @@ AVAILABLE_COMPETITIONS = set((
     ))
 
 
+
 def competition_fixtures(competitions):
     fixtures = []
     for competition in competitions:

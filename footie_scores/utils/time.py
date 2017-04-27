@@ -9,7 +9,8 @@ TIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 
 def datetime_string_make_aware(datetime_string, dt_format):
-    return datetime.strptime(datetime_string, dt_format).astimezone()
+    # return datetime.strptime(datetime_string, dt_format).astimezone()
+    return datetime.strptime(datetime_string, dt_format)
 
 
 def time_from_now(minutes):

@@ -39,6 +39,7 @@ body {
     padding-top: 15px;
     text-transform: none;
     font-style: normal;
+    /* overflow: auto; */
 }
 
 .score {
@@ -56,8 +57,9 @@ body {
 
 .away_team {
     text-align: left;
-    position: absolute;
-    right: 0px;
+    float: right;
+    /* position: relative; */
+    /* right: 0px; */
     padding-right: 0px;
     padding-left: 5px;
 }
@@ -100,18 +102,11 @@ body {
     float: right;
 }
 
-/* .match_details { */
-/*     position: relative; */
-/* } */
-
 .match_details, a {
-    margin: 5px;
-    padding: 2px;
-    display: inline-block;
-    position: relative;
+    margin-right: 5px;
+    float: right;
     text-align: center;
     font-size: 14px;
     text-decoration: none;
-    /* background: DodgerBlue; */
     color: DarkOrange;
 }
