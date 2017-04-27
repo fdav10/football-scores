@@ -6,7 +6,6 @@
 }
 
 body {
-    /* background: LightGrey; */
     background: Gainsboro;
 }
 
@@ -81,10 +80,9 @@ body {
 }
 
 .home_events, .away_events  {
-    width: 45%;
+    width: 42.5%;
     font-size: 12px;
     line-height: 1.4em;
-    white-space: normal;
     vertical-align: top;
     overflow: auto;
 }
