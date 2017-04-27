@@ -38,7 +38,7 @@ body {
     padding-top: 15px;
     text-transform: none;
     font-style: normal;
-    /* overflow: auto; */
+    overflow: auto;
 }
 
 .score {
