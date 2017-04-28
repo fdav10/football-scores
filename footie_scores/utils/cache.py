@@ -38,15 +38,15 @@ def add_expiry_to_json(save_func):
     return expiry_wrapper
 
 
-@add_expiry_to_json
+#@add_expiry_to_json
 def save_json(data, filename, cache_expiry=FAR_IN_FUTURE, folder='data'):
     ensure_folder_exists(folder)
-    with open(os.path.join(folder, filename), 'a') as json_file:
+    with open(os.path.join(folder, filename), 'w') as json_file:
         json.dump(data, json_file)
         logger.info('%s added to cache' %filename)
 
 
-@purge_cache_of_expired
+#@purge_cache_of_expired
 def load_json(filename, folder='data'):
     ensure_folder_exists(folder)
     with open(os.path.join(folder, filename)) as json_file:

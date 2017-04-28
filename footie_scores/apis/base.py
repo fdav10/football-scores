@@ -16,6 +16,7 @@ class FootballAPICaller(object):
     Implements generic calls. Should not be instantiated.
     '''
     def __init__(self):
+        self.id_league = None
         self.base_url = None
         self.headers = None
         self.url_suffix = ""
@@ -62,9 +63,14 @@ class FootballAPICaller(object):
             request_url, response)
         save_json(response, cache_filename)
 
-    def page_ready_todays_fixtures(self):
-        todays = self._todays_fixtures()
+    def page_ready_todays_fixtures(self, competition):
+        todays = self._todays_fixtures(competition)
         return self._make_fixtures_page_ready(todays)
+
+    def page_ready_todays_fixtures_to_db(self, competitions):
+        for competition in competitions:
+            fixtures = self.page_ready_todays_fixtures(competition)
+            save_json(fixtures, 'todays_fixtures_' + competition)
 
     def page_ready_finished_fixtures(self, date):
         fixtures = self._get_fixtures_for_date(date)
@@ -77,8 +83,8 @@ class FootballAPICaller(object):
     def page_ready_fixture_details(self, fixture_id):
         return self._get_commentary_for_fixture(fixture_id)
 
-    def _todays_fixtures(self):
-        return self._get_fixtures_for_date(date.today())
+    def _todays_fixtures(self, competition):
+        return self._get_fixtures_for_date(date.today(), competition)
 
     def _get_fixtures_for_date(self, arg):
         raise NotImplementedError(

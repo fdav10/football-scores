@@ -5,6 +5,7 @@ from datetime import date
 from flask import Flask, render_template
 
 from footie_scores.league_manager import competition_fixtures
+from footie_scores.league_manager import retrieve_fixtures_from_cache
 from footie_scores.utils.log import start_logging
 from footie_scores.apis.football_api import FootballAPI
 from footie_scores.apis.football_data import FootballData
@@ -33,7 +34,7 @@ def test():
 @app.route("/todays_games")
 def todays_fixtures():
     # TODO active fixtures are sometimes shown as not yet kicked off
-    fixtures = competition_fixtures(COMPETITIONS)
+    fixtures = retrieve_fixtures_from_cache(COMPETITIONS)
     return games_template(fixtures, date.today())
 
 @app.route("/details/<fixture_id>")
