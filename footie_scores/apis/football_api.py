@@ -7,6 +7,7 @@ import datetime as dt
 
 import pytz
 
+from footie_scores.utils.exceptions import NoFixturesToday
 from footie_scores.utils.log import start_logging
 from footie_scores.apis.base import FootballAPICaller
 from footie_scores.utils.time import datetime_string_make_aware
@@ -74,14 +75,16 @@ class FootballAPI(FootballAPICaller):
 
     def _get_fixtures_for_date(self, date_, competition):
         comp_id = LEAGUE_ID_MAP[competition]
-        minutes_to_cache_expiry = MINUTES_TO_CACHE_EXPIRY['game_past']
         str_date = date_.strftime(self.date_format)
         fixtures_url = 'matches?comp_id={}&match_date={}&'.format(
             comp_id, str_date)
-        todays_fixtures = self.check_cache_else_request(
-            fixtures_url,
-            minutes_to_cache_expiry,
-        )['data']
+        try:
+            todays_fixtures = self.request(
+                fixtures_url,
+            )['data']
+        except NoFixturesToday:
+            logger.info('No fixtures for %s on date %s' %(competition, date_))
+            todays_fixtures = {}
 
         return todays_fixtures
 
@@ -182,7 +185,10 @@ class FootballAPI(FootballAPICaller):
     def _is_valid_response(self, response):
         try:
             assert isinstance(response, dict) and response['status'] == 'error'
-            return False
+            if 'There are no matches at the moment' in response['message']:
+                raise NoFixturesToday()
+            else:
+                return False
         except (AssertionError, KeyError):
             return True
 

@@ -5,6 +5,7 @@ from collections import defaultdict
 
 from flask import Flask, render_template
 
+from footie_scores.app import run
 from footie_scores.utils.cache import load_json
 from footie_scores.utils.log import start_logging
 from footie_scores.apis.football_api import FootballAPI
@@ -76,4 +77,5 @@ def competition_fixtures(competitions):
 
 if __name__ == '__main__':
     start_logging()
-    start_api_calls(('germany', 'france'))
+
+    start_api_calls(run.COMPETITIONS)

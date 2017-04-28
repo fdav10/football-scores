@@ -24,6 +24,14 @@ class FootballAPICaller(object):
         self.date_format = None
         self.time_format = None
 
+    def request(self, url):
+        request_url = self.base_url + url + self.url_suffix
+        raw_response = requests.get(request_url, headers=self.headers)
+        response = embed_in_dict_if_not_dict(raw_response.json(), key='data')
+        assert self._is_valid_response(response), "Error in request to %s\nResponse: %s" %(
+            request_url, response)
+        return response
+
     def check_cache_else_request(self, url, cache_expiry):
         '''
         Request a url but check local cache first.

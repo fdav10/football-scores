@@ -1,0 +1,3 @@
+
+class NoFixturesToday(Exception):
+    pass
