@@ -51,6 +51,17 @@ class FootballAPICaller(object):
             request_url, response)
         return response
 
+    def save_request_in_db(self, url, cache_filename):
+        '''
+        Request a URL and save it in the cache for retrieval by the app.
+        '''
+        request_url = self.base_url + url + self.url_suffix
+        raw_response = requests.get(request_url, headers=self.headers)
+        response = embed_in_dict_if_not_dict(raw_response.json(), key='data')
+        assert self._is_valid_response(response), "Error in request to %s\nResponse: %s" %(
+            request_url, response)
+        save_json(response, cache_filename)
+
     def page_ready_todays_fixtures(self):
         todays = self._todays_fixtures()
         return self._make_fixtures_page_ready(todays)

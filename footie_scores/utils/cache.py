@@ -7,6 +7,9 @@ import logging
 from footie_scores.utils.time import stime_from_now, json_expiry_as_datime, time_elapsed_from
 
 
+FAR_IN_FUTURE = 525600 # one year in minutes
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -27,7 +30,7 @@ def purge_cache_of_expired(load_func):
 
 
 def add_expiry_to_json(save_func):
-    def expiry_wrapper(data, filename, cache_expiry):
+    def expiry_wrapper(data, filename, cache_expiry=FAR_IN_FUTURE):
         expiry_time = stime_from_now(cache_expiry)
         expiry = {'expiry_time': expiry_time}
         data.update(expiry)
@@ -36,7 +39,7 @@ def add_expiry_to_json(save_func):
 
 
 @add_expiry_to_json
-def save_json(data, filename, cache_expiry, folder='data'):
+def save_json(data, filename, cache_expiry=FAR_IN_FUTURE, folder='data'):
     ensure_folder_exists(folder)
     with open(os.path.join(folder, filename), 'a') as json_file:
         json.dump(data, json_file)

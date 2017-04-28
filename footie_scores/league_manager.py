@@ -5,7 +5,9 @@ from collections import defaultdict
 
 from flask import Flask, render_template
 
+from footie_scores.utils.log import start_logging
 from footie_scores.apis.football_api import FootballAPI
+from footie_scores.utils.scheduling import start_periodic_calls
 
 AVAILABLE_COMPETITIONS = set((
     'champions league',
@@ -33,6 +35,17 @@ AVAILABLE_COMPETITIONS = set((
     ))
 
 
+def start_api_calls(competitions):
+    for competition in competitions:
+        comp_api = FootballAPI(competition)
+        start_periodic_calls(30, comp_api._todays_fixtures_to_db)
+
+
+def todays_fixtures():
+    # TODO move this so that this module is generic
+    fapi = FootballAPI('france')
+    fapi._todays_fixtures_to_db()
+
 
 def competition_fixtures(competitions):
     fixtures = []
@@ -48,3 +61,7 @@ def competition_fixtures(competitions):
             'fixtures': comp_fixtures
         })
     return fixtures
+
+if __name__ == '__main__':
+    start_logging()
+    start_api_calls(('germany', 'france'))

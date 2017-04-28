@@ -75,9 +75,9 @@ class FootballAPI(FootballAPICaller):
     def _get_fixtures_for_date(self, date_):
         # TODO games in the past and active games aren't differentiated here
         minutes_to_cache_expiry = MINUTES_TO_CACHE_EXPIRY['game_past']
-        today = date_.strftime(self.date_format)
+        str_date = date_.strftime(self.date_format)
         fixtures_url = 'matches?comp_id={}&match_date={}&'.format(
-            self.id_league, today)
+            self.id_league, str_date)
         todays_fixtures = self.check_cache_else_request(
             fixtures_url,
             minutes_to_cache_expiry,
@@ -94,6 +94,12 @@ class FootballAPI(FootballAPICaller):
         )['data']
 
         return self._this_league_only(self.id_league, active_fixtures)
+
+    def _todays_fixtures_to_db(self):
+        today = dt.date.today().strftime(self.date_format)
+        fixtures_url = 'matches?comp_id={}&match_date={}&'.format(
+            self.id_league, today)
+        self.save_request_in_db(fixtures_url, 'todays_fixtures')
 
     def _get_commentary_for_fixture(self, fixture_id):
         # TODO class requires competition ID but this method doesn't.
