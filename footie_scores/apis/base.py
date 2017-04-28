@@ -32,34 +32,6 @@ class FootballAPICaller(object):
             request_url, response)
         return response
 
-    def check_cache_else_request(self, url, cache_expiry):
-        '''
-        Request a url but check local cache first.
-
-        If a response is found in the cache then this is returned and no
-        request is made to the API. If a request is made to the API
-        then the response is saved in the cache.  An expiry time is
-        attached to each file in the cache and cache files are checked
-        to see if they've expired before they're returned.
-
-        Some APIs return lists.  Dicts are preferable because this
-        allows the expiry timestamp to be attached.  When a list is
-        returned it's embedded in a dict under the key 'data'.
-        '''
-        request_url = self.base_url + url + self.url_suffix
-        cache_filename = url.replace('/', '_')+'.json'
-        try:
-            local_response = load_json(cache_filename)
-            response = local_response
-        except FileNotFoundError:
-            raw_response = requests.get(request_url, headers=self.headers)
-            response = embed_in_dict_if_not_dict(raw_response.json(), key='data')
-            save_json(response, cache_filename, cache_expiry)
-
-        assert self._is_valid_response(response), "Error in request to %s\nResponse: %s" %(
-            request_url, response)
-        return response
-
     def save_request_in_db(self, url, cache_filename):
         '''
         Request a URL and save it in the cache for retrieval by the app.

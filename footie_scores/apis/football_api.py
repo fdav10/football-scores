@@ -41,12 +41,6 @@ LEAGUE_ID_MAP = {
     None: None,
 }
 
-MINUTES_TO_CACHE_EXPIRY = {
-    'competitions': 60 * 24,
-    'game_active': 1,
-    'game_past': 1,
-}
-
 class FootballAPI(FootballAPICaller):
     '''
     Calls to the Football-API API
@@ -66,12 +60,8 @@ class FootballAPI(FootballAPICaller):
         self.time_format = '%H:%M'
 
     def _get_competitions(self):
-        minutes_to_cache_expiry = MINUTES_TO_CACHE_EXPIRY['competitions']
         competitions_url = 'competitions?'
-        return self.check_cache_else_request(
-            competitions_url,
-            minutes_to_cache_expiry,
-        )
+        return self.request(competitions_url)
 
     def _get_fixtures_for_date(self, date_, competition):
         comp_id = LEAGUE_ID_MAP[competition]
@@ -89,31 +79,17 @@ class FootballAPI(FootballAPICaller):
         return todays_fixtures
 
     def _get_active_fixtures(self):
-        minutes_to_cache_expiry = MINUTES_TO_CACHE_EXPIRY['game_active']
         fixtures_url = 'matches?'
-        active_fixtures = self.check_cache_else_request(
-            fixtures_url,
-            minutes_to_cache_expiry,
-        )['data']
-
+        active_fixtures = self.request(fixtures_url,)['data']
         return self._this_league_only(self.id_league, active_fixtures)
-
-    def _todays_fixtures_to_db(self):
-        today = dt.date.today().strftime(self.date_format)
-        fixtures_url = 'matches?comp_id={}&match_date={}&'.format(
-            self.id_league, today)
-        self.save_request_in_db(fixtures_url, 'todays_fixtures')
 
     def _get_commentary_for_fixture(self, fixture_id):
         # TODO class requires competition ID but this method doesn't.
         # Would be useful to be able to call this method without
         # instantiating the class with a competition ID. Stop-gap
         # solution is to allow class instantiated with competition=None.
-        minutes_to_cache_expiry = MINUTES_TO_CACHE_EXPIRY['game_active']
         commentary_url = 'commentaries/{}?'.format(fixture_id)
-        commentary = self.check_cache_else_request(
-            commentary_url,
-            minutes_to_cache_expiry)
+        commentary = self.request(commentary_url)
         return self._make_commentary_page_ready(commentary)
 
     def _make_fixtures_page_ready(self, fixtures):

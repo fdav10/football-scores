@@ -59,22 +59,6 @@ def retrieve_fixtures_from_cache(competitions):
     return fixtures
 
 
-def competition_fixtures(competitions):
-    fixtures = []
-    for competition in competitions:
-        comp_api = FootballAPI(competition['api_name'])
-        try:
-            comp_fixtures = comp_api.page_ready_todays_fixtures()
-        except:
-            import traceback; traceback.print_exc();
-            # TODO catch custom error for no fixtures available
-            comp_fixtures = []
-        fixtures.append({
-            'name': competition['print_name'],
-            'fixtures': comp_fixtures
-        })
-    return fixtures
-
 if __name__ == '__main__':
     start_logging()
 

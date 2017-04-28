@@ -13,32 +13,6 @@ FAR_IN_FUTURE = 525600 # one year in minutes
 logger = logging.getLogger(__name__)
 
 
-def purge_cache_of_expired(load_func):
-    def purge_cache_and_run(filename, folder='data'):
-        data = load_func(filename, folder)
-        expiry = json_expiry_as_datime(data)
-        elapsed = time_elapsed_from(expiry)
-        if elapsed.total_seconds() <= 0:
-            logger.info('%s cache expired %f seconds ago' %(
-                filename, abs(elapsed.total_seconds())))
-            remove_from_cache(filename, folder)
-            raise FileNotFoundError
-        else:
-            logger.info('%s retreived from cache' %filename)
-        return data
-    return purge_cache_and_run
-
-
-def add_expiry_to_json(save_func):
-    def expiry_wrapper(data, filename, cache_expiry=FAR_IN_FUTURE):
-        expiry_time = stime_from_now(cache_expiry)
-        expiry = {'expiry_time': expiry_time}
-        data.update(expiry)
-        return save_func(data, filename, cache_expiry)
-    return expiry_wrapper
-
-
-#@add_expiry_to_json
 def save_json(data, filename, cache_expiry=FAR_IN_FUTURE, folder='data'):
     ensure_folder_exists(folder)
     with open(os.path.join(folder, filename), 'w') as json_file:
@@ -46,7 +20,6 @@ def save_json(data, filename, cache_expiry=FAR_IN_FUTURE, folder='data'):
         logger.info('%s added to cache' %filename)
 
 
-#@purge_cache_of_expired
 def load_json(filename, folder='data'):
     ensure_folder_exists(folder)
     with open(os.path.join(folder, filename)) as json_file:
