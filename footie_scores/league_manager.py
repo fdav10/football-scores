@@ -18,31 +18,6 @@ FILTER_COUNTRIES = (
 FILTERED_COMPETITIONS = [
     comp for comp in COMPETITIONS if comp['region'] in FILTER_COUNTRIES]
 
-#COMPETITIONS = [
-#    {'api_name': 'champions league', 'print_name': 'Champions League'},
-#    {'api_name': 'europa league', 'print_name': 'Europa League'},
-#    {'api_name': 'england cup', 'print_name': 'FA Cup'},
-#    {'api_name': 'england', 'print_name': 'Premier League'},
-#    {'api_name': 'france', 'print_name': 'Ligue 1'},
-#    {'api_name': 'germany', 'print_name': 'Bundesliga'},
-#    {'api_name': 'italy', 'print_name': 'Serie A'},
-#    {'api_name': 'portugal', 'print_name': 'Primeira Liga'},
-#    {'api_name': 'spain', 'print_name': 'La Liga'},
-#    {'api_name': 'austria', 'print_name': },
-#    {'api_name': 'belgium', 'print_name': },
-#    {'api_name': 'czechoslovakia', 'print_name': },
-#    {'api_name': 'england league cup', 'print_name': },
-#    {'api_name': 'england 2nd', 'print_name': },
-#    {'api_name': 'greece', 'print_name': },
-#    {'api_name': 'italy', 'print_name': },
-#    {'api_name': 'netherlands', 'print_name': },
-#    {'api_name': 'spain cup', 'print_name': },
-#    {'api_name': 'switzerland', 'print_name': },
-#    {'api_name': 'turkey', 'print_name': },
-#    {'api_name': 'ukraine', 'print_name': },
-#    {'api_name': 'russia', 'print_name': }
-#]
-
 
 def start_api_calls(competitions=FILTERED_COMPETITIONS):
     comp_api = FootballAPI()
