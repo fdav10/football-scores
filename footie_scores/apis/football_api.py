@@ -1,4 +1,3 @@
-#!usr/bin/env python3
 ''' Interfaces to football score APIs '''
 
 import os
@@ -7,10 +6,11 @@ import datetime as dt
 
 import pytz
 
-from footie_scores.utils.exceptions import NoFixturesToday
+from footie_scores.apis import base
 from footie_scores.utils.log import start_logging
 from footie_scores.apis.base import FootballAPICaller
 from footie_scores.utils.time import datetime_string_make_aware
+from footie_scores.utils.exceptions import NoFixturesToday, NoCommentaryAvailable
 
 
 logger = logging.getLogger(__name__)
@@ -40,6 +40,7 @@ LEAGUE_ID_MAP = {
     'russia': '1457',
     None: None,
 }
+
 
 class FootballAPI(FootballAPICaller):
     '''
@@ -76,6 +77,11 @@ class FootballAPI(FootballAPICaller):
             logger.info('No fixtures for %s on date %s' %(competition, date_))
             todays_fixtures = {}
 
+        for f in todays_fixtures:
+            try:
+                f['commentary'] = self._get_commentary_for_fixture(f['id'])
+            except NoCommentaryAvailable:
+                f['commentary'] = base.DEFAULT_COMMENTARY
         return todays_fixtures
 
     def _get_active_fixtures(self):
@@ -90,7 +96,7 @@ class FootballAPI(FootballAPICaller):
         # solution is to allow class instantiated with competition=None.
         commentary_url = 'commentaries/{}?'.format(fixture_id)
         commentary = self.request(commentary_url)
-        return self._make_commentary_page_ready(commentary)
+        return commentary
 
     def _make_fixtures_page_ready(self, fixtures):
         page_ready_fixtures = [
@@ -104,9 +110,9 @@ class FootballAPI(FootballAPICaller):
                 'time_elapsed': f['timer'],
                 'home_events': self._make_events_page_ready('localteam', f['events']),
                 'away_events': self._make_events_page_ready('visitorteam', f['events']),
+                'lineup_home': self._get_lineup_from_commentary('localteam', f['commentary']),
+                'lineup_away': self._get_lineup_from_commentary('visitorteam', f['commentary']),
                 'id': f['id'],
-                'home_lineup': None,
-                'away_lineup': None,
             }
             for f in fixtures]
 
@@ -123,12 +129,8 @@ class FootballAPI(FootballAPICaller):
 
         return events
 
-    def _make_commentary_page_ready(self, commentary):
-        page_ready_commentary = {
-            'lineup_home': commentary['lineup']['localteam'],
-            'lineup_away': commentary['lineup']['visitorteam'],
-        }
-        return page_ready_commentary
+    def _get_lineup_from_commentary(self, team, commentary):
+        return commentary['lineup'][team]
 
     def _format_fixture_score(self, fixture):
         home_score = fixture['localteam_score']
@@ -163,6 +165,8 @@ class FootballAPI(FootballAPICaller):
             assert isinstance(response, dict) and response['status'] == 'error'
             if 'There are no matches at the moment' in response['message']:
                 raise NoFixturesToday()
+            elif 'We did not find commentaries' in response['message']:
+                raise NoCommentaryAvailable()
             else:
                 return False
         except (AssertionError, KeyError):

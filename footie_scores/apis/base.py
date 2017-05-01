@@ -1,13 +1,18 @@
 #!usr/bin/env python3
 ''' Interfaces to football score APIs '''
 
-import logging
 from datetime import date
 
 import requests
 
-from footie_scores.utils.cache import save_json, load_json, embed_in_dict_if_not_dict
+from footie_scores.utils.cache import save_json, embed_in_dict_if_not_dict
 
+
+DEFAULT_COMMENTARY = {
+    'lineup': {
+        'visitorteam': [],
+        'localteam': []}
+}
 
 class FootballAPICaller(object):
     '''
@@ -52,10 +57,6 @@ class FootballAPICaller(object):
             fixtures = self.page_ready_todays_fixtures(competition)
             save_json(fixtures, 'todays_fixtures_' + competition)
 
-    def page_ready_finished_fixtures(self, date):
-        fixtures = self._get_fixtures_for_date(date)
-        return self._make_fixtures_page_ready(fixtures)
-
     def page_ready_active_fixtures(self):
         fixtures = self._get_active_fixtures()
         return self._make_fixtures_page_ready(fixtures)
@@ -63,10 +64,14 @@ class FootballAPICaller(object):
     def page_ready_fixture_details(self, fixture_id):
         return self._get_commentary_for_fixture(fixture_id)
 
+    def page_ready_fixture_details_to_db(self, competitions):
+        # TODO finish this
+        pass
+
     def _todays_fixtures(self, competition):
         return self._get_fixtures_for_date(date.today(), competition)
 
-    def _get_fixtures_for_date(self, arg):
+    def _get_fixtures_for_date(self, arg1, arg2):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 
