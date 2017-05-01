@@ -2,7 +2,7 @@
 
 from datetime import date
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 from footie_scores.utils.log import start_logging
 from footie_scores.apis.football_api import FootballAPI
@@ -27,26 +27,23 @@ COMPETITIONS = [
 
 @app.route("/test")
 def test():
+
     return "It worked!"
 
 
 @app.route("/todays_games")
 def todays_fixtures():
     # TODO active fixtures are sometimes shown as not yet kicked off
+    #fapi = FootballAPI()
+    #fixtures = fapi.page_ready_todays_fixtures('france')
     fixtures = retrieve_fixtures_from_cache(COMPETITIONS)
     return games_template(fixtures, date.today())
 
+
 @app.route("/details/<fixture_id>")
 def match_details(fixture_id):
-    fixture_details = FootballAPI().page_ready_fixture_details(fixture_id)
-    return details_template(fixture_details)
-
-@app.route("/prem")
-def prem_fixtures():
-    date_ = date(year=2017, month=4, day=15)
-    premier_league = FootballAPI('england')
-    pl_games = premier_league.page_ready_finished_fixtures(date_)
-    return games_template(pl_games, date_)
+    fixture = request.args.get('fixture')
+    return details_template(fixture)
 
 
 def games_template(competitions, date_):
@@ -57,10 +54,10 @@ def games_template(competitions, date_):
     )
 
 
-def details_template(details):
+def details_template(fixture):
     return render_template(
         'details.html',
-        details=details,
+        fixture=fixture,
     )
 
 
