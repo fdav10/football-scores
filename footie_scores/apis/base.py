@@ -1,11 +1,15 @@
-#!usr/bin/env python3
 ''' Interfaces to football score APIs '''
 
+import logging
 from datetime import date
 
 import requests
 
 from footie_scores.utils.cache import save_json, embed_in_dict_if_not_dict
+from footie_scores.utils.exceptions import NoFixturesToday, NoCommentaryAvailable
+
+
+logger = logging.getLogger(__name__)
 
 
 DEFAULT_COMMENTARY = {
@@ -54,8 +58,12 @@ class FootballAPICaller(object):
 
     def page_ready_todays_fixtures_to_db(self, competitions):
         for competition in competitions:
-            fixtures = self.page_ready_todays_fixtures(competition)
-            save_json(fixtures, 'todays_fixtures_' + competition)
+            try:
+                fixtures = self.page_ready_todays_fixtures(competition)
+                save_json(fixtures, 'todays_fixtures_' + competition['id'])
+            except NoFixturesToday:
+                logger.info('No fixtures for %s %s on date %s' %(
+                    competition['region'], competition['name'], date.today()))
 
     def page_ready_active_fixtures(self):
         fixtures = self._get_active_fixtures()

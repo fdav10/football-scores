@@ -14,7 +14,7 @@ def main():
     web_app = Process(target=app.run)
     api_caller = Process(target=start_api_calls, args=(run.COMPETITIONS,))
     web_app.start()
-    api_caller.start()
+    #api_caller.start()
 
 
 if __name__ == '__main__':

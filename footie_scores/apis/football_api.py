@@ -15,32 +15,6 @@ from footie_scores.utils.exceptions import NoFixturesToday, NoCommentaryAvailabl
 
 logger = logging.getLogger(__name__)
 
-LEAGUE_ID_MAP = {
-    'champions league': '1005',
-    'europa league': '1007',
-    'austria': '1093',
-    'belgium': '1102',
-    'czechoslovakia': '1184',
-    'england cup': '1198',
-    'england league cup': '1199',
-    'england': '1204',
-    'england 2nd': '1205',
-    'france': '1221',
-    'germany': '1229',
-    'greece': '1232',
-    'italy 2nd': '1265',
-    'italy': '1269',
-    'netherlands': '1322',
-    'portugal': '1352',
-    'spain cup': '1397',
-    'spain': '1399',
-    'switzerland': '1408',
-    'turkey': '1425',
-    'ukraine': '1428',
-    'russia': '1457',
-    None: None,
-}
-
 
 class FootballAPI(FootballAPICaller):
     '''
@@ -49,9 +23,12 @@ class FootballAPI(FootballAPICaller):
     https://football-api.com/
     '''
 
+    # TODO this class is a bit confused over whether a competition is required or not
+
     def __init__(self, competition=None, id_season=''):
         super().__init__()
-        self.id_league = LEAGUE_ID_MAP[competition]
+        if competition:
+            self.id_league = competition['id']
         self.id_season = id_season
         self.base_url = 'http://api.football-api.com/2.0/'
         self.key = os.environ['football_api_key']
@@ -65,17 +42,13 @@ class FootballAPI(FootballAPICaller):
         return self.request(competitions_url)
 
     def _get_fixtures_for_date(self, date_, competition):
-        comp_id = LEAGUE_ID_MAP[competition]
         str_date = date_.strftime(self.date_format)
         fixtures_url = 'matches?comp_id={}&match_date={}&'.format(
-            comp_id, str_date)
-        try:
-            todays_fixtures = self.request(
-                fixtures_url,
-            )['data']
-        except NoFixturesToday:
-            logger.info('No fixtures for %s on date %s' %(competition, date_))
-            todays_fixtures = {}
+            competition['id'], str_date)
+        todays_fixtures = self.request(fixtures_url)['data']
+        logger.info(
+            'Fixtures for %s %s on date %s retrieved',
+            competition['region'], competition['name'], dt.date.today())
 
         for f in todays_fixtures:
             try:
