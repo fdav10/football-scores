@@ -61,6 +61,8 @@ class FootballAPICaller(object):
             try:
                 fixtures = self.page_ready_todays_fixtures(competition)
                 save_json(fixtures, 'todays_fixtures_' + competition['id'])
+                for fix in fixtures:
+                    save_json(fix, 'fixture_' + fix['id'])
             except NoFixturesToday:
                 logger.info('No fixtures for %s %s on date %s' %(
                     competition['region'], competition['name'], date.today()))

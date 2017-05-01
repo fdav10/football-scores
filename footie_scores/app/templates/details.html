@@ -9,22 +9,22 @@
     <div class="competition">
       <div class="game">
 	<div class="score">
-	  <!-- <div class="home_team"> -->
-	  <!--   <p>{fixture.team_home}</p> -->
-	  <!-- </div> -->
-	  <!-- <div class="scoreline"> -->
-	  <!--   <p>{fixture.score}</p> -->
-	  <!-- </div> -->
-	  <!-- <div class="away_team"> -->
-	  <!--   <p>{fixture.team_away}</p> -->
-	  <!-- </div> -->
+	  <div class="home_team">
+	    <p>{{fixture.team_home}}</p>
+	  </div>
+	  <div class="scoreline">
+	    <p>{{fixture.score}}</p>
+	  </div>
+	  <div class="away_team">
+	    <p>{{fixture.team_away}}</p>
+	  </div>
 	  <div class="home_events">
-	    {% for player in fixture.lineup_home %}
+	    {% for player in fixture.lineups.lineup_home %}
 	    <p>{{player.number}} {{player.name}}</p>
 	    {% endfor %}
 	  </div>
 	  <div class="away_events">
-	    {% for player in fixture.lineup_away %}
+	    {% for player in fixture.lineups.lineup_away %}
 	    <p>{{player.number}} {{player.name}}</p>
 	    {% endfor %}
 	  </div>

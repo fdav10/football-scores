@@ -33,16 +33,21 @@ def retrieve_fixtures_from_cache(competitions=FILTERED_COMPETITIONS):
     fixtures = []
     for competition in competitions:
         try:
-            comp_fixtures = load_json('todays_fixtures_' + competition['api_name'])
+            comp_fixtures = load_json('todays_fixtures_' + competition['id'])
         except FileNotFoundError:
             comp_fixtures = []
 
         fixtures.append({
-            'name': competition['print_name'],
+            'name': competition['name'],
             'fixtures': comp_fixtures
         })
 
     return fixtures
+
+
+def retrieve_fixture_from_cache(fixture_id):
+    fixture = load_json('fixture_' + fixture_id)
+    return fixture
 
 
 if __name__ == '__main__':

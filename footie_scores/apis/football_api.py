@@ -55,6 +55,8 @@ class FootballAPI(FootballAPICaller):
                 f['commentary'] = self._get_commentary_for_fixture(f['id'])
             except NoCommentaryAvailable:
                 f['commentary'] = base.DEFAULT_COMMENTARY
+                logger.info('No commentary for %s-%s on date %s',
+                            f['localteam_name'], f['visitorteam_name'], dt.date.today())
         return todays_fixtures
 
     def _get_active_fixtures(self):
@@ -83,8 +85,10 @@ class FootballAPI(FootballAPICaller):
                 'time_elapsed': f['timer'],
                 'home_events': self._make_events_page_ready('localteam', f['events']),
                 'away_events': self._make_events_page_ready('visitorteam', f['events']),
-                'lineup_home': self._get_lineup_from_commentary('localteam', f['commentary']),
-                'lineup_away': self._get_lineup_from_commentary('visitorteam', f['commentary']),
+                'lineups': {
+                    'lineup_home': self._get_lineup_from_commentary('localteam', f['commentary']),
+                    'lineup_away': self._get_lineup_from_commentary('visitorteam', f['commentary']),
+                },
                 'id': f['id'],
             }
             for f in fixtures]

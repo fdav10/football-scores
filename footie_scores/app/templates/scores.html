@@ -38,7 +38,7 @@
 	</div>
 	{% endif %}
 	<div class="match details">
-	  <a href= {{ url_for('match_details', fixture_id=fixture.id) }} >match details</a>
+	  <a href= {{ url_for('match_details', fixture_id=fixture.id, fixture=fixture) }} >match details</a>
 	</div>
       </div>
       {% endfor %}
