@@ -26,7 +26,7 @@ def todays_fixtures():
     return games_template(fixtures, date.today())
 
 
-@app.route("/details/<fixture_id>")
+@app.route("/details_<fixture_id>")
 def match_details(fixture_id):
     fixture = api_interface.retrieve_fixture_from_cache(fixture_id)
     return details_template(fixture)
