@@ -37,7 +37,7 @@ class FootballAPI(FootballAPICaller):
         self.date_format = '%d.%m.%Y'
         self.time_format = '%H:%M'
 
-    def _get_competitions(self):
+    def get_competitions(self):
         competitions_url = 'competitions?'
         return self.request(competitions_url)
 

@@ -53,8 +53,12 @@ class FootballAPICaller(object):
         save_json(response, cache_filename)
 
     def page_ready_todays_fixtures(self, competition):
-        todays = self._todays_fixtures(competition)
-        return self._make_fixtures_page_ready(todays)
+        fixtures = self._todays_fixtures(competition)
+        return self._make_fixtures_page_ready(fixtures)
+
+    def page_ready_fixtures_for_date(self, date_, competition):
+        fixtures = self._get_fixtures_for_date(date_, competition)
+        return self._make_fixtures_page_ready(fixtures)
 
     def page_ready_todays_fixtures_to_db(self, competitions):
         for competition in competitions:
@@ -77,6 +81,10 @@ class FootballAPICaller(object):
     def page_ready_fixture_details_to_db(self, competitions):
         # TODO finish this
         pass
+
+    def get_competitions(self):
+        raise NotImplementedError(
+            "Implemented in child classes - base class should not be instantiated")
 
     def _todays_fixtures(self, competition):
         return self._get_fixtures_for_date(date.today(), competition)
