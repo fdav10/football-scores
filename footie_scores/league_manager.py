@@ -11,7 +11,7 @@ from footie_scores.utils.log import start_logging
 from footie_scores.apis.football_api import FootballAPI
 from footie_scores.utils.scheduling import start_periodic_calls
 
-COMPETITIONS = FootballAPI()._get_competitions()['data']
+COMPETITIONS = FootballAPI().get_competitions()['data']
 FILTER_COUNTRIES = (
     'England', 'France', 'Germany', 'Spain', 'Italy', 'Portugal',
     'International')
