@@ -71,7 +71,8 @@ def save_fixture_dict_to_db(fixture):
     db_fixture = Fixture(fixture)
     with db.session_scope() as session:
         id_query = session.query(Fixture.match_id)
-        if not id_query.filter(Fixture.match_id == fixture['match_id']).all():
+        already_in_db = id_query.filter(Fixture.match_id == fixture['match_id']).all()
+        if not already_in_db:
             session.add(db_fixture)
             logger.info('%s added to db', db_fixture)
         else:
@@ -80,8 +81,13 @@ def save_fixture_dict_to_db(fixture):
 
 def get_fixture_by_id(id_):
     with db.session_scope() as session:
-        fixture = session.query(Fixture).filter_by(match_id=id_)
-    return [f.data for f in fixture]
+        fixture = session.query(Fixture).filter_by(match_id=id_).one()
+        session.flush()
+    return fixture
+
+
+def get_fixture_details_by_id(id_):
+    pass
 
 
 def get_competition_fixtures_by_id(id_):

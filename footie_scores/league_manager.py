@@ -68,18 +68,23 @@ def retrieve_fixtures_from_db(competitions=FILTERED_COMPETITIONS):
     return fixtures
 
 
+def retrieve_fixture_from_db(fixture_id):
+    fixture = db.interface.get_fixture_by_id(fixture_id)
+    import ipdb; ipdb.set_trace()
+    pr_fixture = make_fixture_page_ready(fixture)
+    return pr_fixture
+
+
 def make_fixtures_page_ready(fixtures):
     pr_fixtures = []
     for fixture in fixtures:
-        source_api = API_MAP[fixture.api_source]
-        page_ready_fixture = source_api.make_fixture_page_ready(fixture.data)
-        pr_fixtures.append(page_ready_fixture)
+        pr_fixtures.append(make_fixture_page_ready(fixture))
     return pr_fixtures
 
 
-def retrieve_fixture_from_db(fixture_id):
-    fixture = load_json('fixture_' + fixture_id)
-    return fixture
+def make_fixture_page_ready(fixture):
+    source_api = API_MAP[fixture.api_source]
+    return source_api.make_fixture_page_ready(fixture.data)
 
 
 if __name__ == '__main__':
