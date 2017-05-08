@@ -52,7 +52,7 @@ class FootballAPI(FootballAPICaller):
             competition['id'], str_date)
         response = self.request(fixtures_url)
         try:
-            todays_fixtures = response['data']
+            todays_fixtures = response
         except:
             import traceback; traceback.print_exc();
             import ipdb; ipdb.set_trace()

@@ -6,7 +6,6 @@ from datetime import date
 import requests
 
 from footie_scores.db.interface import save_fixture_dicts_to_db
-from footie_scores.utils.cache import save_json, embed_in_dict_if_not_dict
 from footie_scores.utils.exceptions import NoFixturesToday, NoCommentaryAvailable
 
 
@@ -72,7 +71,11 @@ class FootballAPICaller(object):
             "Implemented in child classes - base class should not be instantiated")
 
     def _db_ready_todays_fixtures(self, competition):
-        fixtures = self._todays_fixtures(competition)
+        try:
+            fixtures = self._todays_fixtures(competition)
+        except:
+            import traceback; traceback.print_exc();
+            import ipdb; ipdb.set_trace()
         return self._make_fixtures_db_ready(fixtures)
 
     def _todays_fixtures(self, competition):
