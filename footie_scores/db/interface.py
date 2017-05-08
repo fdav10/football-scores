@@ -56,6 +56,10 @@ class Fixture(Base):
         return "<Fixture(team_home='%s', team_away='%s', score='%s', time='%s')" %(
             self.team_home, self.team_away, self.date, self.time)
 
+    @property
+    def properties(self):
+        return self.__dict__
+
 
 def create_tables():
     if not db.engine.table_names() == ['fixtures', ]:
@@ -81,7 +85,7 @@ def save_fixture_dict_to_db(fixture):
 
 def get_fixture_by_id(id_):
     with db.session_scope() as session:
-        fixture = session.query(Fixture).filter_by(match_id=id_).one()
+        fixture = session.query(Fixture).filter_by(match_id=id_).one().properties
         session.flush()
     return fixture
 
@@ -92,7 +96,7 @@ def get_fixture_details_by_id(id_):
 
 def get_competition_fixtures_by_id(id_):
     with db.session_scope() as session:
-        fixtures = [f for f in session.query(Fixture).filter_by(competition_id=id_).all()]
+        fixtures = [f.properties for f in session.query(Fixture).filter_by(competition_id=id_).all()]
         session.flush()
     return fixtures
 
