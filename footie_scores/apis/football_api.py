@@ -4,13 +4,11 @@ import os
 import logging
 import datetime as dt
 
-import pytz
-
 from footie_scores.apis import base
 from footie_scores.utils.log import start_logging
 from footie_scores.apis.base import FootballAPICaller
-from footie_scores.utils.time import datetime_string_make_aware
-from footie_scores.utils.exceptions import NoFixturesToday, NoCommentaryAvailable
+from footie_scores.utils.time import datetime_string_make_aware, naive_utc_to_uk_tz
+from footie_scores.utils.exceptions import *
 
 
 logger = logging.getLogger(__name__)
@@ -23,6 +21,9 @@ class FootballAPI(FootballAPICaller):
     https://football-api.com/
     '''
 
+    date_format = '%d.%m.%Y'
+    time_format = '%H:%M'
+
     # TODO this class is a bit confused over whether a competition is required or not
 
     def __init__(self, competition=None, id_season=''):
@@ -34,29 +35,38 @@ class FootballAPI(FootballAPICaller):
         self.key = os.environ['football_api_key']
         self.headers = None
         self.url_suffix = 'Authorization=' + self.key
-        self.date_format = '%d.%m.%Y'
-        self.time_format = '%H:%M'
 
     def get_competitions(self):
         competitions_url = 'competitions?'
+        response = self.request(competitions_url)
+        try:
+            assert self._is_valid_response(response), 'Competition lookup failed'
+        except:
+            import traceback; traceback.print_exc();
+            import ipdb; ipdb.set_trace()
         return self.request(competitions_url)
 
     def _get_fixtures_for_date(self, date_, competition):
-        str_date = date_.strftime(self.date_format)
+        str_date = date_.strftime(self.__class__.date_format)
         fixtures_url = 'matches?comp_id={}&match_date={}&'.format(
             competition['id'], str_date)
-        todays_fixtures = self.request(fixtures_url)['data']
+        response = self.request(fixtures_url)
+        try:
+            todays_fixtures = response['data']
+        except:
+            import traceback; traceback.print_exc();
+            import ipdb; ipdb.set_trace()
         logger.info(
             'Fixtures for %s %s on date %s retrieved',
             competition['region'], competition['name'], dt.date.today())
 
-        for f in todays_fixtures:
-            try:
-                f['commentary'] = self._get_commentary_for_fixture(f['id'])
-            except NoCommentaryAvailable:
-                f['commentary'] = base.DEFAULT_COMMENTARY
-                logger.info('No commentary for %s-%s on date %s',
-                            f['localteam_name'], f['visitorteam_name'], dt.date.today())
+        #for f in todays_fixtures:
+        #    try:
+        #        f['commentary'] = self._get_commentary_for_fixture(f['id'])
+        #    except NoCommentaryAvailable:
+        #        f['commentary'] = base.DEFAULT_COMMENTARY
+        #        logger.info('No commentary for %s-%s on date %s',
+        #                    f['localteam_name'], f['visitorteam_name'], dt.date.today())
         return todays_fixtures
 
     def _get_active_fixtures(self):
@@ -71,31 +81,61 @@ class FootballAPI(FootballAPICaller):
         # solution is to allow class instantiated with competition=None.
         commentary_url = 'commentaries/{}?'.format(fixture_id)
         commentary = self.request(commentary_url)
+        logger.info(
+            'Commentary for fixture with id %s retrieved', fixture_id)
         return commentary
 
-    def _make_fixtures_page_ready(self, fixtures):
-        page_ready_fixtures = [
+    def _make_fixtures_db_ready(self, fixtures):
+        db_ready_fixtures = [
             {
+                'date': f['formatted_date'],
+                'time': naive_utc_to_uk_tz(
+                    f['formatted_date'],
+                    f['time'],
+                    self.__class__.date_format,
+                    self.__class__.time_format),
                 'team_home': f['localteam_name'],
                 'team_away': f['visitorteam_name'],
-                'score': self._format_fixture_score(f),
-                'score_home': f['localteam_score'],
-                'score_away': f['visitorteam_score'],
-                'time_kick_off': self._format_fixture_time(f),
-                'time_elapsed': f['timer'],
-                'home_events': self._make_events_page_ready('localteam', f['events']),
-                'away_events': self._make_events_page_ready('visitorteam', f['events']),
-                'lineups': {
-                    'lineup_home': self._get_lineup_from_commentary('localteam', f['commentary']),
-                    'lineup_away': self._get_lineup_from_commentary('visitorteam', f['commentary']),
-                },
-                'id': f['id'],
+                'competition_id':f['comp_id'],
+                'match_id': f['id'],
+                'data': f,
+                'api_source': 'football-api',
             }
             for f in fixtures]
+        return db_ready_fixtures
 
-        return page_ready_fixtures
+    @classmethod
+    def make_fixture_page_ready(cls, fixture):
+        f = fixture
+        page_ready_fixture = {
+            'team_home': f['localteam_name'],
+            'team_away': f['visitorteam_name'],
+            'score': naive_utc_to_uk_tz(
+                f['formatted_date'],
+                f['time'],
+                cls.date_format,
+                cls.time_format),
+            'score_home': f['localteam_score'],
+            'score_away': f['visitorteam_score'],
+            'time_kick_off': naive_utc_to_uk_tz(
+                f['formatted_date'],
+                f['time'],
+                cls.date_format,
+                cls.time_format),
+            'time_elapsed': f['timer'],
+            'home_events': cls._make_events_page_ready('localteam', f['events']),
+            'away_events': cls._make_events_page_ready('visitorteam', f['events']),
+            # 'lineups': {
+            #     'lineup_home': self._get_lineup_from_commentary('localteam', f['commentary']),
+            #     'lineup_away': self._get_lineup_from_commentary('visitorteam', f['commentary']),
+            # },
+            'id': f['id'],
+        }
 
-    def _make_events_page_ready(self, team, fixture_events):
+        return page_ready_fixture
+
+    @classmethod
+    def _make_events_page_ready(cls, team, fixture_events):
         filter_keys = ('goal',)
         events = [e for e in fixture_events if e['team'] == team and e['type'] in filter_keys]
         for e in events:
@@ -127,7 +167,7 @@ class FootballAPI(FootballAPICaller):
         hours.
         '''
         f_date = dt.datetime.strptime(fixture['formatted_date'], self.date_format)
-        f_time = dt.datetime.strptime(fixture['time'], self.time_format).time()
+        f_time = dt.datetime.strptime(fixture['time'], self.__class__.time_format).time()
         dt_ = dt.datetime.combine(f_date, f_time)
         utc_time = pytz.utc.localize(dt_)
         local_tz = pytz.timezone('Europe/London')
@@ -138,13 +178,17 @@ class FootballAPI(FootballAPICaller):
         return [m for m in matches if m['comp_id'] == league_id]
 
     def _is_valid_response(self, response):
+        # TODO this is pretty ugly and unclear
         try:
+            if 'Key not authorised' in response.values():
+                raise AuthorisationError(self.key)
             assert isinstance(response, dict) and response['status'] == 'error'
             if 'There are no matches at the moment' in response['message']:
                 raise NoFixturesToday()
             elif 'We did not find commentaries' in response['message']:
                 raise NoCommentaryAvailable()
             else:
+                import ipdb; ipdb.set_trace()
                 return False
         except (AssertionError, KeyError):
             return True
@@ -153,5 +197,3 @@ class FootballAPI(FootballAPICaller):
 if __name__ == '__main__':
     start_logging()
     fa = FootballAPI()
-    #print (fa.page_ready_todays_fixtures())
-    print(fa.page_ready_finished_fixtures(date(year=2017, month=4, day=15)))

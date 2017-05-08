@@ -1,7 +1,10 @@
 ''' Utilities for time and datetime operations '''
 
 import logging
+import datetime as dt
 from datetime import datetime, timedelta
+
+import pytz
 
 
 logger = logging.getLogger(__name__)
@@ -10,6 +13,22 @@ TIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 def datetime_string_make_aware(datetime_string, dt_format):
     return datetime.strptime(datetime_string, dt_format).astimezone()
+
+
+def naive_utc_to_uk_tz(sdate, stime, date_format, time_format):
+    ''' Convert a UTC time string to UK timezone.
+
+    Date seems to need to be involved otherwise there's a bug (?)
+    where changing the timezone offsets the minutes rather than
+    hours.
+    '''
+    f_date = dt.datetime.strptime(sdate, date_format)
+    f_time = dt.datetime.strptime(stime, time_format).time()
+    dt_ = dt.datetime.combine(f_date, f_time)
+    utc_time = pytz.utc.localize(dt_)
+    local_tz = pytz.timezone('Europe/London')
+    local_time = utc_time.astimezone(local_tz)
+    return local_time.strftime('%H:%M')
 
 
 def time_from_now(minutes):
