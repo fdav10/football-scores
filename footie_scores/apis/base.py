@@ -41,22 +41,11 @@ class FootballAPICaller(object):
     def request(self, url):
         request_url = self.base_url + url + self.url_suffix
         raw_response = requests.get(request_url, headers=self.headers)
-        response = embed_in_dict_if_not_dict(raw_response.json(), key='data')
+        response = raw_response.json()
         assert self._is_valid_response(response), "Error in request to %s\nResponse: %s" %(
             request_url, response)
 
         return response
-
-    def save_request_in_cache(self, url, cache_filename):
-        '''
-        Request a URL and save it in the cache for retrieval by the app.
-        '''
-        request_url = self.base_url + url + self.url_suffix
-        raw_response = requests.get(request_url, headers=self.headers)
-        response = embed_in_dict_if_not_dict(raw_response.json(), key='data')
-        assert self._is_valid_response(response), "Error in request to %s\nResponse: %s" %(
-            request_url, response)
-        save_json(response, cache_filename)
 
     def page_ready_todays_fixtures(self, competition):
         fixtures = self._todays_fixtures(competition)
@@ -75,27 +64,8 @@ class FootballAPICaller(object):
                 logger.info('No fixtures for %s %s on date %s' %(
                     competition['region'], competition['name'], date.today()))
 
-    def page_ready_todays_fixtures_to_cache(self, competitions):
-        for competition in competitions:
-            try:
-                fixtures = self.page_ready_todays_fixtures(competition)
-                save_json(fixtures, 'todays_fixtures_' + competition['id'])
-                for fix in fixtures:
-                    save_json(fix, 'fixture_' + fix['id'])
-            except NoFixturesToday:
-                logger.info('No fixtures for %s %s on date %s' %(
-                    competition['region'], competition['name'], date.today()))
-
-    def page_ready_active_fixtures(self):
-        fixtures = self._get_active_fixtures()
-        return self._make_fixtures_page_ready(fixtures)
-
     def page_ready_fixture_details(self, fixture_id):
         return self._get_commentary_for_fixture(fixture_id)
-
-    def page_ready_fixture_details_to_db(self, competitions):
-        # TODO finish this
-        pass
 
     def get_competitions(self):
         raise NotImplementedError(
@@ -109,10 +79,6 @@ class FootballAPICaller(object):
         return self._get_fixtures_for_date(date.today(), competition)
 
     def _get_fixtures_for_date(self, arg1, arg2):
-        raise NotImplementedError(
-            "Implemented in child classes - base class should not be instantiated")
-
-    def _get_active_fixtures(self):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 

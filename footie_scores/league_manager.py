@@ -2,14 +2,13 @@
 Module where the database and API calls are linked.
 '''
 
-#from footie_scores.app import run
+from footie_scores import db
 from footie_scores.utils.cache import load_json
 from footie_scores.utils.log import start_logging
 from footie_scores.apis.football_api import FootballAPI
 from footie_scores.utils.scheduling import start_periodic_calls
-from footie_scores import db
 
-COMPETITIONS = FootballAPI().get_competitions()['data']
+COMPETITIONS = FootballAPI().get_competitions()
 FILTER_COUNTRIES = ('England', 'France', 'Germany', 'Spain', 'Italy',
                     'Portugal', 'International')
 FILTER_COUNTRIES = ('Spain',)
@@ -90,5 +89,5 @@ def make_fixture_page_ready(fixture):
 if __name__ == '__main__':
     start_logging()
     #start_api_calls()
-    single_api_call()
+    #single_api_call()
     retrieve_fixtures_from_db()

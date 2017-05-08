@@ -69,11 +69,6 @@ class FootballAPI(FootballAPICaller):
         #                    f['localteam_name'], f['visitorteam_name'], dt.date.today())
         return todays_fixtures
 
-    def _get_active_fixtures(self):
-        fixtures_url = 'matches?'
-        active_fixtures = self.request(fixtures_url,)['data']
-        return self._this_league_only(self.id_league, active_fixtures)
-
     def _get_commentary_for_fixture(self, fixture_id):
         # TODO class requires competition ID but this method doesn't.
         # Would be useful to be able to call this method without
@@ -180,9 +175,10 @@ class FootballAPI(FootballAPICaller):
     def _is_valid_response(self, response):
         # TODO this is pretty ugly and unclear
         try:
+            assert isinstance(response, dict)
             if 'Key not authorised' in response.values():
                 raise AuthorisationError(self.key)
-            assert isinstance(response, dict) and response['status'] == 'error'
+            assert response['status'] == 'error'
             if 'There are no matches at the moment' in response['message']:
                 raise NoFixturesToday()
             elif 'We did not find commentaries' in response['message']:
