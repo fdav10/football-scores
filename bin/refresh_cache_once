@@ -3,5 +3,5 @@
 from footie_scores import league_manager
 from footie_scores.utils.log import start_logging
 
-start_logging()
-league_manager.single_api_call()
+# start_logging()
+# league_manager.single_api_call()

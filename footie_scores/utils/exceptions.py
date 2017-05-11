@@ -4,3 +4,6 @@ class NoFixturesToday(Exception):
 
 class NoCommentaryAvailable(Exception):
     pass
+
+class AuthorisationError(Exception):
+    pass
