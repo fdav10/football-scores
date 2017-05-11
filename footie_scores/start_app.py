@@ -5,8 +5,7 @@ from multiprocessing import Process
 from footie_scores import db
 from footie_scores.utils.log import start_logging
 from footie_scores.app.run import app
-from footie_scores.league_manager import start_api_calls , single_api_call
-from footie_scores.app import run
+from footie_scores.league_manager import single_api_call
 
 
 def main():
@@ -20,6 +19,7 @@ def main():
 
 
 if __name__ == '__main__':
-    #db.interface.create_tables()
-    # single_api_call()
+    start_logging()
+    db.schema.create_tables()
+    #single_api_call()
     main()

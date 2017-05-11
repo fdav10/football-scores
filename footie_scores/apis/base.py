@@ -6,7 +6,7 @@ from datetime import date
 import requests
 
 from footie_scores.db.interface import save_fixture_dicts_to_db
-from footie_scores.utils.exceptions import NoFixturesToday, NoCommentaryAvailable
+from footie_scores.utils.exceptions import NoFixturesToday, NoCommentaryAvailable, AuthorisationError
 
 
 logger = logging.getLogger(__name__)
@@ -41,18 +41,16 @@ class FootballAPICaller(object):
         request_url = self.base_url + url + self.url_suffix
         raw_response = requests.get(request_url, headers=self.headers)
         response = raw_response.json()
-        assert self._is_valid_response(response), "Error in request to %s\nResponse: %s" %(
-            request_url, response)
+        authorisation_accepted = False
+        while not authorisation_accepted:
+            try:
+                assert self._is_valid_response(response), "Error in request to %s\nResponse: %s" %(
+                    request_url, response)
+                authorisation_accepted = True
+            except AuthorisationError:
+                logger.info('Authorisation error, trying again')
 
         return response
-
-    def page_ready_todays_fixtures(self, competition):
-        fixtures = self._todays_fixtures(competition)
-        return self._make_fixtures_page_ready(fixtures)
-
-    def page_ready_fixtures_for_date(self, date_, competition):
-        fixtures = self._get_fixtures_for_date(date_, competition)
-        return self._make_fixtures_page_ready(fixtures)
 
     def todays_fixtures_to_db(self, competitions):
         for competition in competitions:
@@ -71,11 +69,7 @@ class FootballAPICaller(object):
             "Implemented in child classes - base class should not be instantiated")
 
     def _db_ready_todays_fixtures(self, competition):
-        try:
-            fixtures = self._todays_fixtures(competition)
-        except:
-            import traceback; traceback.print_exc();
-            import ipdb; ipdb.set_trace()
+        fixtures = self._todays_fixtures(competition)
         return self._make_fixtures_db_ready(fixtures)
 
     def _todays_fixtures(self, competition):

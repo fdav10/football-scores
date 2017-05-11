@@ -22,6 +22,10 @@ def naive_utc_to_uk_tz(sdate, stime, date_format, time_format):
     where changing the timezone offsets the minutes rather than
     hours.
     '''
+    # TODO use dummy date
+    # date is irrelevant to this function and only included to avoid
+    # an apparent bug. Remove from arguments and use a dummy date
+    # instead.
     f_date = dt.datetime.strptime(sdate, date_format)
     f_time = dt.datetime.strptime(stime, time_format).time()
     dt_ = dt.datetime.combine(f_date, f_time)
