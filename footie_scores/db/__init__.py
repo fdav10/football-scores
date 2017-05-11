@@ -4,7 +4,7 @@ from contextlib import contextmanager
 
 
 engine = create_engine('sqlite:///footie_scores/db/fs.db', echo=True)
-Session = sessionmaker(bind=engine, expire_on_commit=False)
+Session = sessionmaker(bind=engine)
 
 
 @contextmanager

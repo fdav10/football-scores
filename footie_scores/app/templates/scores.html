@@ -23,15 +23,15 @@
 	    <p>{{fixture.team_away}}</p>
 	  </div>
 	</div>
-	{% if fixture.home_events or fixture.away_events %}
+	{% if fixture.events %}
 	<div class="events">
 	  <div class="home_events">
-	    {% for event in fixture.home_events %}
+	    {% for event in fixture.events.home %}
 	    <p>{{event.player}} {{event.time}}</p>
 	    {% endfor %}
 	  </div>
 	  <div class="away_events">
-	    {% for event in fixture.away_events %}
+	    {% for event in fixture.events.away %}
 	    <p>{{event.time}} {{event.player}}</p>
 	    {% endfor %}
 	  </div>

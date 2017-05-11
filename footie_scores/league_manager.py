@@ -10,11 +10,10 @@ from footie_scores.utils.scheduling import start_periodic_calls
 COMPETITIONS = FootballAPI().get_competitions()
 FILTER_COUNTRIES = ('England', 'France', 'Germany', 'Spain', 'Italy',
                     'Portugal', 'International')
-FILTER_COUNTRIES = ('Spain',)
 # FILTERED_COMPETITIONS = [
 #     comp for comp in COMPETITIONS if comp['region'] in FILTER_COUNTRIES]
 FILTERED_COMPETITIONS = [
-    comp for comp in COMPETITIONS if comp['name'] == 'Premier League']
+    comp for comp in COMPETITIONS if comp['region'] == 'International']
 
 API_MAP = {
     'football-api': FootballAPI,
@@ -36,35 +35,19 @@ def retrieve_fixtures_from_db(competitions=FILTERED_COMPETITIONS):
     fixtures = []
     for competition in competitions:
         comp_fixtures = db.interface.get_competition_fixtures_by_id(competition['id'])
-        pr_comp_fixtures = make_fixtures_page_ready(comp_fixtures)
         fixtures.append({
             'name': competition['name'],
-            'fixtures': pr_comp_fixtures
+            'fixtures': comp_fixtures
         })
-
     return fixtures
 
 
 def retrieve_fixture_from_db(fixture_id):
-    fixture = db.interface.get_fixture_by_id(fixture_id)
-    pr_fixture = make_fixture_page_ready(fixture)
-    return pr_fixture
-
-
-def make_fixtures_page_ready(fixtures):
-    pr_fixtures = []
-    for fixture in fixtures:
-        pr_fixtures.append(make_fixture_page_ready(fixture))
-    return pr_fixtures
-
-
-def make_fixture_page_ready(fixture):
-    source_api = API_MAP[fixture['api_source']]
-    return source_api.make_fixture_page_ready(fixture['data'])
+    return db.interface.get_fixture_by_id(fixture_id)
 
 
 if __name__ == '__main__':
     start_logging()
     #start_api_calls()
-    #single_api_call()
+    single_api_call()
     retrieve_fixtures_from_db()
