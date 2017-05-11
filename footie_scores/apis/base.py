@@ -1,6 +1,7 @@
 ''' Interfaces to football score APIs '''
 
 import logging
+from time import sleep
 from datetime import date
 
 import requests
@@ -41,14 +42,12 @@ class FootballAPICaller(object):
         request_url = self.base_url + url + self.url_suffix
         raw_response = requests.get(request_url, headers=self.headers)
         response = raw_response.json()
-        authorisation_accepted = False
-        while not authorisation_accepted:
-            try:
-                assert self._is_valid_response(response), "Error in request to %s\nResponse: %s" %(
-                    request_url, response)
-                authorisation_accepted = True
-            except AuthorisationError:
-                logger.info('Authorisation error, trying again')
+        try:
+            assert self._is_valid_response(response), "Error in request to %s\nResponse: %s" %(
+                request_url, response)
+            authorisation_accepted = True
+        except AuthorisationError:
+            logger.info('Authorisation error. Request unsuccessful')
 
         return response
 

@@ -29,6 +29,7 @@ class Fixture(Base):
     time = Column(String)
     team_home = Column(String)
     team_away = Column(String)
+    score = Column(String)
     competition_id = Column(String)
     match_id = Column(String)
 
@@ -50,6 +51,10 @@ class Fixture(Base):
         return self.__dict__
 
 
-def create_tables():
+def create_tables_if_not_present():
     if not db.engine.table_names() == ['fixtures', ]:
         Base.metadata.create_all(db.engine)
+
+
+def clear_tables():
+    Base.metadata.drop_all(db.engine)

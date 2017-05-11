@@ -20,6 +20,6 @@ def main():
 
 if __name__ == '__main__':
     start_logging()
-    db.schema.create_tables()
+    #db.schema.create_tables_if_not_present()
     #single_api_call()
     main()

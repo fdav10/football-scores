@@ -10,11 +10,10 @@ from footie_scores.utils.scheduling import start_periodic_calls
 COMPETITIONS = FootballAPI().get_competitions()
 FILTER_COUNTRIES = ('England', 'France', 'Germany', 'Spain', 'Italy',
                     'Portugal', 'International')
-# FILTER_COUNTRIES = ('Spain',)
-FILTERED_COMPETITIONS = [
-    comp for comp in COMPETITIONS if comp['region'] in FILTER_COUNTRIES]
 # FILTERED_COMPETITIONS = [
-#     comp for comp in COMPETITIONS if comp['name'] == 'Premier League']
+#     comp for comp in COMPETITIONS if comp['region'] in FILTER_COUNTRIES]
+FILTERED_COMPETITIONS = [
+    comp for comp in COMPETITIONS if comp['region'] == 'International']
 
 API_MAP = {
     'football-api': FootballAPI,
@@ -50,5 +49,5 @@ def retrieve_fixture_from_db(fixture_id):
 if __name__ == '__main__':
     start_logging()
     #start_api_calls()
-    single_api_call()
+    #single_api_call()
     retrieve_fixtures_from_db()
