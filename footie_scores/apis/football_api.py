@@ -86,20 +86,22 @@ class FootballAPI(FootballAPICaller):
                 self._format_fixture_score(f),
                 f['formatted_date'],
                 self._format_fixture_time(f),
+                self._make_events_db_ready(f)
             ) for f in fixtures]
         return db_ready_fixtures
 
-    @classmethod
-    def _make_events_page_ready(cls, team, fixture_events):
+    def _make_events_db_ready(self, fixture):
+        events = fixture['events']
         filter_keys = ('goal',)
-        events = [e for e in fixture_events if e['team'] == team and e['type'] in filter_keys]
-        for e in events:
-            if e['extra_min'] != '':
-                e['time'] = e['minute'] + ' + ' + e['extra_min']
-            else:
-                e['time'] = e['minute']
-
-        return events
+        h_events = [e for e in events if e['team'] == 'localteam' and e['type'] in filter_keys]
+        a_events = [e for e in events if e['team'] == 'visitorteam' and e['type'] in filter_keys]
+        for events in (h_events, a_events):
+            for e in events:
+                if e['extra_min'] != '':
+                    e['time'] = e['minute'] + ' + ' + e['extra_min']
+                else:
+                    e['time'] = e['minute']
+        return {'home': h_events, 'away': a_events}
 
     def _get_lineup_from_commentary(self, team, commentary):
         return commentary['lineup'][team]

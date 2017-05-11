@@ -55,6 +55,7 @@ class FootballAPICaller(object):
         for competition in competitions:
             try:
                 fixtures = self._db_ready_todays_fixtures(competition)
+                import ipdb; ipdb.set_trace()
                 save_fixture_dicts_to_db(fixtures)
             except NoFixturesToday:
                 logger.info('No fixtures for %s %s on date %s' %(
