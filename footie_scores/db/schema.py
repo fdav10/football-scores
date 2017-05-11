@@ -43,6 +43,8 @@ class Fixture(Base):
     competition_id = Column(String)
     match_id = Column(String)
     events = Column(_JsonEncodedDict)
+    lineups = Column(_JsonEncodedDict)
+
 
     # events = relationship(
     #     'FixtureEvents',
@@ -51,7 +53,7 @@ class Fixture(Base):
 
     def __init__(
             self, team_home, team_away, competition_id, match_id,
-            score, date, time, events=None):
+            score, date, time, lineups, events=None):
         self.team_home = team_home
         self.team_away = team_away
         self.competition_id = competition_id
@@ -59,6 +61,7 @@ class Fixture(Base):
         self.score = score
         self.date = date
         self.time = time
+        self.lineups = lineups
         if events:
             self.events = events
 
