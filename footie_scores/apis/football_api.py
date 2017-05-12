@@ -105,6 +105,7 @@ class FootballAPI(FootballAPICaller):
         return {'home': h_events, 'away': a_events}
 
     def _get_lineup_from_commentary(self, commentary):
+        import ipdb; ipdb.set_trace()
         return {
             'home': commentary['lineup']['localteam'],
             'away': commentary['lineup']['visitorteam']
