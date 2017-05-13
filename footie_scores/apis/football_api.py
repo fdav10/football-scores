@@ -47,23 +47,22 @@ class FootballAPI(FootballAPICaller):
             import ipdb; ipdb.set_trace()
         return self.request(competitions_url)
 
-    def _get_fixtures_for_date(self, date_, competition):
+    def _get_fixtures_for_date(self, date_, competitions):
         str_date = date_.strftime(self.__class__.date_format)
-        fixtures_url = 'matches?comp_id={}&match_date={}&'.format(
-            competition['id'], str_date)
-        todays_fixtures = self.request(fixtures_url)
+        fixtures_url = 'matches?match_date={}&'.format(str_date)
+        all_fixtures = self.request(fixtures_url)
         logger.info(
-            'Fixtures for %s %s on date %s retrieved',
-            competition['region'], competition['name'], dt.date.today())
+            'Fixtures for all competitions on date %s retrieved', dt.date.today())
 
+        todays_fixtures = self._filter_by_competition(all_fixtures, competitions)
         for f in todays_fixtures:
             try:
                 f['commentary'] = self._get_commentary_for_fixture(f['id'])
-            except NoCommentaryAvailable:
+            except (NoCommentaryAvailable, AuthorisationError):
                 f['commentary'] = base.DEFAULT_COMMENTARY
                 logger.info('No commentary for %s-%s on date %s',
                             f['localteam_name'], f['visitorteam_name'], dt.date.today())
-        return todays_fixtures
+        return self._filter_by_competition(todays_fixtures, competitions)
 
     def _get_commentary_for_fixture(self, fixture_id):
         # TODO class requires competition ID but this method doesn't.
@@ -71,9 +70,14 @@ class FootballAPI(FootballAPICaller):
         # instantiating the class with a competition ID. Stop-gap
         # solution is to allow class instantiated with competition=None.
         commentary_url = 'commentaries/{}?'.format(fixture_id)
-        commentary = self.request(commentary_url)
-        logger.info(
-            'Commentary for fixture with id %s retrieved', fixture_id)
+        try:
+            commentary = self.request(commentary_url)
+            logger.info(
+                'Commentary for fixture with id %s retrieved', fixture_id)
+        except AuthorisationError:
+            # TODO better error handling for random authorisation errors
+            logger.info('AuthorisationError, default commentary used')
+            commentary = base.DEFAULT_COMMENTARY
         return commentary
 
     def _make_fixtures_db_ready(self, fixtures):
@@ -105,11 +109,13 @@ class FootballAPI(FootballAPICaller):
         return {'home': h_events, 'away': a_events}
 
     def _get_lineup_from_commentary(self, commentary):
-        import ipdb; ipdb.set_trace()
-        return {
-            'home': commentary['lineup']['localteam'],
-            'away': commentary['lineup']['visitorteam']
-        }
+        try:
+            return {'home': commentary['lineup']['localteam'],
+                    'away': commentary['lineup']['visitorteam']}
+        except KeyError:
+            # attempt to catch elusive KeyError
+            import traceback; traceback.print_exc();
+            import ipdb; ipdb.set_trace()
 
     def _format_fixture_score(self, fixture):
         home_score = fixture['localteam_score']
@@ -133,6 +139,12 @@ class FootballAPI(FootballAPICaller):
             self.__class__.date_format,
             self.__class__.time_format)
         return formatted_time
+
+
+    def _filter_by_competition(self, fixtures, competitions):
+        filter_ids = [c['id'] for c in competitions]
+        return [f for f in fixtures if f['comp_id'] in filter_ids]
+
 
     def _is_valid_response(self, response):
         # TODO this is pretty ugly and unclear

@@ -42,23 +42,14 @@ class FootballAPICaller(object):
         request_url = self.base_url + url + self.url_suffix
         raw_response = requests.get(request_url, headers=self.headers)
         response = raw_response.json()
-        try:
-            assert self._is_valid_response(response), "Error in request to %s\nResponse: %s" %(
-                request_url, response)
-            authorisation_accepted = True
-        except AuthorisationError:
-            logger.info('Authorisation error. Request unsuccessful')
+        assert self._is_valid_response(response), "Error in request to %s\nResponse: %s" %(
+            request_url, response)
 
         return response
 
     def todays_fixtures_to_db(self, competitions):
-        for competition in competitions:
-            try:
-                fixtures = self._db_ready_todays_fixtures(competition)
-                save_fixture_dicts_to_db(fixtures)
-            except NoFixturesToday:
-                logger.info('No fixtures for %s %s on date %s' %(
-                    competition['region'], competition['name'], date.today()))
+        fixtures = self._todays_fixtures(competitions)
+        save_fixture_dicts_to_db(fixtures)
 
     def page_ready_fixture_details(self, fixture_id):
         return self._get_commentary_for_fixture(fixture_id)
@@ -67,29 +58,30 @@ class FootballAPICaller(object):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 
-    def _db_ready_todays_fixtures(self, competition):
-        fixtures = self._todays_fixtures(competition)
+    def _todays_fixtures(self, competitions):
+        fixtures = self._get_fixtures_for_date(date.today(), competitions)
         return self._make_fixtures_db_ready(fixtures)
 
-    def _todays_fixtures(self, competition):
-        return self._get_fixtures_for_date(date.today(), competition)
-
-    def _get_fixtures_for_date(self, arg1, arg2):
+    def _filter_by_competition(self, competitions):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 
-    def _get_commentary_for_fixture(self, arg):
+    def _get_fixtures_for_date(self, *args):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 
-    def _make_fixtures_page_ready(self, arg):
+    def _get_commentary_for_fixture(self, *args):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 
-    def _make_fixtures_db_ready(self, arg):
+    def _make_fixtures_page_ready(self, *args):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 
-    def _is_valid_response(self, response):
+    def _make_fixtures_db_ready(self, *args):
+        raise NotImplementedError(
+            "Implemented in child classes - base class should not be instantiated")
+
+    def _is_valid_response(self, *args):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")

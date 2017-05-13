@@ -1,7 +1,11 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+import logging
 from contextlib import contextmanager
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+
+logger = logging.getLogger(__name__)
 
 engine = create_engine('sqlite:///footie_scores/db/fs.db', echo=True)
 Session = sessionmaker(bind=engine)

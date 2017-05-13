@@ -1,4 +1,5 @@
 import logging
+
 from sqlalchemy.ext.declarative import declarative_base
 
 from footie_scores import db
@@ -16,28 +17,28 @@ def save_fixture_dicts_to_db(fixtures):
 
 def save_fixture_dict_to_db(fixture):
     with db.session_scope() as session:
-        id_query = session.query(Fixture.match_id)
-        already_in_db = bool(id_query.filter(Fixture.match_id == fixture.match_id).all())
-        if not already_in_db:
+        fixture_query_by_id = session.query(Fixture)
+        db_fixture = fixture_query_by_id.filter(Fixture.match_id == fixture.match_id).one()
+        if not db_fixture:
             session.add(fixture)
-            logger.info('%s added to db', fixture)
+            logger.info('%s added to db', fixture.match_id)
         else:
-            logger.info('%s not added to db because it\'s already there', fixture)
+            # TODO as noted in class definition non_orm_attrs method is unreliable
+            for k, v in fixture.non_orm_attrs.items():
+                setattr(db_fixture, k, v)
+            logger.info('%s updated in db', db_fixture)
 
 
 def get_fixture_by_id(id_):
     with db.session_scope() as session:
-        fixture = session.query(Fixture).filter_by(match_id=id_).one().properties
+        fixture = session.query(Fixture).filter_by(match_id=id_).one().non_orm_attrs
     return fixture
-
-
-def get_fixture_details_by_id(id_):
-    pass
 
 
 def get_competition_fixtures_by_id(id_):
     with db.session_scope() as session:
-        fixtures = [f.properties for f in session.query(Fixture).filter_by(competition_id=id_).all()]
+        comp_fixtures = session.query(Fixture).filter_by(competition_id=id_).all()
+        fixtures = [f.non_orm_attrs for f in comp_fixtures]
     return fixtures
 
 
