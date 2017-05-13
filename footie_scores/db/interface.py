@@ -23,7 +23,6 @@ def save_fixture_dict_to_db(fixture):
             session.add(fixture)
             logger.info('%s added to db', fixture.match_id)
         else:
-            import ipdb; ipdb.set_trace()
             for k, v in fixture.__dict__.items():
                 setattr(db_fixture, k, v)
             logger.info('%s updated in db', db_fixture)
@@ -36,13 +35,10 @@ def get_fixture_by_id(id_):
     return fixture
 
 
-def get_fixture_details_by_id(id_):
-    pass
-
-
 def get_competition_fixtures_by_id(id_):
     with db.session_scope() as session:
-        fixtures = [f.properties for f in session.query(Fixture).filter_by(competition_id=id_).all()]
+        comp_fixtures = session.query(Fixture).filter_by(competition_id=id_).all()
+        fixtures = [f.properties for f in comp_fixtures]
     return fixtures
 
 

@@ -47,13 +47,14 @@ class FootballAPI(FootballAPICaller):
             import ipdb; ipdb.set_trace()
         return self.request(competitions_url)
 
-    def _get_fixtures_for_date(self, date_):
+    def _get_fixtures_for_date(self, date_, competitions):
         str_date = date_.strftime(self.__class__.date_format)
         fixtures_url = 'matches?match_date={}&'.format(str_date)
-        todays_fixtures = self.request(fixtures_url)
+        all_fixtures = self.request(fixtures_url)
         logger.info(
             'Fixtures for all competitions on date %s retrieved', dt.date.today())
 
+        todays_fixtures = self._filter_by_competition(all_fixtures, competitions)
         for f in todays_fixtures:
             try:
                 f['commentary'] = self._get_commentary_for_fixture(f['id'])
@@ -61,7 +62,7 @@ class FootballAPI(FootballAPICaller):
                 f['commentary'] = base.DEFAULT_COMMENTARY
                 logger.info('No commentary for %s-%s on date %s',
                             f['localteam_name'], f['visitorteam_name'], dt.date.today())
-        return todays_fixtures
+        return self._filter_by_competition(todays_fixtures, competitions)
 
     def _get_commentary_for_fixture(self, fixture_id):
         # TODO class requires competition ID but this method doesn't.
@@ -132,6 +133,12 @@ class FootballAPI(FootballAPICaller):
             self.__class__.date_format,
             self.__class__.time_format)
         return formatted_time
+
+
+    def _filter_by_competition(self, fixtures, competitions):
+        filter_ids = [c['id'] for c in competitions]
+        return [f for f in fixtures if f['comp_id'] in filter_ids]
+
 
     def _is_valid_response(self, response):
         # TODO this is pretty ugly and unclear
