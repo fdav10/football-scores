@@ -22,6 +22,7 @@ def _load_competitions():
 COMPETITIONS = _load_competitions()
 FILTER_COUNTRIES = ('England', 'France', 'Germany', 'Spain', 'Italy',
                     'Portugal', 'International')
+FILTER_COUNTRIES = ('England',)
 FILTERED_COMPETITIONS = [
     comp for comp in COMPETITIONS if comp['region'] in FILTER_COUNTRIES]
 

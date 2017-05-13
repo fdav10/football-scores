@@ -70,28 +70,29 @@ class FootballAPI(FootballAPICaller):
         # instantiating the class with a competition ID. Stop-gap
         # solution is to allow class instantiated with competition=None.
         commentary_url = 'commentaries/{}?'.format(fixture_id)
-        commentary = self.request(commentary_url)
-        logger.info(
-            'Commentary for fixture with id %s retrieved', fixture_id)
+        try:
+            commentary = self.request(commentary_url)
+            logger.info(
+                'Commentary for fixture with id %s retrieved', fixture_id)
+        except AuthorisationError:
+            # TODO better error handling for random authorisation errors
+            logger.info('AuthorisationError, default commentary used')
+            commentary = base.DEFAULT_COMMENTARY
         return commentary
 
     def _make_fixtures_db_ready(self, fixtures):
-        try:
-            db_ready_fixtures = [
-                Fixture(
-                    f['localteam_name'],
-                    f['visitorteam_name'],
-                    f['comp_id'],
-                    f['id'],
-                    self._format_fixture_score(f),
-                    f['formatted_date'],
-                    self._format_fixture_time(f),
-                    self._get_lineup_from_commentary(f['commentary']),
-                    self._make_events_db_ready(f),
-                ) for f in fixtures]
-        except:
-            import traceback; traceback.print_exc();
-            import ipdb; ipdb.set_trace()
+        db_ready_fixtures = [
+            Fixture(
+                f['localteam_name'],
+                f['visitorteam_name'],
+                f['comp_id'],
+                f['id'],
+                self._format_fixture_score(f),
+                f['formatted_date'],
+                self._format_fixture_time(f),
+                self._get_lineup_from_commentary(f['commentary']),
+                self._make_events_db_ready(f),
+            ) for f in fixtures]
         return db_ready_fixtures
 
     def _make_events_db_ready(self, fixture):
@@ -108,8 +109,13 @@ class FootballAPI(FootballAPICaller):
         return {'home': h_events, 'away': a_events}
 
     def _get_lineup_from_commentary(self, commentary):
-        return {'home': commentary['lineup']['localteam'],
-                'away': commentary['lineup']['visitorteam']}
+        try:
+            return {'home': commentary['lineup']['localteam'],
+                    'away': commentary['lineup']['visitorteam']}
+        except KeyError:
+            # attempt to catch elusive KeyError
+            import traceback; traceback.print_exc();
+            import ipdb; ipdb.set_trace()
 
     def _format_fixture_score(self, fixture):
         home_score = fixture['localteam_score']

@@ -45,7 +45,6 @@ class Fixture(Base):
     events = Column(_JsonEncodedDict)
     lineups = Column(_JsonEncodedDict)
 
-
     # events = relationship(
     #     'FixtureEvents',
     #     order_by=FixtureEvents.id,
@@ -54,6 +53,7 @@ class Fixture(Base):
     def __init__(
             self, team_home, team_away, competition_id, match_id,
             score, date, time, lineups, events=None):
+
         self.team_home = team_home
         self.team_away = team_away
         self.competition_id = competition_id
@@ -70,8 +70,10 @@ class Fixture(Base):
             self.team_home, self.team_away, self.date, self.time)
 
     @property
-    def properties(self):
-        return self.__dict__
+    def non_orm_attrs(self):
+        # TODO this is dodgy - assuming inherited attributes / sqla attributes will always start with _
+        return {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
+
 
 def create_tables_if_not_present():
     if not db.engine.table_names() == ['fixtures', ]:
