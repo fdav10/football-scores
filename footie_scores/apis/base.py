@@ -45,7 +45,6 @@ class FootballAPICaller(object):
         try:
             assert self._is_valid_response(response), "Error in request to %s\nResponse: %s" %(
                 request_url, response)
-            authorisation_accepted = True
         except AuthorisationError:
             logger.info('Authorisation error. Request unsuccessful')
 
@@ -54,7 +53,7 @@ class FootballAPICaller(object):
     def todays_fixtures_to_db(self, competitions):
         for competition in competitions:
             try:
-                fixtures = self._db_ready_todays_fixtures(competition)
+                fixtures = self._db_ready_todays_fixtures()
                 save_fixture_dicts_to_db(fixtures)
             except NoFixturesToday:
                 logger.info('No fixtures for %s %s on date %s' %(
@@ -67,14 +66,14 @@ class FootballAPICaller(object):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 
-    def _db_ready_todays_fixtures(self, competition):
-        fixtures = self._todays_fixtures(competition)
+    def _db_ready_todays_fixtures(self ):
+        fixtures = self._todays_fixtures()
         return self._make_fixtures_db_ready(fixtures)
 
-    def _todays_fixtures(self, competition):
-        return self._get_fixtures_for_date(date.today(), competition)
+    def _todays_fixtures(self):
+        return self._get_fixtures_for_date(date.today())#, competition)
 
-    def _get_fixtures_for_date(self, arg1, arg2):
+    def _get_fixtures_for_date(self, arg1):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 

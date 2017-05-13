@@ -47,19 +47,17 @@ class FootballAPI(FootballAPICaller):
             import ipdb; ipdb.set_trace()
         return self.request(competitions_url)
 
-    def _get_fixtures_for_date(self, date_, competition):
+    def _get_fixtures_for_date(self, date_):
         str_date = date_.strftime(self.__class__.date_format)
-        fixtures_url = 'matches?comp_id={}&match_date={}&'.format(
-            competition['id'], str_date)
+        fixtures_url = 'matches?match_date={}&'.format(str_date)
         todays_fixtures = self.request(fixtures_url)
         logger.info(
-            'Fixtures for %s %s on date %s retrieved',
-            competition['region'], competition['name'], dt.date.today())
+            'Fixtures for all competitions on date %s retrieved', dt.date.today())
 
         for f in todays_fixtures:
             try:
                 f['commentary'] = self._get_commentary_for_fixture(f['id'])
-            except NoCommentaryAvailable:
+            except (NoCommentaryAvailable, AuthorisationError):
                 f['commentary'] = base.DEFAULT_COMMENTARY
                 logger.info('No commentary for %s-%s on date %s',
                             f['localteam_name'], f['visitorteam_name'], dt.date.today())
@@ -77,18 +75,22 @@ class FootballAPI(FootballAPICaller):
         return commentary
 
     def _make_fixtures_db_ready(self, fixtures):
-        db_ready_fixtures = [
-            Fixture(
-                f['localteam_name'],
-                f['visitorteam_name'],
-                f['comp_id'],
-                f['id'],
-                self._format_fixture_score(f),
-                f['formatted_date'],
-                self._format_fixture_time(f),
-                self._get_lineup_from_commentary(f['commentary']),
-                self._make_events_db_ready(f),
-            ) for f in fixtures]
+        try:
+            db_ready_fixtures = [
+                Fixture(
+                    f['localteam_name'],
+                    f['visitorteam_name'],
+                    f['comp_id'],
+                    f['id'],
+                    self._format_fixture_score(f),
+                    f['formatted_date'],
+                    self._format_fixture_time(f),
+                    self._get_lineup_from_commentary(f['commentary']),
+                    self._make_events_db_ready(f),
+                ) for f in fixtures]
+        except:
+            import traceback; traceback.print_exc();
+            import ipdb; ipdb.set_trace()
         return db_ready_fixtures
 
     def _make_events_db_ready(self, fixture):
@@ -105,11 +107,8 @@ class FootballAPI(FootballAPICaller):
         return {'home': h_events, 'away': a_events}
 
     def _get_lineup_from_commentary(self, commentary):
-        import ipdb; ipdb.set_trace()
-        return {
-            'home': commentary['lineup']['localteam'],
-            'away': commentary['lineup']['visitorteam']
-        }
+        return {'home': commentary['lineup']['localteam'],
+                'away': commentary['lineup']['visitorteam']}
 
     def _format_fixture_score(self, fixture):
         home_score = fixture['localteam_score']

@@ -1,4 +1,5 @@
 import logging
+
 from sqlalchemy.ext.declarative import declarative_base
 
 from footie_scores import db
@@ -16,13 +17,17 @@ def save_fixture_dicts_to_db(fixtures):
 
 def save_fixture_dict_to_db(fixture):
     with db.session_scope() as session:
-        id_query = session.query(Fixture.match_id)
-        already_in_db = bool(id_query.filter(Fixture.match_id == fixture.match_id).all())
-        if not already_in_db:
+        fixture_query_by_id = session.query(Fixture, Fixture.match_id)
+        db_fixture = fixture_query_by_id.filter(Fixture.match_id == fixture.match_id).one()[0]
+        if not db_fixture:
             session.add(fixture)
-            logger.info('%s added to db', fixture)
+            logger.info('%s added to db', fixture.match_id)
         else:
-            logger.info('%s not added to db because it\'s already there', fixture)
+            import ipdb; ipdb.set_trace()
+            for k, v in fixture.__dict__.items():
+                setattr(db_fixture, k, v)
+            logger.info('%s updated in db', db_fixture)
+
 
 
 def get_fixture_by_id(id_):

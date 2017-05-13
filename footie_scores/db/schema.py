@@ -66,7 +66,7 @@ class Fixture(Base):
             self.events = events
 
     def __repr__(self):
-        return "<Fixture(team_home='%s', team_away='%s', score='%s', time='%s')" %(
+        return "<Fixture(%s vs %s on %s at %s)>" %(
             self.team_home, self.team_away, self.date, self.time)
 
     @property

@@ -10,5 +10,4 @@ logger = logging.getLogger(__name__)
 
 start_logging()
 create_tables_if_not_present()
-logger.info
 league_manager.single_api_call()
