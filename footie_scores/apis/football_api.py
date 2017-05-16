@@ -71,7 +71,7 @@ class FootballAPI(FootballAPICaller):
         # solution is to allow class instantiated with competition=None.
         commentary_url = 'commentaries/{}?'.format(fixture_id)
         try:
-            commentary = self.request(commentary_url)
+            commentary = self.request(commentary_url, correct_unicode=True)
             logger.info(
                 'Commentary for fixture with id %s retrieved', fixture_id)
         except AuthorisationError:

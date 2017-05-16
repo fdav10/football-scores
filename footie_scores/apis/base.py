@@ -1,13 +1,14 @@
 ''' Interfaces to football score APIs '''
 
+import json
 import logging
-from time import sleep
 from datetime import date
 
 import requests
 
+from footie_scores.utils.exceptions import *
 from footie_scores.db.interface import save_fixture_dicts_to_db
-from footie_scores.utils.exceptions import NoFixturesToday, NoCommentaryAvailable, AuthorisationError
+from footie_scores.utils.strings import correct_unicode_to_bin
 
 
 logger = logging.getLogger(__name__)
@@ -38,13 +39,15 @@ class FootballAPICaller(object):
         self.date_format = None
         self.time_format = None
 
-    def request(self, url):
+    def request(self, url, correct_unicode=False):
         request_url = self.base_url + url + self.url_suffix
         raw_response = requests.get(request_url, headers=self.headers)
-        response = raw_response.json()
+        if correct_unicode:
+            response = json.loads(correct_unicode_to_bin(raw_response.content))
+        else:
+            response = raw_response.json()
         assert self._is_valid_response(response), "Error in request to %s\nResponse: %s" %(
             request_url, response)
-
         return response
 
     def todays_fixtures_to_db(self, competitions):
@@ -60,6 +63,9 @@ class FootballAPICaller(object):
 
     def _todays_fixtures(self, competitions):
         fixtures = self._get_fixtures_for_date(date.today(), competitions)
+        # from datetime import timedelta
+        # yesterday = date.today() - timedelta(days=1)
+        # fixtures = self._get_fixtures_for_date(yesterday, competitions)
         return self._make_fixtures_db_ready(fixtures)
 
     def _filter_by_competition(self, competitions):

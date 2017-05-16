@@ -5,6 +5,7 @@ __pycache__
 *.pyc
 *.db
 
+tmp/
 data/
 profile.txt
 *.egg-info/
