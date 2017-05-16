@@ -4,6 +4,7 @@ Module where the database and API calls are linked.
 
 import os
 import json
+import datetime as dt
 
 from footie_scores import db
 from footie_scores.utils.log import start_logging
@@ -38,10 +39,11 @@ def single_api_call(competitions=FILTERED_COMPETITIONS):
     comp_api.todays_fixtures_to_db(competitions)
 
 
-def retrieve_fixtures_from_db(competitions=FILTERED_COMPETITIONS):
+def retrieve_fixtures_from_db(competitions=FILTERED_COMPETITIONS, dtdate=dt.date.today()):
+    date_ = dt.date.strftime(dtdate, db.date_format)
     fixtures = []
     for competition in competitions:
-        comp_fixtures = db.interface.get_competition_fixtures_by_id(competition['id'])
+        comp_fixtures = db.interface.get_competition_fixtures_by_id(competition['id'], date_)
         fixtures.append({
             'name': competition['name'],
             'fixtures': comp_fixtures

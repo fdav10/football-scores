@@ -35,9 +35,10 @@ def get_fixture_by_id(id_):
     return fixture
 
 
-def get_competition_fixtures_by_id(id_):
+def get_competition_fixtures_by_id(id_, date_):
     with db.session_scope() as session:
-        comp_fixtures = session.query(Fixture).filter_by(competition_id=id_).all()
+        comp_fixtures = session.query(Fixture).filter_by(
+            competition_id=id_, date=date_).all()
         fixtures = [f.non_orm_attrs for f in comp_fixtures]
     return fixtures
 

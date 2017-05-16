@@ -1,8 +1,7 @@
 import json
 import logging
-from sqlalchemy.orm import relationship
+import sqlalchemy as sqla
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, TypeDecorator, ForeignKey
 
 from footie_scores import db
 
@@ -11,8 +10,8 @@ logger = logging.getLogger(__name__)
 Base = declarative_base()
 
 
-class _JsonEncodedDict(TypeDecorator):
-    impl = String
+class _JsonEncodedDict(sqla.TypeDecorator):
+    impl = sqla.String
 
     def process_bind_param(self, value, dialect):
         return json.dumps(value)
@@ -24,8 +23,8 @@ class _JsonEncodedDict(TypeDecorator):
 # class FixtureEvents(Base):
 #     __tablename__ = 'events'
 
-#     id = Column(Integer, primary_key=True)
-#     fixture_id = Column(String, ForeignKey('fixtures.id'))
+#     id = sqla.Column(sqla.Integer, primary_key=True)
+#     fixture_id = sqla.Column(sqla.String, sqla.ForeignKey('fixtures.id'))
 
 #     fixture = relationship('Fixture', back_populates='events')
 
@@ -34,16 +33,16 @@ class Fixture(Base):
     # TODO lineups, players, events can be stored as own table
     __tablename__ = 'fixtures'
 
-    id = Column(Integer, primary_key=True)
-    date = Column(String)
-    time = Column(String)
-    team_home = Column(String)
-    team_away = Column(String)
-    score = Column(String)
-    competition_id = Column(String)
-    match_id = Column(String)
-    events = Column(_JsonEncodedDict)
-    lineups = Column(_JsonEncodedDict)
+    id = sqla.Column(sqla.Integer, primary_key=True)
+    date = sqla.Column(sqla.String)
+    time = sqla.Column(sqla.String)
+    team_home = sqla.Column(sqla.String)
+    team_away = sqla.Column(sqla.String)
+    score = sqla.Column(sqla.String)
+    competition_id = sqla.Column(sqla.String)
+    match_id = sqla.Column(sqla.String)
+    events = sqla.Column(_JsonEncodedDict)
+    lineups = sqla.Column(_JsonEncodedDict)
 
     # events = relationship(
     #     'FixtureEvents',
@@ -64,6 +63,9 @@ class Fixture(Base):
         self.lineups = lineups
         if events:
             self.events = events
+
+        self.date_format = db.date_format
+        self.time_format = db.time_format
 
     def __repr__(self):
         return "<Fixture(%s vs %s on %s at %s)>" %(

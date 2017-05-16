@@ -22,8 +22,6 @@ class FootballAPI(FootballAPICaller):
     https://football-api.com/
     '''
 
-    date_format = '%d.%m.%Y'
-    time_format = '%H:%M'
 
     # TODO this class is a bit confused over whether a competition is required or not
 
@@ -36,6 +34,8 @@ class FootballAPI(FootballAPICaller):
         self.key = os.environ['football_api_key']
         self.headers = None
         self.url_suffix = 'Authorization=' + self.key
+        self.api_date_format = '%d.%m.%Y'
+        self.api_time_format = '%H:%M'
 
     def get_competitions(self):
         competitions_url = 'competitions?'
@@ -48,7 +48,7 @@ class FootballAPI(FootballAPICaller):
         return self.request(competitions_url)
 
     def _get_fixtures_for_date(self, date_, competitions):
-        str_date = date_.strftime(self.__class__.date_format)
+        str_date = date_.strftime(self.api_date_format)
         fixtures_url = 'matches?match_date={}&'.format(str_date)
         all_fixtures = self.request(fixtures_url)
         logger.info(
@@ -88,8 +88,8 @@ class FootballAPI(FootballAPICaller):
                 f['comp_id'],
                 f['id'],
                 self._format_fixture_score(f),
-                f['formatted_date'],
-                self._format_fixture_time(f),
+                self._make_date_db_ready(f['formatted_date']),
+                self._format_fixture_time(f, dt_object=True),
                 self._get_lineup_from_commentary(f['commentary']),
                 self._make_events_db_ready(f),
             ) for f in fixtures]
@@ -126,7 +126,7 @@ class FootballAPI(FootballAPICaller):
             score = '{} - {}'.format(home_score, away_score)
         return score
 
-    def _format_fixture_time(self, fixture):
+    def _format_fixture_time(self, fixture, dt_object=False):
         ''' API returns dates in UTC timezone so convert to local timezone (i.e UK).
 
         Date seems to need to be involved otherwise there's a bug (?)
@@ -134,11 +134,10 @@ class FootballAPI(FootballAPICaller):
         hours.
         '''
         formatted_time = naive_utc_to_uk_tz(
-            fixture['formatted_date'],
             fixture['time'],
-            self.__class__.date_format,
-            self.__class__.time_format)
-        return formatted_time
+            self.api_time_format,
+            self.db_time_format)
+        return self._make_time_db_ready(formatted_time)
 
 
     def _filter_by_competition(self, fixtures, competitions):

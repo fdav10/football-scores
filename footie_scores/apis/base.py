@@ -2,11 +2,13 @@
 
 import json
 import logging
-from datetime import date
+import datetime as dt
 
 import requests
 
+from footie_scores import db
 from footie_scores.utils.exceptions import *
+from footie_scores.db import date_format
 from footie_scores.db.interface import save_fixture_dicts_to_db
 from footie_scores.utils.strings import correct_unicode_to_bin
 
@@ -27,8 +29,6 @@ class FootballAPICaller(object):
     Implements generic calls. Should not be instantiated.
     '''
 
-    date_format = None
-    time_format = None
 
     def __init__(self):
         self.id_league = None
@@ -36,8 +36,10 @@ class FootballAPICaller(object):
         self.headers = None
         self.url_suffix = ""
         self.match_page_ready_map = None
-        self.date_format = None
-        self.time_format = None
+        self.api_date_format = None
+        self.api_time_format = None
+        self.db_date_format =  db.date_format
+        self.db_time_format = db.time_format
 
     def request(self, url, correct_unicode=False):
         request_url = self.base_url + url + self.url_suffix
@@ -62,11 +64,19 @@ class FootballAPICaller(object):
             "Implemented in child classes - base class should not be instantiated")
 
     def _todays_fixtures(self, competitions):
-        fixtures = self._get_fixtures_for_date(date.today(), competitions)
+        fixtures = self._get_fixtures_for_date(dt.date.today(), competitions)
         # from datetime import timedelta
         # yesterday = date.today() - timedelta(days=1)
         # fixtures = self._get_fixtures_for_date(yesterday, competitions)
         return self._make_fixtures_db_ready(fixtures)
+
+    def _make_date_db_ready(self, sdate):
+        dt_obj = dt.datetime.strptime(sdate, self.db_date_format).date()
+        return dt.datetime.strftime(dt_obj, self.db_date_format)
+
+    def _make_time_db_ready(self, stime):
+        dt_obj = dt.datetime.strptime(stime, self.db_time_format).time()
+        return dt.time.strftime(dt_obj, self.db_time_format)
 
     def _filter_by_competition(self, competitions):
         raise NotImplementedError(
