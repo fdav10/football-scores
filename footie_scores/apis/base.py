@@ -9,7 +9,7 @@ import requests
 from footie_scores import db
 from footie_scores.utils.exceptions import *
 from footie_scores.db import date_format
-from footie_scores.db.interface import save_fixture_dicts_to_db
+from footie_scores.db.interface import save_fixture_dicts_to_db, save_competitions_to_db
 from footie_scores.utils.strings import correct_unicode_to_bin
 
 
@@ -42,6 +42,7 @@ class FootballAPICaller(object):
         self.db_time_format = db.time_format
 
     def request(self, url, correct_unicode=False):
+        logger.info('Making request to %s', self.base_url + url)
         request_url = self.base_url + url + self.url_suffix
         raw_response = requests.get(request_url, headers=self.headers)
         if correct_unicode:
@@ -55,6 +56,10 @@ class FootballAPICaller(object):
     def todays_fixtures_to_db(self, competitions):
         fixtures = self._todays_fixtures(competitions)
         save_fixture_dicts_to_db(fixtures)
+
+    def competitions_to_db(self):
+        competitions = self.get_competitions()
+        save_competitions_to_db(competitions)
 
     def page_ready_fixture_details(self, fixture_id):
         return self._get_commentary_for_fixture(fixture_id)

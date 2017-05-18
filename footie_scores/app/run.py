@@ -1,15 +1,21 @@
 ''' Make webpage from API requests '''
 
-from datetime import date
+import datetime as dt
 
 from flask import Flask, render_template, request
 
+from footie_scores import settings
 from footie_scores.utils.log import start_logging
+from footie_scores import db
+import footie_scores.db.interface as queries
 import footie_scores.league_manager as api_interface
 
 
 app = Flask(__name__)
 DATEFORMAT = "%A %d %B %y" # e.g. Sunday 16 April 2017
+TODAY = dt.date.strftime(dt.date.today(), db.date_format)
+YESTERDAY = dt.date.strftime(dt.date.today() - dt.timedelta(days=1), db.date_format)
+COMPS_FOR_PAGE = settings.MAIN_COMPS
 
 
 @app.route("/test")
@@ -19,9 +25,11 @@ def test():
 
 @app.route("/todays_games")
 def todays_fixtures():
-    # TODO active fixtures are sometimes shown as not yet kicked off
-    fixtures = api_interface.retrieve_fixtures_from_db()
-    return games_template(fixtures, date.today())
+    comps = page_comps_only(queries.get_competitions())
+    comp_ids = [c['api_id'] for c in comps]
+    unsorted_fixtures = queries.get_fixtures_by_date(YESTERDAY, comp_ids)
+    fixtures = sort_fixtures_by_competition(unsorted_fixtures)
+    return games_template(fixtures, dt.date.today())
 
 
 @app.route("/details_<fixture_id>")
@@ -43,6 +51,22 @@ def details_template(fixture):
         'details.html',
         fixture=fixture,
     )
+
+
+def page_comps_only(competitions):
+    to_keep = COMPS_FOR_PAGE
+    return [comp for comp in competitions if comp['api_id'] in to_keep]
+
+
+def sort_fixtures_by_competition(fixtures):
+    sorted_fixtures = []
+    comp_ids = set([f['competition_id'] for f in fixtures])
+    for id_ in comp_ids:
+        sorted_fixtures.append({
+            'name': id_,
+            'fixtures': [fix for fix in fixtures if fix['competition_id'] == id_]
+        })
+    return sorted_fixtures
 
 
 if __name__ == '__main__':

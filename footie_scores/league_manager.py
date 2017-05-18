@@ -39,13 +39,18 @@ def single_api_call(competitions=FILTERED_COMPETITIONS):
     comp_api.todays_fixtures_to_db(competitions)
 
 
+def save_competitions_to_db():
+    comp_api = FootballAPI()
+    comp_api.competitions_to_db()
+
+
 def retrieve_fixtures_from_db(competitions=FILTERED_COMPETITIONS, dtdate=dt.date.today()):
     date_ = dt.date.strftime(dtdate, db.date_format)
     fixtures = []
-    for competition in competitions:
-        comp_fixtures = db.interface.get_competition_fixtures_by_id(competition['id'], date_)
+    for comp in competitions:
+        comp_fixtures = db.interface.get_competition_fixtures_by_id(comp['api_id'], date_)
         fixtures.append({
-            'name': competition['name'],
+            'name': comp['name'],
             'fixtures': comp_fixtures
         })
     return fixtures

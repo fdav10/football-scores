@@ -28,6 +28,26 @@ class _JsonEncodedDict(sqla.TypeDecorator):
 
 #     fixture = relationship('Fixture', back_populates='events')
 
+class Competition(Base):
+    __tablename__ = 'competitions'
+
+    id = sqla.Column(sqla.Integer, primary_key=True)
+    api_id = sqla.Column(sqla.String)
+    name = sqla.Column(sqla.String)
+    region = sqla.Column(sqla.String)
+
+    def __init__(self, api_id, name, region):
+        self.api_id = api_id
+        self.name = name
+        self.region = region
+
+    def dict_clone(self):
+        return {
+            'api_id': self.api_id,
+            'name': self.name,
+            'region': self.region
+            }
+
 
 class Fixture(Base):
     # TODO lineups, players, events can be stored as own table
@@ -78,9 +98,13 @@ class Fixture(Base):
 
 
 def create_tables_if_not_present():
-    if not db.engine.table_names() == ['fixtures', ]:
+    if not db.engine.table_names() == ['fixtures', 'competitions']:
         Base.metadata.create_all(db.engine)
 
 
 def clear_tables():
     Base.metadata.drop_all(db.engine)
+
+
+def clear_table(table):
+    table.__table__.drop(db.engine)

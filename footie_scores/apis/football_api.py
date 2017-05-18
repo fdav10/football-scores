@@ -40,12 +40,13 @@ class FootballAPI(FootballAPICaller):
     def get_competitions(self):
         competitions_url = 'competitions?'
         response = self.request(competitions_url)
+        logger.info('Competitions retrieved from football-api API')
         try:
             assert self._is_valid_response(response), 'Competition lookup failed'
         except:
             import traceback; traceback.print_exc();
             import ipdb; ipdb.set_trace()
-        return self.request(competitions_url)
+        return response
 
     def _get_fixtures_for_date(self, date_, competitions):
         str_date = date_.strftime(self.api_date_format)
