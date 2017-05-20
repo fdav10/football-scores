@@ -13,11 +13,10 @@ TABLE_MAP = {'all': None,
 @click.option('--drop_what', help='all, competitions, or fixtures')
 def drop_something(drop_what):
     if drop_what == 'all':
-        schema.clear_tables()
+        schema.drop_tables()
     elif drop_what in TABLE_MAP.keys():
-        schema.clear_table(TABLE_MAP[drop_what])
+        schema.drop_table(TABLE_MAP[drop_what])
     else:
-        options = TABLE_MAP.keys()
         print('ERROR: use an option: all, competitions, or fixtures')
 
 
