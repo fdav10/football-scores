@@ -12,7 +12,7 @@ import footie_scores.league_manager as api_interface
 
 
 app = Flask(__name__)
-DATEFORMAT = "%A %d %B %y" # e.g. Sunday 16 April 2017
+WEBDATEFORMAT = "%A %d %B %y" # e.g. Sunday 16 April 2017
 TODAY = dt.date.strftime(dt.date.today(), db.date_format)
 YESTERDAY = dt.date.strftime(dt.date.today() - dt.timedelta(days=1), db.date_format)
 COMPS_FOR_PAGE = settings.COMPS
@@ -25,6 +25,7 @@ def test():
 
 @app.route("/todays_games")
 def todays_fixtures():
+    # TODO make details link appear only if lineups etc. are available for fixture
     with db.session_scope() as session:
         comps = page_comps_only(queries.get_competitions(session))
         comp_ids = [c.api_id for c in comps]
@@ -44,7 +45,7 @@ def match_details(fixture_id):
 def games_template(competitions, date_):
     return render_template(
         'scores.html',
-        date=date_.strftime(DATEFORMAT),
+        date=date_.strftime(WEBDATEFORMAT),
         competitions=competitions,
     )
 

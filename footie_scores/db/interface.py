@@ -55,10 +55,11 @@ def get_fixture_by_id(session, id_):
 
 def get_fixtures_by_date(session, date_, comp_ids=settings.COMPS):
     cq = session.query(Competition)
-    # fixtures = [cq.filter(Competition.api_id.is_(id_)).all() for id_ in comp_ids]
+    cfq = session.query(Fixture).join(Competition)
     fixtures_by_comp = []
     for id_ in comp_ids:
         competition = cq.filter(Competition.api_id == id_).one()
+        fixtures = cfq.filter(Fixture.date==date_).filter(Competition.api_id==id_).all()
         fixtures_by_comp.append({'name': competition.name,
-                                 'fixtures': competition.fixtures,})
+                                 'fixtures': fixtures,})
     return fixtures_by_comp

@@ -23,12 +23,8 @@ class FootballAPI(FootballAPICaller):
     '''
 
 
-    # TODO this class is a bit confused over whether a competition is required or not
-
-    def __init__(self, competition=None, id_season=''):
+    def __init__(self, id_season=''):
         super().__init__()
-        if competition:
-            self.id_league = competition['id']
         self.id_season = id_season
         self.base_url = 'http://api.football-api.com/2.0/'
         self.key = os.environ['football_api_key']
@@ -58,6 +54,7 @@ class FootballAPI(FootballAPICaller):
         todays_fixtures = self._filter_by_competition(all_fixtures, competitions)
         for f in todays_fixtures:
             try:
+                # TODO save these to db as they're retrieved
                 f['commentary'] = self._get_commentary_for_fixture(f['id'])
             except (NoCommentaryAvailable, AuthorisationError):
                 f['commentary'] = base.DEFAULT_COMMENTARY
@@ -66,10 +63,6 @@ class FootballAPI(FootballAPICaller):
         return self._filter_by_competition(todays_fixtures, competitions)
 
     def _get_commentary_for_fixture(self, fixture_id):
-        # TODO class requires competition ID but this method doesn't.
-        # Would be useful to be able to call this method without
-        # instantiating the class with a competition ID. Stop-gap
-        # solution is to allow class instantiated with competition=None.
         commentary_url = 'commentaries/{}?'.format(fixture_id)
         try:
             commentary = self.request(commentary_url, correct_unicode=True)
