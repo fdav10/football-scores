@@ -43,13 +43,6 @@ class Competition(Base):
         self.region = region
         self.print_name = None
 
-    def dict_clone(self):
-        return {
-            'api_id': self.api_id,
-            'name': self.name,
-            'region': self.region
-            }
-
     def __repr__(self):
         return "<Competition(%s %s (api id %s) (db id %s))>" %(
             self.region, self.name, self.api_id, self.id)

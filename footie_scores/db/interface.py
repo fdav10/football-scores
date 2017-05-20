@@ -11,16 +11,16 @@ logger = logging.getLogger(__name__)
 Base = declarative_base()
 
 
-def save_fixture_dicts_to_db(session, fixtures):
-    for fixture in fixtures:
-        save_fixture_dict_to_db(session, fixture)
-
-
 def row_exists(session, row_class, id_, value):
     session_query = session.query(row_class, id_)
     occurences = session_query.filter(id_==value).count()
     logger.info('%s occurences of %s with id %s', occurences, id_, value)
     return occurences > 0
+
+
+def save_fixture_dicts_to_db(session, fixtures):
+    for fixture in fixtures:
+        save_fixture_dict_to_db(session, fixture)
 
 
 def save_fixture_dict_to_db(session, fixture):
@@ -54,6 +54,11 @@ def get_fixture_by_id(session, id_):
 
 
 def get_fixtures_by_date(session, date_, comp_ids=settings.COMPS):
-    fixtures = session.query(Fixture).filter(
-        Fixture.comp_api_id.in_(comp_ids), Fixture.date.is_(date_)).all()
-    return fixtures
+    cq = session.query(Competition)
+    # fixtures = [cq.filter(Competition.api_id.is_(id_)).all() for id_ in comp_ids]
+    fixtures_by_comp = []
+    for id_ in comp_ids:
+        competition = cq.filter(Competition.api_id == id_).one()
+        fixtures_by_comp.append({'name': competition.name,
+                                 'fixtures': competition.fixtures,})
+    return fixtures_by_comp

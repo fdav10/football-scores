@@ -28,8 +28,7 @@ def todays_fixtures():
     with db.session_scope() as session:
         comps = page_comps_only(queries.get_competitions(session))
         comp_ids = [c.api_id for c in comps]
-        unsorted_fixtures = queries.get_fixtures_by_date(session, TODAY, comp_ids)
-        fixtures = sort_fixtures_by_competition(unsorted_fixtures)
+        fixtures = queries.get_fixtures_by_date(session, TODAY, comp_ids)
         todays_games = games_template(fixtures, dt.date.today())
     return todays_games
 
@@ -60,19 +59,3 @@ def details_template(fixture):
 def page_comps_only(competitions):
     to_keep = COMPS_FOR_PAGE
     return [comp for comp in competitions if comp.api_id in to_keep]
-
-
-def sort_fixtures_by_competition(fixtures):
-    sorted_fixtures = []
-    comp_ids = set([f.comp_api_id for f in fixtures])
-    for id_ in comp_ids:
-        sorted_fixtures.append({
-            'name': id_,
-            'fixtures': [fix for fix in fixtures if fix.comp_api_id == id_]
-        })
-    return sorted_fixtures
-
-
-if __name__ == '__main__':
-    start_logging()
-    app.run()
