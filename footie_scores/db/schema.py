@@ -35,11 +35,13 @@ class Competition(Base):
     api_id = sqla.Column(sqla.String)
     name = sqla.Column(sqla.String)
     region = sqla.Column(sqla.String)
+    fixtures = sqla.orm.relationship('Fixture', back_populates='competition')
 
     def __init__(self, api_id, name, region):
         self.api_id = api_id
         self.name = name
         self.region = region
+        self.print_name = None
 
     def dict_clone(self):
         return {
@@ -47,6 +49,10 @@ class Competition(Base):
             'name': self.name,
             'region': self.region
             }
+
+    def __repr__(self):
+        return "<Competition(%s %s (api id %s) (db id %s))>" %(
+            self.region, self.name, self.api_id, self.id)
 
 
 class Fixture(Base):
@@ -59,23 +65,22 @@ class Fixture(Base):
     team_home = sqla.Column(sqla.String)
     team_away = sqla.Column(sqla.String)
     score = sqla.Column(sqla.String)
-    competition_id = sqla.Column(sqla.String)
+    comp_api_id = sqla.Column(sqla.String)
     match_id = sqla.Column(sqla.String)
     events = sqla.Column(_JsonEncodedDict)
     lineups = sqla.Column(_JsonEncodedDict)
-
-    # events = relationship(
-    #     'FixtureEvents',
-    #     order_by=FixtureEvents.id,
-    #     back_populates='fixture')
+    competition_id = sqla.Column(sqla.Integer, sqla.ForeignKey('competitions.id'))
+    competition = sqla.orm.relationship(
+        'Competition',
+        back_populates='fixtures')
 
     def __init__(
-            self, team_home, team_away, competition_id, match_id,
+            self, team_home, team_away, comp_api_id, match_id,
             score, date, time, lineups, events=None):
 
         self.team_home = team_home
         self.team_away = team_away
-        self.competition_id = competition_id
+        self.comp_api_id = comp_api_id
         self.match_id = match_id
         self.score = score
         self.date = date
@@ -91,10 +96,10 @@ class Fixture(Base):
         return "<Fixture(%s vs %s on %s at %s)>" %(
             self.team_home, self.team_away, self.date, self.time)
 
-    @property
-    def non_orm_attrs(self):
-        # TODO this is dodgy - assuming inherited attributes / sqla attributes will always start with _
-        return {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
+    def update_from_equivalent(self, equivalent):
+        keys_to_update = ('score', 'events', 'lineups')
+        for key in keys_to_update:
+            setattr(self, key, getattr(equivalent, key))
 
 
 def create_tables_if_not_present():
@@ -102,9 +107,9 @@ def create_tables_if_not_present():
         Base.metadata.create_all(db.engine)
 
 
-def clear_tables():
+def drop_tables():
     Base.metadata.drop_all(db.engine)
 
 
-def clear_table(table):
+def drop_table(table):
     table.__table__.drop(db.engine)

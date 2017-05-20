@@ -8,10 +8,8 @@ import requests
 
 from footie_scores import db
 from footie_scores.utils.exceptions import *
-from footie_scores.db import date_format
 from footie_scores.db.interface import save_fixture_dicts_to_db, save_competitions_to_db
 from footie_scores.utils.strings import correct_unicode_to_bin
-
 
 logger = logging.getLogger(__name__)
 
@@ -55,11 +53,13 @@ class FootballAPICaller(object):
 
     def todays_fixtures_to_db(self, competitions):
         fixtures = self._todays_fixtures(competitions)
-        save_fixture_dicts_to_db(fixtures)
+        with db.session_scope() as session:
+            save_fixture_dicts_to_db(session, fixtures)
 
     def competitions_to_db(self):
         competitions = self.get_competitions()
-        save_competitions_to_db(competitions)
+        with db.session_scope() as session:
+            save_competitions_to_db(session, competitions)
 
     def page_ready_fixture_details(self, fixture_id):
         return self._get_commentary_for_fixture(fixture_id)
@@ -70,9 +70,6 @@ class FootballAPICaller(object):
 
     def _todays_fixtures(self, competitions):
         fixtures = self._get_fixtures_for_date(dt.date.today(), competitions)
-        # from datetime import timedelta
-        # yesterday = date.today() - timedelta(days=1)
-        # fixtures = self._get_fixtures_for_date(yesterday, competitions)
         return self._make_fixtures_db_ready(fixtures)
 
     def _make_date_db_ready(self, sdate):

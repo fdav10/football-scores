@@ -141,9 +141,8 @@ class FootballAPI(FootballAPICaller):
         return self._make_time_db_ready(formatted_time)
 
 
-    def _filter_by_competition(self, fixtures, competitions):
-        filter_ids = [c['id'] for c in competitions]
-        return [f for f in fixtures if f['comp_id'] in filter_ids]
+    def _filter_by_competition(self, fixtures, comp_ids):
+        return [f for f in fixtures if f['comp_id'] in comp_ids]
 
 
     def _is_valid_response(self, response):
