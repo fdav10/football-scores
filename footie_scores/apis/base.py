@@ -8,6 +8,7 @@ import requests
 
 from footie_scores import db
 from footie_scores.utils.exceptions import *
+from footie_scores.utils.scheduling import batch_request
 from footie_scores.db.interface import save_fixture_dicts_to_db, save_competitions_to_db
 from footie_scores.utils.strings import correct_unicode_to_bin
 
@@ -27,7 +28,6 @@ class FootballAPICaller(object):
     Implements generic calls. Should not be instantiated.
     '''
 
-
     def __init__(self):
         self.id_league = None
         self.base_url = None
@@ -43,13 +43,30 @@ class FootballAPICaller(object):
         logger.info('Making request to %s', self.base_url + url)
         request_url = self.base_url + url + self.url_suffix
         raw_response = requests.get(request_url, headers=self.headers)
-        if correct_unicode:
-            response = json.loads(correct_unicode_to_bin(raw_response.content))
-        else:
-            response = raw_response.json()
-        assert self._is_valid_response(response), "Error in request to %s\nResponse: %s" %(
-            request_url, response)
-        return response
+        return self._process_responses((raw_response,), correct_unicode)[0]
+
+    def batch_request(self, urls, correct_unicode=False):
+        logger.info('Making batch request to:')
+        for url in urls:
+            logger.info('\t%s', url)
+        urls = [self.base_url + url + self.url_suffix for url in urls]
+        responses = batch_request(urls)
+        return self._process_responses(responses, correct_unicode)
+
+    def _process_responses(self, raw_responses, correct_unicode=False):
+        responses = []
+        for raw_response in raw_responses:
+            try:
+                assert raw_response.status_code == 200
+            except AssertionError:
+                logger.error(raw_response.content)
+            else:
+                if correct_unicode:
+                    response = json.loads(correct_unicode_to_bin(raw_response.content))
+                else:
+                    response = raw_response.json()
+                responses.append(response)
+        return responses
 
     def todays_fixtures_to_db(self, competitions):
         fixtures = self._todays_fixtures(competitions)

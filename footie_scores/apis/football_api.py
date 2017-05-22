@@ -4,6 +4,7 @@ import os
 import logging
 import datetime as dt
 
+from footie_scores import settings
 from footie_scores.db.schema import Fixture
 from footie_scores.apis import base
 from footie_scores.utils.log import start_logging
@@ -13,7 +14,7 @@ from footie_scores.utils.exceptions import *
 
 
 logger = logging.getLogger(__name__)
-
+TODAY = dt.date.today()
 
 class FootballAPI(FootballAPICaller):
     '''
@@ -44,15 +45,16 @@ class FootballAPI(FootballAPICaller):
             import ipdb; ipdb.set_trace()
         return response
 
-    def _get_fixtures_for_date(self, date_, competitions):
+    def _get_fixtures_for_date(self, date_=TODAY, competitions=settings.COMPS):
         str_date = date_.strftime(self.api_date_format)
         fixtures_url = 'matches?match_date={}&'.format(str_date)
         all_fixtures = self.request(fixtures_url)
         logger.info(
             'Fixtures for all competitions on date %s retrieved', dt.date.today())
 
-        todays_fixtures = self._filter_by_competition(all_fixtures, competitions)
-        for f in todays_fixtures:
+        fixtures = self._filter_by_competition(all_fixtures, competitions)
+        # commentaries = self._get_commentary_for_fixtures(fixtures)
+        for f in fixtures:
             try:
                 # TODO save these to db as they're retrieved
                 f['commentary'] = self._get_commentary_for_fixture(f['id'])
@@ -60,7 +62,7 @@ class FootballAPI(FootballAPICaller):
                 f['commentary'] = base.DEFAULT_COMMENTARY
                 logger.info('No commentary for %s-%s on date %s',
                             f['localteam_name'], f['visitorteam_name'], dt.date.today())
-        return self._filter_by_competition(todays_fixtures, competitions)
+        return fixtures
 
     def _get_commentary_for_fixture(self, fixture_id):
         commentary_url = 'commentaries/{}?'.format(fixture_id)
@@ -73,6 +75,11 @@ class FootballAPI(FootballAPICaller):
             logger.info('AuthorisationError, default commentary used')
             commentary = base.DEFAULT_COMMENTARY
         return commentary
+
+    def _get_commentary_for_fixtures(self, fixtures):
+        urls = ['commentaries/{}?'.format(f['id']) for f in fixtures]
+        commentaries = self.batch_request(urls, correct_unicode=True)
+        return commentaries
 
     def _make_fixtures_db_ready(self, fixtures):
         db_ready_fixtures = [
