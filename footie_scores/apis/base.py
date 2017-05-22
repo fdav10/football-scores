@@ -9,7 +9,7 @@ import requests
 from footie_scores import db
 from footie_scores.utils.exceptions import *
 from footie_scores.utils.scheduling import batch_request
-from footie_scores.db.interface import save_fixture_dicts_to_db, save_competitions_to_db
+from footie_scores.db.interface import save_fixtures_to_db, save_competitions_to_db, save_lineups_to_db
 from footie_scores.utils.strings import correct_unicode_to_bin
 
 logger = logging.getLogger(__name__)
@@ -70,8 +70,11 @@ class FootballAPICaller(object):
 
     def todays_fixtures_to_db(self, competitions):
         fixtures = self._todays_fixtures(competitions)
+        fixture_ids = [f.api_fixture_id for f in fixtures]
+        lineups = self._get_commentary_for_fixtures(fixture_ids)
         with db.session_scope() as session:
-            save_fixture_dicts_to_db(session, fixtures)
+            save_fixtures_to_db(session, fixtures)
+            save_lineups_to_db(session, lineups)
 
     def competitions_to_db(self):
         competitions = self.get_competitions()
@@ -105,7 +108,7 @@ class FootballAPICaller(object):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 
-    def _get_commentary_for_fixture(self, *args):
+    def _get_commentary_for_fixtures(self, *args):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 

@@ -5,7 +5,7 @@ import logging
 import datetime as dt
 
 from footie_scores import settings
-from footie_scores.db.schema import Fixture
+from footie_scores.db.schema import Fixture, Lineups
 from footie_scores.apis import base
 from footie_scores.utils.log import start_logging
 from footie_scores.apis.base import FootballAPICaller
@@ -51,35 +51,29 @@ class FootballAPI(FootballAPICaller):
         all_fixtures = self.request(fixtures_url)
         logger.info(
             'Fixtures for all competitions on date %s retrieved', dt.date.today())
-
         fixtures = self._filter_by_competition(all_fixtures, competitions)
-        # commentaries = self._get_commentary_for_fixtures(fixtures)
-        for f in fixtures:
-            try:
-                # TODO save these to db as they're retrieved
-                f['commentary'] = self._get_commentary_for_fixture(f['id'])
-            except (NoCommentaryAvailable, AuthorisationError):
-                f['commentary'] = base.DEFAULT_COMMENTARY
-                logger.info('No commentary for %s-%s on date %s',
-                            f['localteam_name'], f['visitorteam_name'], dt.date.today())
         return fixtures
+        # commentaries = self._get_commentary_for_fixtures(fixtures)
+        # for f in fixtures:
+        #     try:
+        #         # TODO save these to db as they're retrieved
+        #         f['commentary'] = self._get_commentary_for_fixture(f['id'])
+        #     except (NoCommentaryAvailable, AuthorisationError):
+        #         f['commentary'] = base.DEFAULT_COMMENTARY
+        #         logger.info('No commentary for %s-%s on date %s',
+        #                     f['localteam_name'], f['visitorteam_name'], dt.date.today())
 
-    def _get_commentary_for_fixture(self, fixture_id):
-        commentary_url = 'commentaries/{}?'.format(fixture_id)
-        try:
-            commentary = self.request(commentary_url, correct_unicode=True)
-            logger.info(
-                'Commentary for fixture with id %s retrieved', fixture_id)
-        except AuthorisationError:
-            # TODO better error handling for random authorisation errors
-            logger.info('AuthorisationError, default commentary used')
-            commentary = base.DEFAULT_COMMENTARY
-        return commentary
-
-    def _get_commentary_for_fixtures(self, fixtures):
-        urls = ['commentaries/{}?'.format(f['id']) for f in fixtures]
-        commentaries = self.batch_request(urls, correct_unicode=True)
-        return commentaries
+    # def _get_commentary_for_fixture(self, fixture_id):
+    #     commentary_url = 'commentaries/{}?'.format(fixture_id)
+    #     try:
+    #         commentary = self.request(commentary_url, correct_unicode=True)
+    #         logger.info(
+    #             'Commentary for fixture with id %s retrieved', fixture_id)
+    #     except AuthorisationError:
+    #         # TODO better error handling for random authorisation errors
+    #         logger.info('AuthorisationError, default commentary used')
+    #         commentary = base.DEFAULT_COMMENTARY
+    #     return commentary
 
     def _make_fixtures_db_ready(self, fixtures):
         db_ready_fixtures = [
@@ -91,10 +85,22 @@ class FootballAPI(FootballAPICaller):
                 self._format_fixture_score(f),
                 self._make_date_db_ready(f['formatted_date']),
                 self._format_fixture_time(f, dt_object=True),
-                self._get_lineup_from_commentary(f['commentary']),
+                # self._get_lineup_from_commentary(f['commentary']),
                 self._make_events_db_ready(f),
             ) for f in fixtures]
         return db_ready_fixtures
+
+    def _get_commentary_for_fixtures(self, fixture_ids):
+        urls = ['commentaries/{}?'.format(id_) for id_ in fixture_ids]
+        commentaries = self.batch_request(urls, correct_unicode=True)
+        return [self._make_commentary_db_ready(c) for c in commentaries]
+
+    def _make_commentary_db_ready(self, commentary):
+        return Lineups(
+            commentary['match_id'],
+            {'home': commentary['lineup']['localteam'],
+             'away': commentary['lineup']['visitorteam']}
+        )
 
     def _make_events_db_ready(self, fixture):
         events = fixture['events']

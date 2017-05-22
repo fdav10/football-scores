@@ -48,6 +48,32 @@ class Competition(Base):
             self.region, self.name, self.api_id, self.id)
 
 
+class Lineups(Base):
+    # TODO make name singular
+    __tablename__ = 'lineups'
+
+    id = sqla.Column(sqla.Integer, primary_key=True)
+    api_fixture_id = sqla.Column(sqla.String)
+    home = sqla.Column(_JsonEncodedDict)
+    away = sqla.Column(_JsonEncodedDict)
+
+    fixture_id = sqla.Column(sqla.Integer, sqla.ForeignKey('fixtures.id'))
+    fixture = sqla.orm.relationship('Fixture', back_populates='lineups')
+
+    def __init__(self, api_fixture_id, lineups):
+        self.api_fixture_id = api_fixture_id
+        self.lineups = lineups
+
+    def update_from_equivalent(self, equivalent):
+        # TODO - repetition, make base class I guess
+        keys_to_update = ('lineups',)
+        for key in keys_to_update:
+            setattr(self, key, getattr(equivalent, key))
+
+    def __repr__(self):
+        return None
+
+
 class Fixture(Base):
     # TODO lineups, players, events can be stored as own table
     __tablename__ = 'fixtures'
@@ -59,26 +85,27 @@ class Fixture(Base):
     team_away = sqla.Column(sqla.String)
     score = sqla.Column(sqla.String)
     comp_api_id = sqla.Column(sqla.String)
-    match_id = sqla.Column(sqla.String)
+    api_fixture_id = sqla.Column(sqla.String)
     events = sqla.Column(_JsonEncodedDict)
-    lineups = sqla.Column(_JsonEncodedDict)
+
+    lineups = sqla.orm.relationship('Lineups', uselist=False, back_populates='fixture')
+
     competition_id = sqla.Column(sqla.Integer, sqla.ForeignKey('competitions.id'))
     competition = sqla.orm.relationship(
         'Competition',
         back_populates='fixtures')
 
     def __init__(
-            self, team_home, team_away, comp_api_id, match_id,
-            score, date, time, lineups, events=None):
+            self, team_home, team_away, comp_api_id, api_fixture_id,
+            score, date, time, events=None):
 
         self.team_home = team_home
         self.team_away = team_away
         self.comp_api_id = comp_api_id
-        self.match_id = match_id
+        self.api_fixture_id = api_fixture_id
         self.score = score
         self.date = date
         self.time = time
-        self.lineups = lineups
         if events:
             self.events = events
 
