@@ -53,27 +53,6 @@ class FootballAPI(FootballAPICaller):
             'Fixtures for all competitions on date %s retrieved', dt.date.today())
         fixtures = self._filter_by_competition(all_fixtures, competitions)
         return fixtures
-        # commentaries = self._get_commentary_for_fixtures(fixtures)
-        # for f in fixtures:
-        #     try:
-        #         # TODO save these to db as they're retrieved
-        #         f['commentary'] = self._get_commentary_for_fixture(f['id'])
-        #     except (NoCommentaryAvailable, AuthorisationError):
-        #         f['commentary'] = base.DEFAULT_COMMENTARY
-        #         logger.info('No commentary for %s-%s on date %s',
-        #                     f['localteam_name'], f['visitorteam_name'], dt.date.today())
-
-    # def _get_commentary_for_fixture(self, fixture_id):
-    #     commentary_url = 'commentaries/{}?'.format(fixture_id)
-    #     try:
-    #         commentary = self.request(commentary_url, correct_unicode=True)
-    #         logger.info(
-    #             'Commentary for fixture with id %s retrieved', fixture_id)
-    #     except AuthorisationError:
-    #         # TODO better error handling for random authorisation errors
-    #         logger.info('AuthorisationError, default commentary used')
-    #         commentary = base.DEFAULT_COMMENTARY
-    #     return commentary
 
     def _make_fixtures_db_ready(self, fixtures):
         db_ready_fixtures = [
