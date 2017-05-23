@@ -89,7 +89,7 @@ class FootballAPICaller(object):
             "Implemented in child classes - base class should not be instantiated")
 
     def _todays_fixtures(self, competitions):
-        fixtures = self._get_fixtures_for_date(dt.date.today(), competitions)
+        fixtures = self._get_fixtures_for_date(dt.date.today() - dt.timedelta(days=1), competitions)
         return self._make_fixtures_db_ready(fixtures)
 
     def _make_date_db_ready(self, sdate):

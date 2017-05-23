@@ -98,8 +98,8 @@ class FootballAPI(FootballAPICaller):
     def _make_commentary_db_ready(self, commentary):
         return Lineups(
             commentary['match_id'],
-            {'home': commentary['lineup']['localteam'],
-             'away': commentary['lineup']['visitorteam']}
+            commentary['lineup']['localteam'],
+            commentary['lineup']['visitorteam']
         )
 
     def _make_events_db_ready(self, fixture):

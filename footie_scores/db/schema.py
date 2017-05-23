@@ -28,6 +28,19 @@ class _JsonEncodedDict(sqla.TypeDecorator):
 
 #     fixture = relationship('Fixture', back_populates='events')
 
+class Updatable():
+    def __init__(self):
+        self.atts_to_update = []
+
+    def update_from_equivalent(self, equivalent):
+        try:
+            for name in self.atts_to_update:
+                setattr(self, name, getattr(equivalent, name))
+        except:
+            import traceback; traceback.print_exc();
+            import ipdb; ipdb.set_trace()
+
+
 class Competition(Base):
     __tablename__ = 'competitions'
 
@@ -47,8 +60,7 @@ class Competition(Base):
         return "<Competition(%s %s (api id %s) (db id %s))>" %(
             self.region, self.name, self.api_id, self.id)
 
-
-class Lineups(Base):
+class Lineups(Base, Updatable):
     # TODO make name singular
     __tablename__ = 'lineups'
 
@@ -60,21 +72,18 @@ class Lineups(Base):
     fixture_id = sqla.Column(sqla.Integer, sqla.ForeignKey('fixtures.id'))
     fixture = sqla.orm.relationship('Fixture', back_populates='lineups')
 
-    def __init__(self, api_fixture_id, lineups):
-        self.api_fixture_id = api_fixture_id
-        self.lineups = lineups
+    atts_to_update = ('home', 'away')
 
-    def update_from_equivalent(self, equivalent):
-        # TODO - repetition, make base class I guess
-        keys_to_update = ('lineups',)
-        for key in keys_to_update:
-            setattr(self, key, getattr(equivalent, key))
+    def __init__(self, api_fixture_id, home_lineup, away_lineup):
+        self.api_fixture_id = api_fixture_id
+        self.home = home_lineup
+        self.away = away_lineup
 
     def __repr__(self):
-        return None
+        return "<Lineups(for match id %s)>" %self.api_fixture_id
 
 
-class Fixture(Base):
+class Fixture(Base, Updatable):
     # TODO lineups, players, events can be stored as own table
     __tablename__ = 'fixtures'
 
@@ -95,6 +104,8 @@ class Fixture(Base):
         'Competition',
         back_populates='fixtures')
 
+    atts_to_update = ('score', 'events', 'lineups')
+
     def __init__(
             self, team_home, team_away, comp_api_id, api_fixture_id,
             score, date, time, events=None):
@@ -112,14 +123,10 @@ class Fixture(Base):
         self.date_format = db.date_format
         self.time_format = db.time_format
 
+
     def __repr__(self):
         return "<Fixture(%s vs %s on %s at %s)>" %(
             self.team_home, self.team_away, self.date, self.time)
-
-    def update_from_equivalent(self, equivalent):
-        keys_to_update = ('score', 'events', 'lineups')
-        for key in keys_to_update:
-            setattr(self, key, getattr(equivalent, key))
 
 
 def create_tables_if_not_present():

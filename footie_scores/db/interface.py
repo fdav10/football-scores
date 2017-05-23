@@ -32,7 +32,7 @@ def save_fixture_to_db(session, fixture):
         session.add(fixture)
         logger.info('%s added to db', fixture.api_fixture_id)
     else:
-        db_fixture = fq.filter(Fixture.match_id == fixture.match_id).first()
+        db_fixture = fq.filter(Fixture.api_fixture_id == fixture.api_fixture_id).first()
         db_fixture.update_from_equivalent(fixture)
         logger.info('%s updated in db', db_fixture)
 
@@ -48,7 +48,7 @@ def save_lineups_to_db(session, lineups):
     fq = session.query(Fixture)
     lq = session.query(Lineups)
     for lineup in lineups:
-        if not row_exists(session, Lineups, Lineups.fixture_id, lineup.api_fixture_id):
+        if not row_exists(session, Lineups, Lineups.api_fixture_id, lineup.api_fixture_id):
             lineup.fixture = fq.filter(Fixture.api_fixture_id.is_(lineup.api_fixture_id)).one()
             session.add(lineup)
             logger.info('%s added to db', lineup.api_fixture_id)
@@ -64,8 +64,13 @@ def get_competitions(session):
 
 
 def get_fixture_by_id(session, id_):
-    fixture = session.query(Fixture).filter_by(match_id=id_).one()
+    fixture = session.query(Fixture).filter_by(api_fixture_id=id_).one()
     return fixture
+
+
+def get_lineups_by_id(session, id_):
+    lineups = session.query(Lineups).filter_by(api_fixture_id=id_).one()
+    return lineups
 
 
 def get_fixtures_by_date(session, date_, comp_ids=settings.COMPS):

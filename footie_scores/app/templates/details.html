@@ -20,16 +20,16 @@
 	    <p>{{fixture.team_away}}</p>
 	  </div>
 	  <div class="events">
-	    {% if fixture.lineups.home %}
+	    {% if lineups.home %}
 	    <div class="home_events">
-	      {% for player in fixture.lineups.home %}
+	      {% for player in lineups.home %}
 	      <p>{{player.number}} {{player.name}}</p>
 	      {% endfor %}
 	    </div>
 	    {% endif %}
-	    {% if fixture.lineups.away %}
+	    {% if lineups.away %}
 	    <div class="away_events">
-	      {% for player in fixture.lineups.away %}
+	      {% for player in lineups.away %}
 	      <p>{{player.number}} {{player.name}}</p>
 	      {% endfor %}
 	    </div>

@@ -29,7 +29,8 @@ def todays_fixtures():
     with db.session_scope() as session:
         comps = page_comps_only(queries.get_competitions(session))
         comp_ids = [c.api_id for c in comps]
-        fixtures = queries.get_fixtures_by_date(session, TODAY, comp_ids)
+        # fixtures = queries.get_fixtures_by_date(session, TODAY, comp_ids)
+        fixtures = queries.get_fixtures_by_date(session, YESTERDAY, comp_ids)
         todays_games = games_template(fixtures, dt.date.today())
     return todays_games
 
@@ -38,7 +39,8 @@ def todays_fixtures():
 def match_details(fixture_id):
     with db.session_scope() as session:
         fixture = queries.get_fixture_by_id(session, fixture_id)
-        template = details_template(fixture)
+        lineups = queries.get_lineups_by_id(session, fixture_id)
+        template = details_template(fixture, lineups)
     return template 
 
 
@@ -50,10 +52,11 @@ def games_template(competitions, date_):
     )
 
 
-def details_template(fixture):
+def details_template(fixture, lineups):
     return render_template(
         'details.html',
         fixture=fixture,
+        lineups=lineups,
     )
 
 
