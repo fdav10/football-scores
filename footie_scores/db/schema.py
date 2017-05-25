@@ -33,12 +33,8 @@ class Updatable():
         self.atts_to_update = []
 
     def update_from_equivalent(self, equivalent):
-        try:
-            for name in self.atts_to_update:
-                setattr(self, name, getattr(equivalent, name))
-        except:
-            import traceback; traceback.print_exc();
-            import ipdb; ipdb.set_trace()
+        for name in self.atts_to_update:
+            setattr(self, name, getattr(equivalent, name))
 
 
 class Competition(Base):
