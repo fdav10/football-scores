@@ -9,7 +9,7 @@ import requests
 from footie_scores import db
 from footie_scores.utils.exceptions import *
 from footie_scores.utils.scheduling import batch_request
-from footie_scores.db.interface import save_fixtures_to_db, save_competitions_to_db, save_lineups_to_db
+from footie_scores.db.queries import save_fixtures_to_db, save_competitions_to_db, save_lineups_to_db
 from footie_scores.utils.strings import correct_unicode_to_bin
 
 logger = logging.getLogger(__name__)
