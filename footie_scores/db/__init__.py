@@ -4,14 +4,15 @@ from contextlib import contextmanager
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from footie_scores import settings
 
 logger = logging.getLogger(__name__)
 
-engine = create_engine('sqlite:///footie_scores/db/fs.db', echo=True)
+engine = create_engine('sqlite:///footie_scores/db/fs.db', echo=settings.SQLA_ECHO)
 Session = sessionmaker(bind=engine)
 
-date_format = '%d.%m.%Y'
-time_format = '%H:%M'
+# date_format = '%d.%m.%Y'
+# time_format = '%H:%M'
 
 
 @contextmanager

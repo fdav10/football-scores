@@ -14,7 +14,12 @@ Base = declarative_base()
 def row_exists(session, row_class, id_, value):
     # TODO this isn't in any way self-explanatory
     session_query = session.query(row_class, id_)
-    occurences = session_query.filter(id_==value).count()
+    try:
+        occurences = session_query.filter(id_==value).count()
+    except:
+        import traceback; traceback.print_exc();
+        import ipdb; ipdb.set_trace()
+
     logger.info('%s occurences of %s with id %s', occurences, id_, value)
     return occurences > 0
 
@@ -73,7 +78,13 @@ def get_lineups_by_id(session, id_):
     return lineups
 
 
-def get_fixtures_by_date(session, date_, comp_ids=settings.COMPS):
+def get_fixtures_by_date(session, date_):
+    fq = session.query(Fixture)
+    fixtures = fq.filter(Fixture.date==date_).all()
+    return fixtures
+
+
+def get_comp_grouped_fixtures_for_date(session, date_, comp_ids=settings.COMPS):
     cq = session.query(Competition)
     cfq = session.query(Fixture).join(Competition)
     fixtures_by_comp = []

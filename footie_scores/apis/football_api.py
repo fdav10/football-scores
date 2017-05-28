@@ -64,17 +64,17 @@ class FootballAPI(FootballAPICaller):
                 self._format_fixture_score(f),
                 self._make_date_db_ready(f['formatted_date']),
                 self._format_fixture_time(f, dt_object=True),
-                # self._get_lineup_from_commentary(f['commentary']),
+                f['status'],
                 self._make_events_db_ready(f),
             ) for f in fixtures]
         return db_ready_fixtures
 
-    def _get_commentary_for_fixtures(self, fixture_ids):
+    def _get_lineups_for_fixtures(self, fixture_ids):
         urls = ['commentaries/{}?'.format(id_) for id_ in fixture_ids]
         commentaries = self.batch_request(urls, correct_unicode=True)
-        return [self._make_commentary_db_ready(c) for c in commentaries]
+        return [self._make_lineups_db_ready(c) for c in commentaries]
 
-    def _make_commentary_db_ready(self, commentary):
+    def _make_lineups_db_ready(self, commentary):
         return Lineups(
             commentary['match_id'],
             commentary['lineup']['localteam'],
@@ -93,15 +93,6 @@ class FootballAPI(FootballAPICaller):
                 else:
                     e['time'] = e['minute']
         return {'home': h_events, 'away': a_events}
-
-    def _get_lineup_from_commentary(self, commentary):
-        try:
-            return {'home': commentary['lineup']['localteam'],
-                    'away': commentary['lineup']['visitorteam']}
-        except KeyError:
-            # attempt to catch elusive KeyError
-            import traceback; traceback.print_exc();
-            import ipdb; ipdb.set_trace()
 
     def _format_fixture_score(self, fixture):
         home_score = fixture['localteam_score']

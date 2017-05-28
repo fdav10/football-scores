@@ -7,6 +7,7 @@ import datetime as dt
 import requests
 
 from footie_scores import db
+from footie_scores import settings
 from footie_scores.utils.exceptions import *
 from footie_scores.utils.scheduling import batch_request
 from footie_scores.db.queries import save_fixtures_to_db, save_competitions_to_db, save_lineups_to_db
@@ -36,8 +37,8 @@ class FootballAPICaller(object):
         self.match_page_ready_map = None
         self.api_date_format = None
         self.api_time_format = None
-        self.db_date_format =  db.date_format
-        self.db_time_format = db.time_format
+        self.db_date_format =  settings.DB_DATEFORMAT
+        self.db_time_format = settings.DB_TIMEFORMAT
 
     def request(self, url, correct_unicode=False):
         logger.info('Making request to %s', self.base_url + url)
@@ -71,25 +72,22 @@ class FootballAPICaller(object):
     def todays_fixtures_to_db(self, competitions):
         fixtures = self._todays_fixtures(competitions)
         fixture_ids = [f.api_fixture_id for f in fixtures]
-        lineups = self._get_commentary_for_fixtures(fixture_ids)
+        # lineups = self._get_lineups_for_fixtures(fixture_ids)
         with db.session_scope() as session:
             save_fixtures_to_db(session, fixtures)
-            save_lineups_to_db(session, lineups)
+            # save_lineups_to_db(session, lineups)
 
     def competitions_to_db(self):
         competitions = self.get_competitions()
         with db.session_scope() as session:
             save_competitions_to_db(session, competitions)
 
-    def page_ready_fixture_details(self, fixture_id):
-        return self._get_commentary_for_fixture(fixture_id)
-
     def get_competitions(self):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 
     def _todays_fixtures(self, competitions):
-        fixtures = self._get_fixtures_for_date(dt.date.today() - dt.timedelta(days=1), competitions)
+        fixtures = self._get_fixtures_for_date(dt.date.today(), competitions)
         return self._make_fixtures_db_ready(fixtures)
 
     def _make_date_db_ready(self, sdate):
@@ -108,7 +106,7 @@ class FootballAPICaller(object):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 
-    def _get_commentary_for_fixtures(self, *args):
+    def _get_lineups_for_fixtures(self, *args):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 
