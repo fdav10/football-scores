@@ -24,14 +24,6 @@ class _JsonEncodedDict(sqla.TypeDecorator):
         return json.loads(value)
 
 
-# class FixtureEvents(Base):
-#     __tablename__ = 'events'
-
-#     id = sqla.Column(sqla.Integer, primary_key=True)
-#     fixture_id = sqla.Column(sqla.String, sqla.ForeignKey('fixtures.id'))
-
-#     fixture = relationship('Fixture', back_populates='events')
-
 class Updatable():
     def __init__(self):
         self.atts_to_update = []
@@ -105,7 +97,7 @@ class Fixture(Base, Updatable):
         'Competition',
         back_populates='fixtures')
 
-    atts_to_update = ('score', 'events', 'lineups', 'status')
+    atts_to_update = ('score', 'events', 'status')
     date_format = settings.DB_DATEFORMAT
     time_format = settings.DB_DATEFORMAT
     datetime_format = settings.DB_DATETIMEFORMAT

@@ -63,7 +63,7 @@ class FootballAPI(FootballAPICaller):
                 f['id'],
                 self._format_fixture_score(f),
                 self._make_date_db_ready(f['formatted_date']),
-                self._format_fixture_time(f, dt_object=True),
+                self._format_fixture_time(f['time']),
                 f['status'],
                 self._make_events_db_ready(f),
             ) for f in fixtures]
@@ -98,12 +98,12 @@ class FootballAPI(FootballAPICaller):
         home_score = fixture['localteam_score']
         away_score = fixture['visitorteam_score']
         if home_score == '?' and away_score == '?':
-            score = self._format_fixture_time(fixture)
+            score = self._format_fixture_time(fixture['time'])
         else:
             score = '{} - {}'.format(home_score, away_score)
         return score
 
-    def _format_fixture_time(self, fixture, dt_object=False):
+    def _format_fixture_time(self, fixture_time):
         ''' API returns dates in UTC timezone so convert to local timezone (i.e UK).
 
         Date seems to need to be involved otherwise there's a bug (?)
@@ -111,7 +111,7 @@ class FootballAPI(FootballAPICaller):
         hours.
         '''
         formatted_time = naive_utc_to_uk_tz(
-            fixture['time'],
+            fixture_time,
             self.api_time_format,
             self.db_time_format)
         return self._make_time_db_ready(formatted_time)
