@@ -61,3 +61,6 @@ def details_template(fixture, lineups):
 def page_comps_only(competitions):
     to_keep = COMPS_FOR_PAGE
     return [comp for comp in competitions if comp.api_id in to_keep]
+
+	  # <!-- {% if fixture.lineups %} -->
+	  # <!-- {% endif} -->
