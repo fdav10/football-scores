@@ -38,9 +38,11 @@
 	  </div>
 	</div>
 	{% endif %}
+	{% if fixture.lineups %}
 	<div class="match details">
 	  <a href= {{ url_for('match_details', fixture_id=fixture.api_fixture_id) }} >match details</a>
 	</div>
+	{% endif %}
       </div>
       {% endfor %}
     </div>
