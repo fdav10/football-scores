@@ -14,11 +14,7 @@ Base = declarative_base()
 def row_exists(session, row_class, id_, value):
     # TODO this isn't in any way self-explanatory
     session_query = session.query(row_class, id_)
-    try:
-        occurences = session_query.filter(id_==value).count()
-    except:
-        import traceback; traceback.print_exc();
-        import ipdb; ipdb.set_trace()
+    occurences = session_query.filter(id_==value).count()
 
     logger.info('%s occurences of %s with id %s', occurences, id_, value)
     return occurences > 0

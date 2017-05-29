@@ -37,7 +37,8 @@ def todays_fixtures():
 def match_details(fixture_id):
     with db.session_scope() as session:
         fixture = queries.get_fixture_by_id(session, fixture_id)
-        lineups = queries.get_lineups_by_id(session, fixture_id)
+        # lineups = queries.get_lineups_by_id(session, fixture_id)
+        lineups = fixture.lineups
         template = details_template(fixture, lineups)
     return template 
 
@@ -61,6 +62,3 @@ def details_template(fixture, lineups):
 def page_comps_only(competitions):
     to_keep = COMPS_FOR_PAGE
     return [comp for comp in competitions if comp.api_id in to_keep]
-
-	  # <!-- {% if fixture.lineups %} -->
-	  # <!-- {% endif} -->

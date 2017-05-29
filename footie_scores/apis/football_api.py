@@ -38,11 +38,6 @@ class FootballAPI(FootballAPICaller):
         competitions_url = 'competitions?'
         response = self.request(competitions_url)
         logger.info('Competitions retrieved from football-api API')
-        try:
-            assert self._is_valid_response(response), 'Competition lookup failed'
-        except:
-            import traceback; traceback.print_exc();
-            import ipdb; ipdb.set_trace()
         return response
 
     def _get_fixtures_for_date(self, date_=TODAY, competitions=settings.COMPS):
@@ -132,9 +127,6 @@ class FootballAPI(FootballAPICaller):
                 raise NoFixturesToday()
             elif 'We did not find commentaries' in response['message']:
                 raise NoCommentaryAvailable()
-            else:
-                import ipdb; ipdb.set_trace()
-                return False
         except (AssertionError, KeyError):
             return True
 

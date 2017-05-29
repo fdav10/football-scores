@@ -37,9 +37,14 @@ def main():
 
 def update_fixtures_lineups(session, fixtures):
     needs_lineups = [f for f in fixtures if not f.has_lineups()]
-    logger.info('%d fixtures do not have lineups:\n%s', len(needs_lineups), needs_lineups)
+    logger.info('%d fixtures kicking off soon do not have lineups:\n%s', len(needs_lineups), needs_lineups)
     fixture_ids = [f.api_fixture_id for f in needs_lineups]
     FootballAPI().fixture_lineups_to_db(session, fixture_ids)
+
+
+def time_to_next_kickoff(fixtures):
+    times_to_kickoff = [f.time_to_kickoff for f in fixtures]
+    return sorted(times_to_kickoff)[0]
 
 
 class FixturesUpdater():
@@ -73,49 +78,53 @@ class IdleState():
         with db.session_scope() as session:
             fixtures = db.queries.get_fixtures_by_date(session, utils.time.today())
             future_fixtures = [f for f in fixtures if f.status != 'FT']
-            times_to_kickoff = [f.time_to_kickoff for f in future_fixtures]
-            log_list(fixtures, intro='Todays fixtures:')
-
-        if not times_to_kickoff:
-            logger.info('No games today, sleeping for 3 hours')
-            time.sleep(settings.NO_GAMES_SLEEP)
-            return IdleState()
-        else:
-            time_to_next_game = sorted(times_to_kickoff)[0]
-
-        if time_to_next_game < settings.PRE_GAME_ACTIVE_PERIOD:
-            return ActiveState()
-        elif time_to_next_game < settings.PRE_GAME_PREP_PERIOD:
-            return PreparationState()
-        else:
-            sleeptime = time_to_next_game - settings.PRE_GAME_PREP_PERIOD
-            log_time_util_next_fixture(time_to_next_game, sleeptime)
-            time.sleep(sleeptime)
-            return PreparationState()
+            if not future_fixtures:
+                logger.info('No games today, sleeping for 3 hours')
+                time.sleep(settings.NO_GAMES_SLEEP)
+                return IdleState()
+            else:
+                log_list(fixtures, intro='Todays fixtures:')
+                time_to_next_game = time_to_next_kickoff(future_fixtures)
+                if time_to_next_game < settings.PRE_GAME_ACTIVE_PERIOD:
+                    return ActiveState()
+                elif time_to_next_game < settings.PRE_GAME_PREP_PERIOD:
+                    return PreparationState()
+                else:
+                    sleeptime = time_to_next_game - settings.PRE_GAME_PREP_PERIOD
+                    log_time_util_next_fixture(time_to_next_game, sleeptime)
+                    time.sleep(sleeptime)
+                    return PreparationState()
 
 
 class PreparationState():
     ''' Try and get lineups in the period leading up to kick-offs '''
     def __init__(self):
-        self.api = FootballAPI()
         logger.info('Entered preparation state')
         self.run()
 
     def run(self):
+        active_fixtures = False
         with db.session_scope() as session:
-            with db.session_scope() as session:
-                fixtures = refresh_and_get_todays_fixtures(session)
-                fixtures_soon = [f for f in fixtures if 0 < f.time_to_kickoff < 3600]
-                update_fixtures_lineups(session, [f for f in fixtures_soon])
-        logger.info('Prep state pausing for %d seconds', settings.PREP_STATE_PAUSE)
-        time.sleep(settings.PREP_STATE_PAUSE)
-        return IdleState()
+            fixtures = refresh_and_get_todays_fixtures(session)
+            while not active_fixtures:
+                active_fixtures = [f for f in fixtures if f.is_active()]
+                fixtures_soon = [f for f in fixtures if 0 < f.time_to_kickoff < settings.PRE_GAME_PREP_PERIOD]
+                needs_lineups = [f for f in fixtures_soon if not f.has_lineups()]
+                if not needs_lineups:
+                    time_to_next_game = time_to_next_kickoff(fixtures_soon)
+                    log_time_util_next_fixture(time_to_next_game, time_to_next_game)
+                    time.sleep(time_to_next_game)
+                    return ActiveState()
+                else:
+                    update_fixtures_lineups(session, needs_lineups)
+                    logger.info('Prep state pausing for %d seconds', settings.PREP_STATE_PAUSE)
+                    time.sleep(settings.PREP_STATE_PAUSE)
+        return ActiveState()
 
 
 class ActiveState():
     ''' Update fixture scores periodically when games are ongoing'''
     def __init__(self):
-        self.api = FootballAPI()
         logger.info('Entered active state')
         self.run()
 
@@ -125,7 +134,9 @@ class ActiveState():
             with db.session_scope() as session:
                 fixtures = refresh_and_get_todays_fixtures(session)
                 active_fixtures = [f for f in fixtures if f.is_active()]
-                update_fixtures_lineups(session, active_fixtures)
+                needs_lineups = [f for f in active_fixtures if not f.has_lineups()]
+                if needs_lineups:
+                    update_fixtures_lineups(session, needs_lineups)
             logger.info('Active state pausing for %d seconds', settings.ACTIVE_STATE_PAUSE)
             time.sleep(settings.ACTIVE_STATE_PAUSE)
         return IdleState()

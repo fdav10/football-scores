@@ -41,9 +41,7 @@ class FootballAPICaller(object):
         return self._process_responses((raw_response,), correct_unicode)[0]
 
     def batch_request(self, urls, correct_unicode=False):
-        logger.info('Making batch request to:')
-        for url in urls:
-            logger.info('\t%s', url)
+        utils.log.log_list(urls, 'Making batch request to:')
         urls = [self.base_url + url + self.url_suffix for url in urls]
         responses = batch_request(urls)
         return self._process_responses(responses, correct_unicode)

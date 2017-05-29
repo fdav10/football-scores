@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 ''' Runs the web app '''
 
 from multiprocessing import Process
@@ -18,7 +20,7 @@ def main():
 
 def start_web_app():
     start_logging()
-    app.run(kwargs={'debug': settings.FLASK_DEBUG})
+    app.run(debug=settings.FLASK_DEBUG)
 
 
 def start_api_caller():
@@ -28,4 +30,6 @@ def start_api_caller():
 
 if __name__ == '__main__':
     start_logging()
+    # start_web_app()
+    # start_api_caller()
     main()

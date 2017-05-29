@@ -16,10 +16,11 @@ def start_logging():
 
 
 def log_list(list_, intro=None):
-    if intro:
-        logger.info(intro)
-    for i in list_:
-        logger.info(i)
+    if list_:
+        if intro:
+            logger.info(intro)
+        for i in list_:
+            logger.info(i)
 
 def log_time_util_next_fixture(tdelta, sleeptime):
     logger.info('Next game in: %s', chop_microseconds(dt.timedelta(seconds=tdelta)))
