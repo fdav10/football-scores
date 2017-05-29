@@ -11,9 +11,6 @@ logger = logging.getLogger(__name__)
 engine = create_engine('sqlite:///footie_scores/db/fs.db', echo=settings.SQLA_ECHO)
 Session = sessionmaker(bind=engine)
 
-# date_format = '%d.%m.%Y'
-# time_format = '%H:%M'
-
 
 @contextmanager
 def session_scope():

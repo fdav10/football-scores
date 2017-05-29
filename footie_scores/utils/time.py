@@ -42,21 +42,3 @@ def naive_utc_to_uk_tz(stime, time_format, desired_time_format='%H:%M'):
     local_tz = pytz.timezone('Europe/London')
     local_time = utc_time.astimezone(local_tz)
     return local_time.strftime(desired_time_format)
-
-
-# def time_from_now(minutes):
-#     return now() + timedelta(minutes=minutes)
-
-
-# def stime_from_now(minutes, time_format=TIME_FORMAT):
-#     return time_from_now(minutes).strftime(time_format)
-
-
-# def json_expiry_as_datime(json_data, time_format=TIME_FORMAT):
-#     return datetime.strptime(json_data['expiry_time'], time_format)
-
-
-# def time_elapsed_from(from_time):
-#     return from_time - datetime.now()
-
-
