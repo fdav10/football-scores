@@ -9,6 +9,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from footie_scores import db, settings, utils
 
 
+TIME_OVERRIDE = settings.OVERRIDE_DAY or settings.OVERRIDE_TIME
 logger = logging.getLogger(__name__)
 Base = declarative_base()
 
@@ -132,7 +133,10 @@ class Fixture(Base, Updatable):
 
     def is_active(self):
         timer_re = re.compile('\d+$')
-        return self.status in ('HT', 'Pen', 'ET') or timer_re.match(self.status)
+        if TIME_OVERRIDE:
+            return self.status in ('HT', 'Pen', 'ET', 'FT') or timer_re.match(self.status)
+        else:
+            return self.status in ('HT', 'Pen', 'ET') or timer_re.match(self.status)
 
     def has_lineups(self):
         return self.lineups is not None
