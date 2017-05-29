@@ -120,8 +120,8 @@ class Fixture(Base, Updatable):
 
 
     def __repr__(self):
-        return "<Fixture(%s vs %s on %s at %s)>" %(
-            self.team_home, self.team_away, self.date, self.time)
+        return "<Fixture(%s vs %s on %s at %s id %s)>" %(
+            self.team_home, self.team_away, self.date, self.time, self.api_fixture_id)
 
     def is_active(self):
         timer_re = re.compile('\d+$')

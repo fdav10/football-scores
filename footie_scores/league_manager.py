@@ -7,7 +7,7 @@ import logging
 import datetime as dt
 
 from footie_scores import db, settings, utils
-from footie_scores.utils.log import start_logging
+from footie_scores.utils.log import start_logging, log_list, log_time_util_next_fixture
 from footie_scores.apis.football_api import FootballAPI
 from footie_scores.utils.scheduling import schedule_action
 
@@ -64,7 +64,7 @@ class StartupState():
 
 
 class IdleState():
-    ''' Check when next game kicks off and sleep until close to then '''
+    ''' Check when next game kicks off and sleep until closer to then '''
     def __init__(self):
         logger.info('Entered idle state')
         self.run()
@@ -74,15 +74,24 @@ class IdleState():
             fixtures = db.queries.get_fixtures_by_date(session, utils.time.today())
             future_fixtures = [f for f in fixtures if f.status != 'FT']
             times_to_kickoff = [f.time_to_kickoff for f in future_fixtures]
-        time_to_next_game = sorted(times_to_kickoff)[0]
-        if time_to_next_game < 600:
+            log_list(fixtures, intro='Todays fixtures:')
+
+        if not times_to_kickoff:
+            logger.info('No games today, sleeping for 3 hours')
+            time.sleep(settings.NO_GAMES_SLEEP)
+            return IdleState()
+        else:
+            time_to_next_game = sorted(times_to_kickoff)[0]
+
+        if time_to_next_game < settings.PRE_GAME_ACTIVE_PERIOD:
             return ActiveState()
-        elif time_to_next_game < 3600:
+        elif time_to_next_game < settings.PRE_GAME_PREP_PERIOD:
             return PreparationState()
         else:
-            logger.info('Next game in %.1f minutes, waiting' %(time_to_next_game / 60))
-            time.sleep(time_to_next_game * 0.9)
-            return IdleState()
+            sleeptime = time_to_next_game - settings.PRE_GAME_PREP_PERIOD
+            log_time_util_next_fixture(time_to_next_game, sleeptime)
+            time.sleep(sleeptime)
+            return PreparationState()
 
 
 class PreparationState():

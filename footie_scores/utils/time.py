@@ -42,3 +42,6 @@ def naive_utc_to_uk_tz(stime, time_format, desired_time_format='%H:%M'):
     local_tz = pytz.timezone('Europe/London')
     local_time = utc_time.astimezone(local_tz)
     return local_time.strftime(desired_time_format)
+
+def chop_microseconds(tdelta):
+    return tdelta - dt.timedelta(microseconds=tdelta.microseconds)
