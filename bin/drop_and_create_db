@@ -2,6 +2,9 @@
 
 import logging
 
+from footie_scores import settings
+settings.SQLA_ECHO = True
+
 from footie_scores import league_manager
 from footie_scores.utils.log import start_logging
 from footie_scores.db.schema import create_tables_if_not_present, drop_tables
@@ -12,4 +15,3 @@ start_logging()
 drop_tables()
 create_tables_if_not_present()
 league_manager.save_competitions_to_db()
-league_manager.single_api_call()

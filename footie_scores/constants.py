@@ -1,3 +1,4 @@
+import datetime as dt
 
 '''
 Football-api competitions:

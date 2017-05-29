@@ -1,11 +1,15 @@
+import re
 import json
 import logging
+import datetime as dt
+
 import sqlalchemy as sqla
 from sqlalchemy.ext.declarative import declarative_base
 
-from footie_scores import db
+from footie_scores import db, settings, utils
 
 
+TIME_OVERRIDE = settings.OVERRIDE_DAY or settings.OVERRIDE_TIME
 logger = logging.getLogger(__name__)
 Base = declarative_base()
 
@@ -20,25 +24,13 @@ class _JsonEncodedDict(sqla.TypeDecorator):
         return json.loads(value)
 
 
-# class FixtureEvents(Base):
-#     __tablename__ = 'events'
-
-#     id = sqla.Column(sqla.Integer, primary_key=True)
-#     fixture_id = sqla.Column(sqla.String, sqla.ForeignKey('fixtures.id'))
-
-#     fixture = relationship('Fixture', back_populates='events')
-
 class Updatable():
     def __init__(self):
         self.atts_to_update = []
 
     def update_from_equivalent(self, equivalent):
-        try:
-            for name in self.atts_to_update:
-                setattr(self, name, getattr(equivalent, name))
-        except:
-            import traceback; traceback.print_exc();
-            import ipdb; ipdb.set_trace()
+        for name in self.atts_to_update:
+            setattr(self, name, getattr(equivalent, name))
 
 
 class Competition(Base):
@@ -96,6 +88,7 @@ class Fixture(Base, Updatable):
     comp_api_id = sqla.Column(sqla.String)
     api_fixture_id = sqla.Column(sqla.String)
     events = sqla.Column(_JsonEncodedDict)
+    status = sqla.Column(sqla.String)
 
     lineups = sqla.orm.relationship('Lineups', uselist=False, back_populates='fixture')
 
@@ -104,11 +97,14 @@ class Fixture(Base, Updatable):
         'Competition',
         back_populates='fixtures')
 
-    atts_to_update = ('score', 'events', 'lineups')
+    atts_to_update = ('score', 'events', 'status')
+    date_format = settings.DB_DATEFORMAT
+    time_format = settings.DB_DATEFORMAT
+    datetime_format = settings.DB_DATETIMEFORMAT
 
-    def __init__(
-            self, team_home, team_away, comp_api_id, api_fixture_id,
-            score, date, time, events=None):
+    def __init__(self, team_home, team_away, comp_api_id,
+                 api_fixture_id, score, date, time, status,
+                 events=None):
 
         self.team_home = team_home
         self.team_away = team_away
@@ -117,16 +113,31 @@ class Fixture(Base, Updatable):
         self.score = score
         self.date = date
         self.time = time
+        self.status = status
         if events:
             self.events = events
-
-        self.date_format = db.date_format
-        self.time_format = db.time_format
+        self.lineups = None
 
 
     def __repr__(self):
-        return "<Fixture(%s vs %s on %s at %s)>" %(
-            self.team_home, self.team_away, self.date, self.time)
+        return "<Fixture(%s vs %s on %s at %s id %s)>" %(
+            self.team_home, self.team_away, self.date, self.time, self.api_fixture_id)
+
+    def is_active(self):
+        timer_re = re.compile('\d+$')
+        if TIME_OVERRIDE:
+            return self.status in ('HT', 'Pen', 'ET', 'FT') or timer_re.match(self.status)
+        else:
+            return self.status in ('HT', 'Pen', 'ET') or timer_re.match(self.status)
+
+    def has_lineups(self):
+        return self.lineups is not None
+
+    @property
+    def time_to_kickoff(self):
+        kick_off_time = dt.datetime.strptime(self.date+'-'+self.time, self.datetime_format)
+        timedelta_to_kickoff = kick_off_time - utils.time.now()
+        return timedelta_to_kickoff.total_seconds()
 
 
 def create_tables_if_not_present():

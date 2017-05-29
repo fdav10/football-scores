@@ -14,7 +14,12 @@ Base = declarative_base()
 def row_exists(session, row_class, id_, value):
     # TODO this isn't in any way self-explanatory
     session_query = session.query(row_class, id_)
-    occurences = session_query.filter(id_==value).count()
+    try:
+        occurences = session_query.filter(id_==value).count()
+    except:
+        import traceback; traceback.print_exc();
+        import ipdb; ipdb.set_trace()
+
     logger.info('%s occurences of %s with id %s', occurences, id_, value)
     return occurences > 0
 
@@ -48,14 +53,18 @@ def save_lineups_to_db(session, lineups):
     fq = session.query(Fixture)
     lq = session.query(Lineups)
     for lineup in lineups:
-        if not row_exists(session, Lineups, Lineups.api_fixture_id, lineup.api_fixture_id):
-            lineup.fixture = fq.filter(Fixture.api_fixture_id.is_(lineup.api_fixture_id)).one()
-            session.add(lineup)
+        fixture = fq.filter(Fixture.api_fixture_id.is_(lineup.api_fixture_id)).one()
+        if fixture.lineups is None:
+            fixture.lineups = lineup
             logger.info('%s added to db', lineup.api_fixture_id)
+        # if not row_exists(session, Lineups, Lineups.api_fixture_id, lineup.api_fixture_id):
+            # lineup.fixture = fq.filter(Fixture.api_fixture_id.is_(lineup.api_fixture_id)).one()
+            # session.add(lineup)
         else:
-            db_lineup = lq.filter(Lineups.api_fixture_id == lineup.api_fixture_id).one()
-            db_lineup.update_from_equivalent(lineup)
-            logger.info('%s updated in db', db_lineup)
+            fixture.lineups.update_from_equivalent(lineup)
+            # db_lineup = lq.filter(Lineups.api_fixture_id == lineup.api_fixture_id).one()
+            # db_lineup.update_from_equivalent(lineup)
+            logger.info('%s updated in db', fixture.lineups)
 
 
 def get_competitions(session):
@@ -73,7 +82,15 @@ def get_lineups_by_id(session, id_):
     return lineups
 
 
-def get_fixtures_by_date(session, date_, comp_ids=settings.COMPS):
+def get_fixtures_by_date(session, dt_date):
+    date_ = dt_date.strftime(settings.DB_DATEFORMAT)
+    fq = session.query(Fixture)
+    fixtures = fq.filter(Fixture.date==date_).all()
+    return fixtures
+
+
+def get_comp_grouped_fixtures_for_date(session, dt_date, comp_ids=settings.COMPS):
+    date_ = dt_date.strftime(settings.DB_DATEFORMAT)
     cq = session.query(Competition)
     cfq = session.query(Fixture).join(Competition)
     fixtures_by_comp = []
@@ -83,3 +100,6 @@ def get_fixtures_by_date(session, date_, comp_ids=settings.COMPS):
         fixtures_by_comp.append({'name': competition.name,
                                  'fixtures': fixtures,})
     return fixtures_by_comp
+
+def fixture_has_lineups(session, fixture_id):
+    pass

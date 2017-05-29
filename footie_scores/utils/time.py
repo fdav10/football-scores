@@ -6,9 +6,27 @@ from datetime import datetime, timedelta
 
 import pytz
 
+from footie_scores.settings import OVERRIDE_TIME, OVERRIDE_DAY
+
 
 logger = logging.getLogger(__name__)
 TIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
+
+
+def today(override_day=OVERRIDE_DAY):
+    if override_day:
+        logger.warning("Override day %s passed to today() function", override_day)
+        return override_day
+    else:
+        return dt.date.today()
+
+
+def now(override_time=OVERRIDE_TIME):
+    if override_time:
+        logger.warning("Override time %s passed to now() function", override_time)
+        return dt.datetime.combine(today(), override_time)
+    else:
+        return dt.datetime.now()
 
 
 def datetime_string_make_aware(datetime_string, dt_format):
@@ -25,18 +43,5 @@ def naive_utc_to_uk_tz(stime, time_format, desired_time_format='%H:%M'):
     local_time = utc_time.astimezone(local_tz)
     return local_time.strftime(desired_time_format)
 
-
-def time_from_now(minutes):
-    return datetime.now() + timedelta(minutes=minutes)
-
-
-def stime_from_now(minutes, time_format=TIME_FORMAT):
-    return time_from_now(minutes).strftime(time_format)
-
-
-def json_expiry_as_datime(json_data, time_format=TIME_FORMAT):
-    return datetime.strptime(json_data['expiry_time'], time_format)
-
-
-def time_elapsed_from(from_time):
-    return from_time - datetime.now()
+def chop_microseconds(tdelta):
+    return tdelta - dt.timedelta(microseconds=tdelta.microseconds)

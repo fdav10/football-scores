@@ -4,17 +4,16 @@ import datetime as dt
 
 from flask import Flask, render_template, request
 
-from footie_scores import settings
+from footie_scores import db, settings, utils
 from footie_scores.utils.log import start_logging
-from footie_scores import db
-import footie_scores.db.interface as queries
+from footie_scores.db import queries
 import footie_scores.league_manager as api_interface
 
 
 app = Flask(__name__)
 WEBDATEFORMAT = "%A %d %B %y" # e.g. Sunday 16 April 2017
-TODAY = dt.date.strftime(dt.date.today(), db.date_format)
-YESTERDAY = dt.date.strftime(dt.date.today() - dt.timedelta(days=1), db.date_format)
+TODAY = dt.date.strftime(utils.time.today(), settings.DB_DATEFORMAT)
+TODAY = utils.time.today()
 COMPS_FOR_PAGE = settings.COMPS
 
 
@@ -29,9 +28,8 @@ def todays_fixtures():
     with db.session_scope() as session:
         comps = page_comps_only(queries.get_competitions(session))
         comp_ids = [c.api_id for c in comps]
-        # fixtures = queries.get_fixtures_by_date(session, TODAY, comp_ids)
-        fixtures = queries.get_fixtures_by_date(session, YESTERDAY, comp_ids)
-        todays_games = games_template(fixtures, dt.date.today())
+        fixtures = queries.get_comp_grouped_fixtures_for_date(session, TODAY, comp_ids)
+        todays_games = games_template(fixtures, utils.time.today())
     return todays_games
 
 
