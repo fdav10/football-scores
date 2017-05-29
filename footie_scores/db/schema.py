@@ -6,7 +6,7 @@ import datetime as dt
 import sqlalchemy as sqla
 from sqlalchemy.ext.declarative import declarative_base
 
-from footie_scores import db, settings
+from footie_scores import db, settings, utils
 
 
 logger = logging.getLogger(__name__)
@@ -107,6 +107,7 @@ class Fixture(Base, Updatable):
     atts_to_update = ('score', 'events', 'lineups', 'status')
     date_format = settings.DB_DATEFORMAT
     time_format = settings.DB_DATEFORMAT
+    datetime_format = settings.DB_DATETIMEFORMAT
 
     def __init__(self, team_home, team_away, comp_api_id,
                  api_fixture_id, score, date, time, status,
@@ -122,6 +123,7 @@ class Fixture(Base, Updatable):
         self.status = status
         if events:
             self.events = events
+        self.lineups = None
 
 
     def __repr__(self):
@@ -131,6 +133,15 @@ class Fixture(Base, Updatable):
     def is_active(self):
         timer_re = re.compile('\d+$')
         return self.status in ('HT', 'Pen', 'ET') or timer_re.match(self.status)
+
+    def has_lineups(self):
+        return self.lineups is not None
+
+    @property
+    def time_to_kickoff(self):
+        kick_off_time = dt.datetime.strptime(self.date+'-'+self.time, self.datetime_format)
+        timedelta_to_kickoff = kick_off_time - utils.time.now()
+        return timedelta_to_kickoff.total_seconds()
 
 
 def create_tables_if_not_present():
