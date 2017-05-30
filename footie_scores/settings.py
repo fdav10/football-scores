@@ -1,17 +1,19 @@
+import os
 import datetime as dt
 
 from footie_scores import constants
 
+if os.environ.get('DATABASE_URL') is None:
+    DB_PATH = 'sqlite:///footie_scores/db/fs.db'
 SQLA_ECHO = False
-DB_PATH = None
 DB_DATEFORMAT = '%d.%m.%Y'
 DB_TIMEFORMAT = '%H:%M'
 DB_DATETIMEFORMAT = DB_DATEFORMAT + '-' + DB_TIMEFORMAT
 
-OVERRIDE_DAY = None
-OVERRIDE_TIME = None
-# OVERRIDE_DAY = dt.date(2017, 5, 28)
-# OVERRIDE_TIME = dt.time(16, 58, 00)
+# OVERRIDE_DAY = None
+# OVERRIDE_TIME = None
+OVERRIDE_DAY = dt.date(2017, 5, 28)
+OVERRIDE_TIME = dt.time(16, 58, 00)
 
 WEB_DATEFORMAT =  "%A %d %B %y" # e.g. Sunday 16 April 2017
 WEB_TIMEFORMAT = None

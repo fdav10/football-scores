@@ -8,7 +8,7 @@ from footie_scores import settings
 
 logger = logging.getLogger(__name__)
 
-engine = create_engine('sqlite:///footie_scores/db/fs.db', echo=settings.SQLA_ECHO)
+engine = create_engine(settings.DB_PATH, echo=settings.SQLA_ECHO)
 Session = sessionmaker(bind=engine)
 
 
