@@ -18,16 +18,6 @@ def main():
     api_caller.start()
 
 
-def start_web_app():
-    app.run(debug=settings.FLASK_DEBUG)
-
-
-def start_api_caller():
-    league_manager.main()
-
-
 if __name__ == '__main__':
     start_logging()
-    # start_web_app()
-    # start_api_caller()
     main()

@@ -32,6 +32,9 @@ def save_competitions_to_db():
 
 
 def main():
+    db.schema.drop_tables()
+    db.schema.create_tables_if_not_present()
+    save_competitions_to_db()
     FixturesUpdater(StartupState())
 
 
@@ -76,14 +79,15 @@ class IdleState():
 
     def run(self):
         with db.session_scope() as session:
-            fixtures = db.queries.get_fixtures_by_date(session, utils.time.today())
-            future_fixtures = [f for f in fixtures if f.status != 'FT']
+            fixtures_today = db.queries.get_fixtures_by_date(session, utils.time.today())
+            update_fixtures_lineups(session, fixtures_today)
+            future_fixtures = [f for f in fixtures_today if f.status != 'FT']
             if not future_fixtures:
                 logger.info('No games today, sleeping for 3 hours')
                 time.sleep(settings.NO_GAMES_SLEEP)
                 return IdleState()
             else:
-                log_list(fixtures, intro='Todays fixtures:')
+                log_list(fixtures_today, intro='Todays fixtures:')
                 time_to_next_game = time_to_next_kickoff(future_fixtures)
                 if time_to_next_game < settings.PRE_GAME_ACTIVE_PERIOD:
                     return ActiveState()
@@ -105,10 +109,10 @@ class PreparationState():
     def run(self):
         active_fixtures = False
         with db.session_scope() as session:
-            fixtures = refresh_and_get_todays_fixtures(session)
+            fixtures_today = refresh_and_get_todays_fixtures(session)
             while not active_fixtures:
-                active_fixtures = [f for f in fixtures if f.is_active()]
-                fixtures_soon = [f for f in fixtures if 0 < f.time_to_kickoff < settings.PRE_GAME_PREP_PERIOD]
+                active_fixtures = [f for f in fixtures_today if f.is_active()]
+                fixtures_soon = [f for f in fixtures_today if 0 < f.time_to_kickoff < settings.PRE_GAME_PREP_PERIOD]
                 needs_lineups = [f for f in fixtures_soon if not f.has_lineups()]
                 if not needs_lineups:
                     time_to_next_game = time_to_next_kickoff(fixtures_soon)
@@ -145,4 +149,4 @@ class ActiveState():
 
 if __name__ == '__main__':
     start_logging()
-    FixturesUpdater(StartupState())
+    main()
