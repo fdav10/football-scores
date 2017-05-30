@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 '''
 Module where the database and API calls are linked.
 '''

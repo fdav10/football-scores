@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 ''' Make webpage from API requests '''
 
 import datetime as dt
