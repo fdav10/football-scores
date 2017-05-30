@@ -141,6 +141,7 @@ class Fixture(Base, Updatable):
 
 
 def create_tables_if_not_present():
+    # TODO this probably isn't very good
     if not db.engine.table_names() == ['fixtures', 'competitions']:
         Base.metadata.create_all(db.engine)
 
