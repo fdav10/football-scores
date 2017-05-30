@@ -133,15 +133,13 @@ class Fixture(Base, Updatable):
     def has_lineups(self):
         return self.lineups is not None
 
-    @property
     def time_to_kickoff(self):
         kick_off_time = dt.datetime.strptime(self.date+'-'+self.time, self.datetime_format)
         timedelta_to_kickoff = kick_off_time - utils.time.now()
         return timedelta_to_kickoff.total_seconds()
 
-    def not_in_future(self):
-        return self.is_active() or self.time_to_kickoff <= 0
-
+    def kicks_off_within(self, seconds_from_now):
+        return self.time_to_kickoff() <= seconds_from_now
 
 
 def create_tables_if_not_present():
