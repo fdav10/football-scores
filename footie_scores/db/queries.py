@@ -12,11 +12,8 @@ Base = declarative_base()
 
 
 def row_exists(session, row_class, id_, value):
-    # TODO this isn't in any way self-explanatory
     session_query = session.query(row_class, id_)
     occurences = session_query.filter(id_==value).count()
-
-    logger.info('%s occurences of %s with id %s', occurences, id_, value)
     return occurences > 0
 
 
@@ -53,13 +50,8 @@ def save_lineups_to_db(session, lineups):
         if fixture.lineups is None:
             fixture.lineups = lineup
             logger.info('%s added to db', lineup.api_fixture_id)
-        # if not row_exists(session, Lineups, Lineups.api_fixture_id, lineup.api_fixture_id):
-            # lineup.fixture = fq.filter(Fixture.api_fixture_id.is_(lineup.api_fixture_id)).one()
-            # session.add(lineup)
         else:
             fixture.lineups.update_from_equivalent(lineup)
-            # db_lineup = lq.filter(Lineups.api_fixture_id == lineup.api_fixture_id).one()
-            # db_lineup.update_from_equivalent(lineup)
             logger.info('%s updated in db', fixture.lineups)
 
 
