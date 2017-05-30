@@ -140,8 +140,8 @@ class ActiveState():
             with db.session_scope() as session:
                 fixtures = refresh_and_get_todays_fixtures(session)
                 active_fixtures = [f for f in fixtures if f.is_active()]
-                fixtures_soon = [f for f in fixtures if 0 < f.time_to_kickoff < settings.PRE_GAME_PREP_PERIOD]
-                needs_lineups = [f for f in fixtures_soon if not f.has_lineups()]
+                fixtures_soon_or_past = [f for f in fixtures if f.not_in_future]
+                needs_lineups = [f for f in fixtures_soon_or_past if not f.has_lineups()]
                 if needs_lineups:
                     update_fixtures_lineups(session, needs_lineups)
             logger.info('Active state pausing for %d seconds', settings.ACTIVE_STATE_PAUSE)

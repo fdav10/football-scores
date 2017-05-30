@@ -139,6 +139,10 @@ class Fixture(Base, Updatable):
         timedelta_to_kickoff = kick_off_time - utils.time.now()
         return timedelta_to_kickoff.total_seconds()
 
+    def not_in_future(self):
+        return self.is_active() or self.time_to_kickoff <= 0
+
+
 
 def create_tables_if_not_present():
     # TODO this probably isn't very good
