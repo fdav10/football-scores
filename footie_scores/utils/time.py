@@ -15,7 +15,6 @@ TIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 def today(override_day=OVERRIDE_DAY):
     if override_day:
-        logger.warning("Override day %s passed to today() function", override_day)
         return override_day
     else:
         return dt.date.today()
@@ -23,7 +22,6 @@ def today(override_day=OVERRIDE_DAY):
 
 def now(override_time=OVERRIDE_TIME):
     if override_time:
-        logger.warning("Override time %s passed to now() function", override_time)
         return dt.datetime.combine(today(), override_time)
     else:
         return dt.datetime.now()
