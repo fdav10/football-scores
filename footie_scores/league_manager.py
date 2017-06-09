@@ -69,14 +69,15 @@ class StartupState():
             update_fixtures_lineups(session, fixtures_today)
             fixtures_active = any([f.is_active() for f in fixtures_today])
         if fixtures_active:
-            return ActiveState()
+            return ActiveState(previous=self)
         else:
-            return IdleState()
+            return IdleState(previous=self)
 
 
 class IdleState():
     ''' Check when next game kicks off and sleep until closer to then '''
-    def __init__(self):
+    def __init__(self, previous):
+        del(previous)
         logger.info('Entered idle state')
         self.run()
 
@@ -87,24 +88,25 @@ class IdleState():
             if not future_fixtures:
                 logger.info('No games today, sleeping for %d seconds', settings.NO_GAMES_SLEEP)
                 time.sleep(settings.NO_GAMES_SLEEP)
-                return IdleState()
+                return IdleState(previous=self)
             else:
                 log_list(fixtures_today, intro='Todays fixtures:')
                 time_to_next_game = time_to_next_kickoff(future_fixtures)
                 if time_to_next_game < settings.PRE_GAME_ACTIVE_PERIOD:
-                    return ActiveState()
+                    return ActiveState(previous=self)
                 elif time_to_next_game < settings.PRE_GAME_PREP_PERIOD:
-                    return PreparationState()
+                    return PreparationState(previous=self)
                 else:
                     sleeptime = time_to_next_game - settings.PRE_GAME_PREP_PERIOD
                     log_time_util_next_fixture(time_to_next_game, sleeptime)
                     time.sleep(sleeptime)
-                    return PreparationState()
+                    return PreparationState(previous=self)
 
 
 class PreparationState():
     ''' Try and get lineups in the period leading up to kick-offs '''
-    def __init__(self):
+    def __init__(self, previous):
+        del(previous)
         logger.info('Entered preparation state')
         self.run()
 
@@ -124,13 +126,14 @@ class PreparationState():
                     time_to_next_game = time_to_next_kickoff(fixtures_soon)
                     log_time_util_next_fixture(time_to_next_game, time_to_next_game)
                     time.sleep(time_to_next_game)
-                    return ActiveState()
-        return ActiveState()
+                    return ActiveState(previous=self)
+        return ActiveState(previous=self)
 
 
 class ActiveState():
     ''' Update fixture scores periodically when games are ongoing'''
-    def __init__(self):
+    def __init__(self, previous):
+        del(previous)
         logger.info('Entered active state')
         self.run()
 
@@ -145,6 +148,7 @@ class ActiveState():
                 if needs_lineups:
                     update_fixtures_lineups(session, needs_lineups)
             logger.info('Active state pausing for %d seconds', settings.ACTIVE_STATE_PAUSE)
+            import ipdb; ipdb.set_trace()
             time.sleep(settings.ACTIVE_STATE_PAUSE)
         return IdleState()
 
