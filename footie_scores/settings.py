@@ -7,7 +7,8 @@ from footie_scores import constants
 logger = logging.getLogger(__name__)
 
 if os.environ.get('DATABASE_URL') is None:
-    DB_PATH = 'sqlite:///footie_scores/db/fs.db'
+    # DB_PATH = 'sqlite:///footie_scores/db/fs.db'
+    DB_PATH = 'postgresql://freddavison:@localhost:5432/fs'
 else:
     DB_PATH = os.environ['DATABASE_URL']
 SQLA_ECHO = False
