@@ -62,4 +62,4 @@ def page_comps_only(competitions):
 
 if __name__ == '__main__':
     start_logging()
-    app.run()
+    app.run(debug=settings.FLASK_DEBUG)
