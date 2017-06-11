@@ -54,7 +54,7 @@ class FootballAPI(FootballAPICaller):
             Fixture(
                 f['localteam_name'],
                 f['visitorteam_name'],
-                f['comp_id'],
+                int(f['comp_id']),
                 f['id'],
                 self._format_fixture_score(f),
                 self._make_date_db_ready(f['formatted_date']),

@@ -37,7 +37,7 @@ class Competition(Base):
     __tablename__ = 'competitions'
 
     id = sqla.Column(sqla.Integer, primary_key=True)
-    api_id = sqla.Column(sqla.String)
+    api_id = sqla.Column(sqla.Integer)
     name = sqla.Column(sqla.String)
     region = sqla.Column(sqla.String)
     fixtures = sqla.orm.relationship('Fixture', back_populates='competition')
@@ -85,7 +85,7 @@ class Fixture(Base, Updatable):
     team_home = sqla.Column(sqla.String)
     team_away = sqla.Column(sqla.String)
     score = sqla.Column(sqla.String)
-    comp_api_id = sqla.Column(sqla.String)
+    comp_api_id = sqla.Column(sqla.Integer)
     api_fixture_id = sqla.Column(sqla.String)
     events = sqla.Column(_JsonEncodedDict)
     status = sqla.Column(sqla.String)
