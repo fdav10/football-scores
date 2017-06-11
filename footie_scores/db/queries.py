@@ -23,6 +23,7 @@ def save_fixtures_to_db(session, fixtures):
 
 
 def save_fixture_to_db(session, fixture):
+    import ipdb; ipdb.set_trace()
     fq = session.query(Fixture)
     cq = session.query(Competition)
     if not row_exists(session, Fixture, Fixture.api_fixture_id, fixture.api_fixture_id):
