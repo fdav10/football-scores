@@ -6,7 +6,7 @@ import datetime as dt
 
 from flask import Flask, render_template, request
 
-from footie_scores import db, settings, utils
+from footie_scores import settings, db, utils
 from footie_scores.utils.log import start_logging
 from footie_scores.db import queries
 import footie_scores.engine.updating as api_interface
