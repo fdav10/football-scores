@@ -19,11 +19,6 @@ TODAY = utils.time.today()
 COMPS_FOR_PAGE = settings.COMPS
 
 
-@app.route("/test")
-def test():
-    return "It worked!"
-
-
 @app.route("/todays_games")
 def todays_fixtures():
     # TODO make details link appear only if lineups etc. are available for fixture
