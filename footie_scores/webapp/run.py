@@ -9,7 +9,7 @@ from flask import Flask, render_template, request
 from footie_scores import db, settings, utils
 from footie_scores.utils.log import start_logging
 from footie_scores.db import queries
-import footie_scores.engine.league_manager as api_interface
+import footie_scores.engine.updating as api_interface
 
 
 app = Flask(__name__)
