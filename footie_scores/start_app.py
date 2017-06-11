@@ -13,7 +13,7 @@ from footie_scores.engine import updating
 def main():
     ''' Start web app and scores updater '''
     web_app = Process(target=app.run, kwargs={'debug': settings.FLASK_DEBUG})
-    api_caller = Process(target=updating.main, args=())
+    api_caller = Process(target=updating.start_updater, args=())
     web_app.start()
     api_caller.start()
 
