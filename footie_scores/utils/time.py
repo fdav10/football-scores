@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 import pytz
 
-from footie_scores.settings import OVERRIDE_TIME, OVERRIDE_DAY
+from footie_scores.settings import OVERRIDE_TIME, OVERRIDE_DAY, START_TIME
 
 
 logger = logging.getLogger(__name__)
@@ -15,14 +15,16 @@ TIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 def today(override_day=OVERRIDE_DAY):
     if override_day:
-        return override_day
+        time_elapsed = dt.datetime.now() - START_TIME
+        return override_day + time_elapsed
     else:
         return dt.date.today()
 
 
 def now(override_time=OVERRIDE_TIME):
     if override_time:
-        return dt.datetime.combine(today(), override_time)
+        time_elapsed = dt.datetime.now() - START_TIME
+        return dt.datetime.combine(today(), override_time) + time_elapsed
     else:
         return dt.datetime.now()
 
