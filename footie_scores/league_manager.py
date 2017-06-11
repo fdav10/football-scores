@@ -150,7 +150,7 @@ class ActiveState():
             logger.info('Active state pausing for %d seconds', settings.ACTIVE_STATE_PAUSE)
             import ipdb; ipdb.set_trace()
             time.sleep(settings.ACTIVE_STATE_PAUSE)
-        return IdleState()
+        return IdleState(previous=self)
 
 
 if __name__ == '__main__':
