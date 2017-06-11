@@ -26,7 +26,7 @@ def save_fixture_to_db(session, fixture):
     fq = session.query(Fixture)
     cq = session.query(Competition)
     if not row_exists(session, Fixture, Fixture.api_fixture_id, fixture.api_fixture_id):
-        fixture.competition = cq.filter(Competition.api_id.is_(fixture.comp_api_id)).one()
+        fixture.competition = cq.filter(Competition.api_id == fixture.comp_api_id).one()
         session.add(fixture)
         logger.info('%s added to db', fixture.api_fixture_id)
     else:
@@ -38,15 +38,14 @@ def save_fixture_to_db(session, fixture):
 def save_competitions_to_db(session, competitions):
     for comp in competitions:
         if not row_exists(session, Competition, Competition.api_id, comp['id']):
-            db_comp = Competition(comp['id'], comp['name'], comp['region'])
+            db_comp = Competition(int(comp['id']), comp['name'], comp['region'])
             session.add(db_comp)
 
 
 def save_lineups_to_db(session, lineups):
     fq = session.query(Fixture)
-    lq = session.query(Lineups)
     for lineup in lineups:
-        fixture = fq.filter(Fixture.api_fixture_id.is_(lineup.api_fixture_id)).one()
+        fixture = fq.filter(Fixture.api_fixture_id == lineup.api_fixture_id).one()
         if fixture.lineups is None:
             fixture.lineups = lineup
             logger.info('%s added to db', lineup.api_fixture_id)
