@@ -148,6 +148,10 @@ def create_tables_if_not_present():
         Base.metadata.create_all(db.engine)
 
 
+def create_db():
+    Base.metadata.create_all(db.engine)
+
+
 def drop_tables():
     Base.metadata.drop_all(db.engine)
 
