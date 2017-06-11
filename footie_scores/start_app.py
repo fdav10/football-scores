@@ -6,8 +6,8 @@ from multiprocessing import Process
 
 from footie_scores import db, settings
 from footie_scores.utils.log import start_logging
-from footie_scores.app.run import app
-from footie_scores import league_manager
+from footie_scores.webapp.run import app
+from footie_scores.engine import league_manager
 
 
 def main():
