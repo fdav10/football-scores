@@ -8,6 +8,8 @@ logger = logging.getLogger(__name__)
 
 if os.environ.get('DATABASE_URL') is None:
     DB_PATH = 'sqlite:///footie_scores/db/fs.db'
+else:
+    DB_PATH = os.environ('DATABASE_URL')
 SQLA_ECHO = False
 DB_DATEFORMAT = '%d.%m.%Y'
 DB_TIMEFORMAT = '%H:%M'
