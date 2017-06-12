@@ -2,19 +2,16 @@
 
 import os
 import logging
-import datetime as dt
 
+from footie_scores import utils
 from footie_scores import settings
 from footie_scores.db.schema import Fixture, Lineups
-from footie_scores.apis import base
-from footie_scores.utils.log import start_logging
 from footie_scores.apis.base import FootballAPICaller
-from footie_scores.utils.time import datetime_string_make_aware, naive_utc_to_uk_tz
 from footie_scores.utils.exceptions import *
 
 
 logger = logging.getLogger(__name__)
-TODAY = dt.date.today()
+TODAY = utils.time.today()
 
 class FootballAPI(FootballAPICaller):
     '''
@@ -45,7 +42,7 @@ class FootballAPI(FootballAPICaller):
         fixtures_url = 'matches?match_date={}&'.format(str_date)
         all_fixtures = self.request(fixtures_url)
         logger.info(
-            'Fixtures for all competitions on date %s retrieved', dt.date.today())
+            'Fixtures for all competitions on date %s retrieved', TODAY)
         fixtures = self._filter_by_competition(all_fixtures, competitions)
         return fixtures
 
@@ -105,7 +102,7 @@ class FootballAPI(FootballAPICaller):
         where changing the timezone offsets the minutes rather than
         hours.
         '''
-        formatted_time = naive_utc_to_uk_tz(
+        formatted_time = utils.time.naive_utc_to_uk_tz(
             fixture_time,
             self.api_time_format,
             self.db_time_format)
@@ -132,5 +129,5 @@ class FootballAPI(FootballAPICaller):
 
 
 if __name__ == '__main__':
-    start_logging()
+    utils.log.start_logging()
     fa = FootballAPI()

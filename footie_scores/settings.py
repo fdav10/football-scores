@@ -33,10 +33,3 @@ PREP_STATE_PAUSE = 10
 NO_GAMES_SLEEP = 10800
 PRE_GAME_PREP_PERIOD = 3600
 PRE_GAME_ACTIVE_PERIOD = 600
-
-if OVERRIDE_DAY:
-    logger.warning(
-        "utils.time.today() function returning %s rather than today's date", OVERRIDE_DAY)
-if OVERRIDE_TIME:
-    logger.warning(
-        "utils.time.now() function returning %s rather than time now", OVERRIDE_TIME)
