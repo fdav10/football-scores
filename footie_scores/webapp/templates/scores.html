@@ -7,46 +7,64 @@
     <meta charset="UTF-8">
   </head>
   <body>
-    {% for comp in competitions %}
-    {% if comp.fixtures %}
-    <div class="competition">
-      <p> {{comp.name}} </p>
-      {% for fixture in comp.fixtures %}
-      <div class="game">
-	<div class="score">
-	  <div class="home_team">
-	    <p>{{fixture.team_home}}</p>
-	  </div>
-	  <div class="scoreline">
-	    <p>{{fixture.score}}</p>
-	  </div>
-	  <div class="away_team">
-	    <p>{{fixture.team_away}}</p>
-	  </div>
-	</div>
-	{% if fixture.events %}
-	<div class="events">
-	  <div class="home_events">
-	    {% for event in fixture.events.home %}
-	    <p>{{event.player}} {{event.time}}</p>
-	    {% endfor %}
-	  </div>
-	  <div class="away_events">
-	    {% for event in fixture.events.away %}
-	    <p>{{event.time}} {{event.player}}</p>
-	    {% endfor %}
-	  </div>
-	</div>
-	{% endif %}
-	{% if fixture.lineups %}
-	<div class="match details">
-	  <a href= {{ url_for('match_details', fixture_id=fixture.api_fixture_id) }} >match details</a>
-	</div>
-	{% endif %}
-      </div>
-      {% endfor %}
+    <div class="sidebar">
+      <ul>
+	<li><a href="#">January</a></li>
+	<li><a href="#">February</a></li>
+	<li><a href="#">March</a></li>
+	<li><a href="#">April</a></li>
+	<li><a href="#">May</a></li>
+	<li><a href="#">June</a></li>
+	<li><a href="#">July</a></li>
+	<li><a href="#">August</a></li>
+	<li><a href="#">September</a></li>
+	<li><a href="#">October</a></li>
+	<li><a href="#">November</a></li>
+	<li><a href="#">December</a></li>
+      </ul>
     </div>
+    <div class="main_panel">
+      {% for comp in competitions %}
+      {% if comp.fixtures %}
+      <div class="competition">
+	<p> {{comp.name}} </p>
+	{% for fixture in comp.fixtures %}
+	<div class="game">
+	  <div class="score">
+	    <div class="home_team">
+	      <p>{{fixture.team_home}}</p>
+	    </div>
+	    <div class="scoreline">
+	      <p>{{fixture.score}}</p>
+	    </div>
+	    <div class="away_team">
+	      <p>{{fixture.team_away}}</p>
+	    </div>
+	  </div>
+	  {% if fixture.events %}
+	  <div class="events">
+	    <div class="home_events">
+	      {% for event in fixture.events.home %}
+	      <p>{{event.player}} {{event.time}}</p>
+	      {% endfor %}
+	    </div>
+	    <div class="away_events">
+	      {% for event in fixture.events.away %}
+	      <p>{{event.time}} {{event.player}}</p>
+	      {% endfor %}
+	    </div>
+	  </div>
+	  {% endif %}
+	  {% if fixture.lineups %}
+	  <div class="match-details">
+	    <a href= {{ url_for('match_details', fixture_id=fixture.api_fixture_id) }} >match details</a>
+	  </div>
+	  {% endif %}
+	</div>
+	{% endfor %}
+      </div>
     {% endif %}
     {% endfor %}
+    </div>
   </body>
 </html>

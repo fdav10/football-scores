@@ -9,10 +9,36 @@ body {
     background: Gainsboro;
 }
 
+.sidebar {
+    width: 20%;
+    display: inline-block;
+    background: Gainsboro;
+}
+
+.sidebar li {
+    padding: .6em;
+    margin: .6em;
+    background: white;
+    text-align: center;
+}
+.sidebar a {
+    font-size: 1.1rem;
+    text-decoration: none;
+    color: DodgerBlue;
+}
+
+.main_panel {
+    width: 80%;
+    display: inline-block;
+    float: right;
+}
+
+.competition_container {
+}
 
 .competition {
     width: 80%;
-    position: relative;
+    position: static;
     top: 50px;
     margin: auto;
     margin-top: 30px;
@@ -100,7 +126,7 @@ body {
     float: right;
 }
 
-.match_details, a {
+.match-details a {
     margin-right: 5px;
     float: right;
     text-align: center;
