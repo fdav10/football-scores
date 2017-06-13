@@ -2,69 +2,109 @@
 <html lang="en">
   <head>
     <title> Scores for 16/01/2017 </title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="//cdn.muicss.com/mui-0.9.16/css/mui.min.css" rel="stylesheet" type="text/css" />
+    <script src="//cdn.muicss.com/mui-0.9.16/js/mui.min.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Arimo" rel="stylesheet">
-    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   </head>
   <body>
-    <div class="sidebar">
-      <ul>
-	<li><a href="#">January</a></li>
-	<li><a href="#">February</a></li>
-	<li><a href="#">March</a></li>
-	<li><a href="#">April</a></li>
-	<li><a href="#">May</a></li>
-	<li><a href="#">June</a></li>
-	<li><a href="#">July</a></li>
-	<li><a href="#">August</a></li>
-	<li><a href="#">September</a></li>
-	<li><a href="#">October</a></li>
-	<li><a href="#">November</a></li>
-	<li><a href="#">December</a></li>
+    <header id="header">
+      <div class="mui-appbar mui--appbar-line-height">
+	<div class="mui-container-fluid">
+	  <a class="sidedrawer-toggle mui--visible-xs-inline-block mui--visible-sm-inline-block js-show-sidedrawer">☰</a>
+	  <a class="sidedrawer-toggle mui--hidden-xs mui--hidden-sm js-hide-sidedrawer">☰</a>
+	  <span class="mui--text-title mui--visible-xs-inline-block">Brand.io</span>
+	</div>
+      </div>
+    </header>
+    <div class="mui--appbar-height"></div>
+    <nav id="sidenav">
+      <ul class="mui-list--unstyled">
+	<li>
+	  <a href="#">January</a>
+	</li>
+	<li>
+	  <a href="#">February</a>
+	</li>
+	<li>
+	  <a href="#">March</a>
+	</li>
+	<li>
+	  <a href="#">April</a>
+	</li>
+	<li>
+	  <a href="#">May</a>
+	</li>
+	<li>
+	  <a href="#">June</a>
+	</li>
+	<li>
+	  <a href="#">July</a>
+	</li>
+	<li>
+	  <a href="#">August</a>
+	</li>
+	<li>
+	  <a href="#">September</a>
+	</li>
+	<li>
+	  <a href="#">October</a>
+	</li>
+	<li>
+	  <a href="#">November</a>
+	</li>
+	<li>
+	  <a href="#">December</a>
+	</li>
       </ul>
-    </div>
-    <div class="main_panel">
+    </nav>
+    <div class="main-panel">
       {% for comp in competitions %}
       {% if comp.fixtures %}
-      <div class="competition">
-	<p> {{comp.name}} </p>
-	{% for fixture in comp.fixtures %}
-	<div class="game">
-	  <div class="score">
-	    <div class="home_team">
-	      <p>{{fixture.team_home}}</p>
+      <div id="competition">
+	<div class="mui-panel">
+	  <p> {{comp.name}} </p>
+	  {% for fixture in comp.fixtures %}
+	  <div id="game" class="mui-panel">
+	    <div class="score">
+	      <div class="home_team">
+		<p>{{fixture.team_home}}</p>
+	      </div>
+	      <div class="scoreline">
+		<p>{{fixture.score}}</p>
+	      </div>
+	      <div class="away_team">
+		<p>{{fixture.team_away}}</p>
+	      </div>
 	    </div>
-	    <div class="scoreline">
-	      <p>{{fixture.score}}</p>
+	    {% if fixture.events %}
+	    <div class="events">
+	      <div class="home_events">
+		{% for event in fixture.events.home %}
+		<p>{{event.player}} {{event.time}}</p>
+		{% endfor %}
+	      </div>
+	      <div class="away_events">
+		{% for event in fixture.events.away %}
+		<p>{{event.time}} {{event.player}}</p>
+		{% endfor %}
+	      </div>
 	    </div>
-	    <div class="away_team">
-	      <p>{{fixture.team_away}}</p>
+	    {% endif %}
+	    {% if fixture.lineups %}
+	    <div class="match-details">
+	      <a href= {{ url_for('match_details', fixture_id=fixture.api_fixture_id) }} >match details</a>
 	    </div>
+	    {% endif %}
 	  </div>
-	  {% if fixture.events %}
-	  <div class="events">
-	    <div class="home_events">
-	      {% for event in fixture.events.home %}
-	      <p>{{event.player}} {{event.time}}</p>
-	      {% endfor %}
-	    </div>
-	    <div class="away_events">
-	      {% for event in fixture.events.away %}
-	      <p>{{event.time}} {{event.player}}</p>
-	      {% endfor %}
-	    </div>
-	  </div>
-	  {% endif %}
-	  {% if fixture.lineups %}
-	  <div class="match-details">
-	    <a href= {{ url_for('match_details', fixture_id=fixture.api_fixture_id) }} >match details</a>
-	  </div>
-	  {% endif %}
+	  {% endfor %}
 	</div>
-	{% endfor %}
       </div>
-    {% endif %}
-    {% endfor %}
+      {% endif %}
+      {% endfor %}
     </div>
   </body>
 </html>

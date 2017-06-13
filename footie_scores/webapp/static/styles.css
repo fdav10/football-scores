@@ -1,70 +1,44 @@
-* {
-    margin: 0;
-    padding: 0;
-    font-family: Arime, sans-serif;
-    box-sizing: border-box;
-}
-
 body {
-    background: Gainsboro;
+    background-color: #eee;
 }
 
-.sidebar {
-    width: 20%;
-    display: inline-block;
-    background: Gainsboro;
-}
-
-.sidebar li {
-    padding: .6em;
-    margin: .6em;
-    background: white;
-    text-align: center;
-}
-.sidebar a {
-    font-size: 1.1rem;
-    text-decoration: none;
-    color: DodgerBlue;
-}
-
-.main_panel {
-    width: 80%;
+.main-panel {
+    width: 75%;
     display: inline-block;
     float: right;
 }
 
-.competition_container {
+#header {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    display: block;
 }
 
-.competition {
-    width: 80%;
-    position: static;
-    top: 50px;
-    margin: auto;
-    margin-top: 30px;
-    margin-bottom: 30px;
-    padding: 15px;
-    background: #bdc1c5;
-    border-radius: 4px;
-    font-size: 24px;
-    text-transform: uppercase;
-    color: DodgerBlue;
-    font-style: italic;
+#side-top {
+
 }
 
-.game {
-    position: static;
-    width: 80%;
-    padding-bottom: 15px;
-    margin: auto;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    background: white;
-    border-radius: 4px;
+#sidenav {
+    position: fixed;
+    padding-left: 20px;
     padding-top: 15px;
-    text-transform: none;
-    font-style: normal;
-    overflow: auto;
+    width: 20%;
+    display: inline-block;
+    background-color: white;
+}
+
+#competition {
+    /* display: inline-block; */
+}
+
+#competition :first-child {
+    margin-top: 15px;
+}
+
+#game mui-panel {
+    box-sizing: border-box;
 }
 
 .score {
