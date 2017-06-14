@@ -76,7 +76,7 @@
 	    {% for comp in competitions %}
 	    {% if comp.fixtures %}
 	    <div id="competition">
-	      <div class="mui-panel">
+	      <div class="mui-panel mui--z2">
 		<div class="mui-row">
 		  <div class="mui-col-sm-10 mui-col-sm-offset-1">
 		    <h2> {{comp.name}} </h2>
@@ -86,7 +86,7 @@
 		{% for fixture in comp.fixtures %}
 		<div class="mui-row">
 		  <div class="mui-col-sm-10 mui-col-sm-offset-1">
-		    <div id="game" class="mui-panel">
+		    <div id="game" class="mui-panel mui--z2">
 		      <div id="scoreline" class="mui-row">
 			<div id="home-team" class="mui-col-sm-4 mui-col-sm-offset-1">
 			  <h4>{{fixture.team_home}}</h4>
