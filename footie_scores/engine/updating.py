@@ -6,7 +6,6 @@ Contains logic for indefinitely updating active fixtures
 
 import time
 import logging
-import datetime as dt
 
 from footie_scores import db, settings, utils
 from footie_scores.utils.log import start_logging, log_list, log_time_util_next_fixture

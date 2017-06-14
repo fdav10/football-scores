@@ -45,3 +45,11 @@ def naive_utc_to_uk_tz(stime, time_format, desired_time_format='%H:%M'):
 
 def chop_microseconds(tdelta):
     return tdelta - dt.timedelta(microseconds=tdelta.microseconds)
+
+
+if OVERRIDE_DAY:
+    logger.warning(
+        "utils.time.today() function returning %s rather than today's date", today())
+if OVERRIDE_TIME:
+    logger.warning(
+        "utils.time.now() function returning %s rather than time now", now())

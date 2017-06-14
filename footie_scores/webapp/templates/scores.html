@@ -2,51 +2,137 @@
 <html lang="en">
   <head>
     <title> Scores for 16/01/2017 </title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="//cdn.muicss.com/mui-0.9.16/css/mui.min.css" rel="stylesheet" type="text/css" />
+    <script src="//cdn.muicss.com/mui-0.9.16/js/mui.min.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Arimo" rel="stylesheet">
-    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   </head>
   <body>
-    {% for comp in competitions %}
-    {% if comp.fixtures %}
-    <div class="competition">
-      <p> {{comp.name}} </p>
-      {% for fixture in comp.fixtures %}
-      <div class="game">
-	<div class="score">
-	  <div class="home_team">
-	    <p>{{fixture.team_home}}</p>
-	  </div>
-	  <div class="scoreline">
-	    <p>{{fixture.score}}</p>
-	  </div>
-	  <div class="away_team">
-	    <p>{{fixture.team_away}}</p>
-	  </div>
+    <header id="header">
+      <div class="mui-appbar mui--appbar-line-height">
+	<div class="mui-container-fluid">
+	  <a class="sidedrawer-toggle mui--visible-xs-inline-block mui--visible-sm-inline-block js-show-sidedrawer">☰</a>
+	  <a class="sidedrawer-toggle mui--hidden-xs mui--hidden-sm js-hide-sidedrawer">☰</a>
+	  <span class="mui--text-title mui--visible-xs-inline-block">Brand.io</span>
 	</div>
-	{% if fixture.events %}
-	<div class="events">
-	  <div class="home_events">
-	    {% for event in fixture.events.home %}
-	    <p>{{event.player}} {{event.time}}</p>
-	    {% endfor %}
-	  </div>
-	  <div class="away_events">
-	    {% for event in fixture.events.away %}
-	    <p>{{event.time}} {{event.player}}</p>
-	    {% endfor %}
-	  </div>
-	</div>
-	{% endif %}
-	{% if fixture.lineups %}
-	<div class="match details">
-	  <a href= {{ url_for('match_details', fixture_id=fixture.api_fixture_id) }} >match details</a>
-	</div>
-	{% endif %}
       </div>
-      {% endfor %}
+    </header>
+    <!-- <nav id="sidebar">
+	 <div class="mui--appbar-height"></div>
+	 <ul class="mui-list--unstyled">
+	 <li>
+	 <a href="#">January</a>
+	 </li>
+	 <li>
+	 <a href="#">February</a>
+	 </li>
+	 <li>
+	 <a href="#">March</a>
+	 </li>
+	 <li>
+	 <a href="#">April</a>
+	 </li>
+	 <li>
+	 <a href="#">May</a>
+	 </li>
+	 <li>
+	 <a href="#">June</a>
+	 </li>
+	 <li>
+	 <a href="#">July</a>
+	 </li>
+	 <li>
+	 <a href="#">August</a>
+	 </li>
+	 <li>
+	 <a href="#">September</a>
+	 </li>
+	 <li>
+	 <a href="#">October</a>
+	 </li>
+	 <li>
+	 <a href="#">November</a>
+	 </li>
+	 <li>
+	 <a href="#">December</a>
+	 </li>
+	 </ul>
+	 </nav> -->
+    <div id="main-panel">
+      <div class="mui--appbar-height"></div>
+      <div class="mui-container-fluid">
+	<div class="mui-row">
+	  <div id="fixtures-title">
+	    <div class="mui-col-sm-10 mui-col-sm-offset-1">
+	      <h1>Today's Fixtures</h1>
+	    </div>
+	  </div>
+	</div>
+	<div class="mui-row">
+	  <div class="mui-col-sm-10 mui-col-sm-offset-1">
+	    {% for comp in competitions %}
+	    {% if comp.fixtures %}
+	    <div id="competition">
+	      <div class="mui-panel">
+		<div class="mui-row">
+		  <div class="mui-col-sm-10 mui-col-sm-offset-1">
+		    <h2> {{comp.name}} </h2>
+		  </div>
+		</div>
+		    <div id="games-container">
+		{% for fixture in comp.fixtures %}
+		<div class="mui-row">
+		  <div class="mui-col-sm-10 mui-col-sm-offset-1">
+		    <div id="game" class="mui-panel">
+		      <div id="scoreline" class="mui-row">
+			<div id="home-team" class="mui-col-sm-4 mui-col-sm-offset-1">
+			  <h4>{{fixture.team_home}}</h4>
+			</div>
+			<div id="score" class="mui-col-sm-2">
+			  <h4>{{fixture.score}}</h4>
+			</div>
+			<div id="away-team" class="mui-col-sm-4">
+			  <h4>{{fixture.team_away}}</h4>
+			</div>
+		      </div>
+		      {% if fixture.events %}
+		      <div class="mui-row">
+			<div id="home-events" class="mui-col-sm-4 mui-col-sm-offset-1">
+			  {% for event in fixture.events.home %}
+			  <p>{{event.player}} {{event.time}}</p>
+			  {% endfor %}
+			</div>
+			<div class="mui-col-sm-2">
+			</div>
+			<div id="away-events" class="mui-col-sm-4">
+			  {% for event in fixture.events.away %}
+			  <p>{{event.time}} {{event.player}}</p>
+			  {% endfor %}
+			</div>
+		      </div>
+		      {% endif %}
+		      {% if fixture.lineups %}
+		      <div id="details-row" class="mui-row">
+			<div id="match-details" class="mui=col-sm-6 mui-col-sm-offset-6">
+			  <a href= {{ url_for('match_details', fixture_id=fixture.api_fixture_id) }} >match details</a>
+			</div>
+		      </div>
+		      {% endif %}
+		    </div>
+		    </div>
+		</div>
+		{% endfor %}
+		  </div>
+	      </div>
+	    </div>
+	    {% endif %}
+	    {% endfor %}
+	  </div>
+	</div>
+      </div>
     </div>
-    {% endif %}
-    {% endfor %}
   </body>
 </html>
