@@ -1,110 +1,47 @@
-body {
-    background-color: #eee;
-}
+body {background-color: #eee;}
 
-.main-panel {
-    width: 75%;
-    display: inline-block;
-    float: right;
-}
+/* #main-panel {margin-left: 200px;} */
 
 #header {
+    z-index: 999;
     position: fixed;
     top: 0px;
     left: 0px;
     right: 0px;
-    display: block;
 }
 
-#side-top {
-
-}
-
-#sidenav {
+#sidebar {
     position: fixed;
-    padding-left: 20px;
-    padding-top: 15px;
-    width: 20%;
-    display: inline-block;
+    overflow: auto;
+    top: 0;
+    bottom: 0;
+    width: 200px;
     background-color: white;
 }
 
-#competition {
-    /* display: inline-block; */
-}
+#sidebar ul {
+    padding-top: 15px;
+    padding-left: 15px;}
+#sidebar li {line-height: 1.5;}
 
-#competition :first-child {
-    margin-top: 15px;
-}
-
-#game mui-panel {
-    box-sizing: border-box;
-}
+/* #competition :first-child { */
+/*     margin-top: 15px; */
+/* } */
 
 .score {
     width: 100%;
-    /* white-space: nowrap; */
 }
 
-.home_team, .away_team, .scoreline {
-    width: 42.5%;
+#home-team, #home-events {text-align: right;}
+#away-team, #away-events {text-align: left;}
+p, #home-events, #away-events {
+    font-size: 10px;
+    line-height: 1.5;
+    margin-bottom: 0px;
+}
+#score {text-align: center;}
+
+#match-details {
     text-align: right;
-    padding-right: 5px;
-    display: inline-block;
-}
-
-.home_team {
-    float: left;
-}
-
-.away_team {
-    text-align: left;
-    padding-right: 0px;
-    padding-left: 5px;
-    float: right;
-}
-
-.scoreline {
-    width: 15%;
-    text-align: center;
-    padding-right: 0px;
-}
-
-.events {
-    position: relative;
-    color: #716d6d;
-    width: 100%;
-    white-space: nowrap;
-    padding-top: 5px;
-    display: inline-block;
-}
-
-.home_events, .away_events  {
-    width: 42.5%;
-    font-size: 12px;
-    line-height: 1.4em;
-    vertical-align: top;
-    overflow: auto;
-}
-
-.home_events  {
-    text-align: right;
-    padding-right: 5px;
-    position: relative;
-    float: left;
-}
-.away_events  {
-    text-align: left;
-    padding-left: 5px;
-    position: relative;
-    float: right;
-}
-
-.match-details a {
-    margin-right: 5px;
-    float: right;
-    text-align: center;
-    font-size: 14px;
-    text-decoration: none;
-    color: DarkOrange;
+    padding: 15px;
 }
