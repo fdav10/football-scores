@@ -24,9 +24,8 @@ body {background-color: #eee;}
     padding-left: 15px;}
 #sidebar li {line-height: 1.5;}
 
-/* #competition :first-child { */
-/*     margin-top: 15px; */
-/* } */
+#games-container {margin-bottom: 15px;}
+#game.mui-panel {margin-bottom: 0px;}
 
 .score {
     width: 100%;

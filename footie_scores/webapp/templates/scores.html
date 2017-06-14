@@ -65,11 +65,11 @@
       <div class="mui--appbar-height"></div>
       <div class="mui-container-fluid">
 	<div class="mui-row">
-									  <div id="fixtures-title">
-									  <div class="mui-col-sm-10 mui-col-sm-offset-1">
-										  <h1>Today's Fixtures</h1>
-		    </div>
-		    </div>
+	  <div id="fixtures-title">
+	    <div class="mui-col-sm-10 mui-col-sm-offset-1">
+	      <h1>Today's Fixtures</h1>
+	    </div>
+	  </div>
 	</div>
 	<div class="mui-row">
 	  <div class="mui-col-sm-10 mui-col-sm-offset-1">
@@ -82,6 +82,7 @@
 		    <h2> {{comp.name}} </h2>
 		  </div>
 		</div>
+		    <div id="games-container">
 		{% for fixture in comp.fixtures %}
 		<div class="mui-row">
 		  <div class="mui-col-sm-10 mui-col-sm-offset-1">
@@ -116,14 +117,15 @@
 		      {% if fixture.lineups %}
 		      <div id="details-row" class="mui-row">
 			<div id="match-details" class="mui=col-sm-6 mui-col-sm-offset-6">
-			    <a href= {{ url_for('match_details', fixture_id=fixture.api_fixture_id) }} >match details</a>
+			  <a href= {{ url_for('match_details', fixture_id=fixture.api_fixture_id) }} >match details</a>
 			</div>
 		      </div>
 		      {% endif %}
 		    </div>
-		  </div>
+		    </div>
 		</div>
 		{% endfor %}
+		  </div>
 	      </div>
 	    </div>
 	    {% endif %}
