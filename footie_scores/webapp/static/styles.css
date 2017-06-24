@@ -19,18 +19,55 @@ body {background-color: #eee;}
     background-color: white;
 }
 
+.invisible-panel .mui-panel {
+    padding: 0px;
+    margin: 0px;
+    background-color: #eee;
+    box-shadow: none;
+}
+
+#view-header-row h1 {
+    margin-bottom: 40px;
+}
+
+#view-header-row.mui-row,
+#fixture-content-row.mui-row
+{
+    margin-left: -80px;
+    margin-right: -80px;
+}
+
+#competition-container.mui-container-fluid,
+#view-header-container.mui-container
+{
+    max-width: 800px;
+}
+/* #view-header-container.mui-container {padding: 0px;} */
+
+
 #sidebar ul {
     padding-top: 15px;
     padding-left: 15px;}
 #sidebar li {line-height: 1.5;}
 
-#games-container {margin-bottom: 15px;}
-#game.mui-panel {margin-bottom: 0px;}
-
-.score {
-    width: 100%;
+#game-panel.mui-panel {
+    margin-bottom: 0px;
+    white-space: nowrap;
+}
+#game-row.mui-row, #comp-header-row.mui-row {
+    margin-left: -50px; margin-right: -50px;
 }
 
+.competition-name-header h2 {
+    margin-top: 0px;
+}
+
+#scoreline-row h4 {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+#home-team, #away-team {white-space: initial; }
 #home-team, #home-events {text-align: right;}
 #away-team, #away-events {text-align: left;}
 p, #home-events, #away-events {
@@ -38,9 +75,17 @@ p, #home-events, #away-events {
     line-height: 1.5;
     margin-bottom: 0px;
 }
-#score {text-align: center;}
+
+#score {
+    text-align: center;
+    min-width: 50px;
+    /* overflow: ; */
+}
+/* #score > h4 { */
+/*     overflow: inherit; */
+/* } */
 
 #match-details {
     text-align: right;
-    padding: 15px;
+    margin-right: 15px;
 }

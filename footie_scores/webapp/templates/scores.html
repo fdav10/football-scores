@@ -64,30 +64,35 @@
     <div id="main-panel">
       <div class="mui--appbar-height"></div>
       <div class="mui-container-fluid">
-	<div class="mui-row">
-	  <div id="fixtures-title">
-	    <div class="mui-col-xs-10 mui-col-xs-offset-1">
-	      <h1>Today's Fixtures</h1>
+	<div id="view-header-row" class="mui-row">
+	  <div class="mui-col-xs-10 mui-col-xs-offset-1">
+	    <div id="view-header-container" class="mui-container">
+	      <div class="invisible-panel">
+		<div class="mui-panel">
+		  <h1>Today's Fixtures</h1>
+		</div>
+	      </div>
 	    </div>
 	  </div>
 	</div>
-	<div class="mui-row">
+	<div id="fixture-content-row" class="mui-row">
 	  <div class="mui-col-xs-10 mui-col-xs-offset-1">
 	    {% for comp in competitions %}
 	    {% if comp.fixtures %}
-	    <div id="competition">
+	    <div id="competition-container" class="mui-container-fluid">
 	      <div class="mui-panel mui--z2">
-		<div class="mui-row">
+		<div id="comp-header-row" class="mui-row">
 		  <div class="mui-col-xs-10 mui-col-xs-offset-1">
-		    <h2> {{comp.name}} </h2>
+		    <div class="competition-name-header">
+		      <h2> {{comp.name}} </h2>
+		    </div>
 		  </div>
 		</div>
-		    <div id="games-container">
 		{% for fixture in comp.fixtures %}
-		<div class="mui-row">
+		<div id="game-row" class="mui-row">
 		  <div class="mui-col-xs-10 mui-col-xs-offset-1">
-		    <div id="game" class="mui-panel">
-		      <div id="scoreline" class="mui-row">
+		    <div id="game-panel" class="mui-panel">
+		      <div id="scoreline-row" class="mui-row">
 			<div id="home-team" class="mui-col-xs-4 mui-col-xs-offset-1">
 			  <h4>{{fixture.team_home}}</h4>
 			</div>
@@ -99,7 +104,7 @@
 			</div>
 		      </div>
 		      {% if fixture.events %}
-		      <div class="mui-row">
+		      <div id="events-row" class="mui-row">
 			<div id="home-events" class="mui-col-xs-4 mui-col-xs-offset-1">
 			  {% for event in fixture.events.home %}
 			  <p>{{event.player}} {{event.time}}</p>
@@ -116,16 +121,15 @@
 		      {% endif %}
 		      {% if fixture.lineups %}
 		      <div id="details-row" class="mui-row">
-			<div id="match-details" class="mui=col-xs-6 mui-col-xs-offset-6">
+			<div id="match-details" class="mui=col-xs-6">
 			  <a href= {{ url_for('match_details', fixture_id=fixture.api_fixture_id) }} >match details</a>
 			</div>
 		      </div>
 		      {% endif %}
 		    </div>
-		    </div>
+		  </div>
 		</div>
 		{% endfor %}
-		  </div>
 	      </div>
 	    </div>
 	    {% endif %}
