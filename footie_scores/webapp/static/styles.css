@@ -1,4 +1,8 @@
-body {background-color: #eee;}
+body {
+    background-color: #eee;
+    /* min-width: 500px; */
+    /* margin: auto; */
+}
 
 /* #main-panel {margin-left: 200px;} */
 
@@ -37,12 +41,16 @@ body {background-color: #eee;}
     margin-right: -80px;
 }
 
+#competition-panel.mui-panel,
+#view-header-panel.mui-panel {
+    min-width: 275px;
+}
+
 #competition-container.mui-container-fluid,
 #view-header-container.mui-container
 {
     max-width: 800px;
 }
-/* #view-header-container.mui-container {padding: 0px;} */
 
 
 #sidebar ul {

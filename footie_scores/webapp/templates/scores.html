@@ -68,7 +68,7 @@
 	  <div class="mui-col-xs-10 mui-col-xs-offset-1">
 	    <div id="view-header-container" class="mui-container">
 	      <div class="invisible-panel">
-		<div class="mui-panel">
+		<div id="view-header-panel" class="mui-panel">
 		  <h1>Today's Fixtures</h1>
 		</div>
 	      </div>
@@ -80,7 +80,7 @@
 	    {% for comp in competitions %}
 	    {% if comp.fixtures %}
 	    <div id="competition-container" class="mui-container-fluid">
-	      <div class="mui-panel mui--z2">
+	      <div id="competition-panel" class="mui-panel mui--z2">
 		<div id="comp-header-row" class="mui-row">
 		  <div class="mui-col-xs-10 mui-col-xs-offset-1">
 		    <div class="competition-name-header">
