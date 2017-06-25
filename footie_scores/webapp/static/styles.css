@@ -1,6 +1,8 @@
 body {
     background-color: #eee;
-    /* min-width: 500px; */
+    min-width: 300px;
+    overflow-x: hidden;
+    overflow-y: scroll;
     /* margin: auto; */
 }
 
@@ -43,7 +45,8 @@ body {
 
 #competition-panel.mui-panel,
 #view-header-panel.mui-panel {
-    min-width: 275px;
+    /* min-width: 275px; */
+    overflow: hidden;
 }
 
 #competition-container.mui-container-fluid,
@@ -58,11 +61,13 @@ body {
     padding-left: 15px;}
 #sidebar li {line-height: 1.5;}
 
-#game-panel.mui-panel {
+#game-panel.mui-panel,
+#lineups-panel.mui-panel
+{
     margin-bottom: 0px;
     white-space: nowrap;
 }
-#game-row.mui-row, #comp-header-row.mui-row {
+#game-row.mui-row, #comp-header-row.mui-row, #lineups-row.mui-row {
     margin-left: -50px; margin-right: -50px;
 }
 
