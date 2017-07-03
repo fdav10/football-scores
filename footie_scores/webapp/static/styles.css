@@ -29,12 +29,17 @@ body {
     display: block;
     padding: 15px 22px;
 }
-.sidebar li {
-}
-.sidebar li strong:hover {
-    display: block;
+.sidebar li strong:hover  {
     background-color: #ded8d8;
-    padding: 15px 22px;
+}
+/* .sub-list{display: none;} */
+.sidebar .sub-list li {
+    padding-left: 40px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.sidebar .sub-list li:hover {
+    background-color: #ded8d8;
 }
 
 .invisible-panel .mui-panel {

@@ -7,9 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="//cdn.muicss.com/mui-0.9.16/css/mui.min.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <script src="{{ url_for('static', filename='js/main.js') }}">
+    <script type="text/javascript" src="https:ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}">
     <script src="//cdn.muicss.com/mui-0.9.16/js/mui.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   </head>
   <body>
     <header id="header">
@@ -32,6 +32,13 @@
 	</li>
 	<li>
 	  <strong>Competitions</strong>
+	  <ul class="mui-list--unstyled">
+	    <div class="sub-list">
+	      {% for comp in competitions %}
+	      <li>{{comp.name}}</li>
+	      {% endfor %}
+	    </div>
+	  </ul>
 	</li>
       </ul>
     </nav>
