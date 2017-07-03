@@ -32,14 +32,18 @@ body {
 .sidebar li strong:hover  {
     background-color: #ded8d8;
 }
-/* .sub-list{display: none;} */
+.sub-list{display: none;}
 .sidebar .sub-list li {
+    color: rgba(0, 0, 0, .87);
     padding-left: 40px;
     padding-top: 5px;
     padding-bottom: 5px;
 }
 .sidebar .sub-list li:hover {
     background-color: #ded8d8;
+}
+.sidebar .sub-list a:hover{
+    text-decoration: none;
 }
 
 .invisible-panel .mui-panel {
