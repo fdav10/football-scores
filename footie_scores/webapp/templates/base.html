@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+    <title>Footie Scores{% block title %}{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="//cdn.muicss.com/mui-0.9.16/css/mui.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script type="text/javascript" src="https:ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}">
+    <script src="//cdn.muicss.com/mui-0.9.16/js/mui.min.js"></script>
+    {% set months = ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December') %}
+    {% endblock head %}
+  </head>
+  <body>
+    <header id="header">
+      {% block header_bar %}
+      <div class="mui-appbar mui--appbar-line-height">
+	<div class="mui-container-fluid">
+	  <!-- <a class="sidedrawer-toggle mui--visible-xs-inline-block mui--visible-sm-inline-block js-show-sidedrawer">☰</a>
+	       <a class="sidedrawer-toggle mui--hidden-xs mui--hidden-sm js-hide-sidedrawer">☰</a> -->
+	  <span class="mui--text-title mui--visible-xs-inline-block">Football Scores</span>
+	</div>
+      </div>
+      {% endblock header_bar %}
+    </header>
+    <nav class="sidebar">
+    {% block sidebar %}
+      <div class="mui--appbar-height"></div>
+      <ul class="mui-list--unstyled">
+	<li>
+	  <strong id="todays-games">Today's Games</strong>
+	  <div class="sub-list">
+	    <ul class="mui-list--unstyled">
+	      <a href="#">
+		<li id="all-comps-button">All Competitions</li>
+	      </a>
+	      {% for comp in competitions %}
+	      {% if comp.fixtures %}
+	      <a href="#">
+		<li class="individual-competitions">{{comp.name}}</li>
+	      </a>
+	      {% endif %}
+	      {% endfor %}
+	    </ul>
+	  </div>
+	</li>
+	<li>
+	  <strong>Competitions</strong>
+	</li>
+	<li>
+	  <strong id="past-results">Past Results</strong>
+	  <div class="sub-list">
+	    <ul class="mui-list--unstyled">
+	      <a href="#">
+		<li id="all-comps-button">All Competitions</li>
+	      </a>
+	      {% for comp in competitions %}
+	      <a href="#">
+		<li class="individual-competitions">{{comp.name}}</li>
+	      </a>
+	      {% endfor %}
+	    </ul>
+	  </div>
+	</li>
+      </ul>
+    {% endblock sidebar %}
+    </nav>
+    <div class="main-panel">
+    {% block main_panel %}
+      <div class="mui--appbar-height"></div>
+      <div class="mui-container-fluid">
+	{% block main_row_header %}
+	<div id="view-header-row" class="mui-row">
+	  <div class="mui-col-xs-10 mui-col-xs-offset-1">
+	    <div id="view-header-container" class="mui-container">
+	      <div class="invisible-panel">
+		<div id="view-header-panel" class="mui-panel">
+		  <h1>{% block header_title %}{% endblock %}</h1>
+		</div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	{% endblock main_row_header %}
+	{% block main_row_content %}
+	{% endblock main_row_content %}
+      </div>
+    {% endblock main_panel %}
+    </div>
+  </body>
+</html>

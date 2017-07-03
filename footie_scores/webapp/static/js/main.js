@@ -27,5 +27,6 @@ $( document ).ready(function() {
   $(".sidebar strong").on("click", showSubList);
   $(".sidebar .sub-list li.individual-competitions").on("click", filterCompetitions);
   $(".sidebar .sub-list li#all-comps-button").on("click", showAllCompetitions);
+  console.log(document.createElement('link'));
 });
 
