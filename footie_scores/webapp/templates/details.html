@@ -1,110 +1,100 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
   <head>
-    <title> Scores for 16/01/2017 </title>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="//cdn.muicss.com/mui-0.9.16/css/mui.min.css" rel="stylesheet" type="text/css" />
-    <script src="//cdn.muicss.com/mui-0.9.16/js/mui.min.js"></script>
-    <link href="https://fonts.googleapis.com/css?family=Arimo" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    {% block title %}{% endblock title %}
+    {% block head %}
+    {{super ()}}
+    {% endblock head %}
   </head>
   <body>
     <header id="header">
-      <div class="mui-appbar mui--appbar-line-height">
-	<div class="mui-container-fluid">
-	  <a class="sidedrawer-toggle mui--visible-xs-inline-block mui--visible-sm-inline-block js-show-sidedrawer">☰</a>
-	  <a class="sidedrawer-toggle mui--hidden-xs mui--hidden-sm js-hide-sidedrawer">☰</a>
-	  <span class="mui--text-title mui--visible-xs-inline-block">Football Scores</span>
-	</div>
-      </div>
+      {% block header_bar %}
+      {{super ()}}
+      {% endblock header_bar %}
     </header>
-    {% include "sidebar.html" %}
-    <div id="main-panel">
-      <div class="mui--appbar-height"></div>
-      <div class="mui-container-fluid">
-	<div id="view-header-row" class="mui-row">
-	  <div class="mui-col-xs-10 mui-col-xs-offset-1">
-	    <div id="view-header-container" class="mui-container">
-	      <div class="invisible-panel">
-		<div id="view-header-panel" class="mui-panel">
-		  <h1>Fixture Details</h1>
-		</div>
-	      </div>
-	    </div>
-	  </div>
-	</div>
-	<div id="fixture-content-row" class="mui-row">
-	  <div class="mui-col-xs-10 mui-col-xs-offset-1">
-	    <div id="competition-container" class="mui-container-fluid">
-	      <div id="competition-panel" class="mui-panel mui--z2">
-		<div id="comp-header-row" class="mui-row">
-		  <div class="mui-col-xs-10 mui-col-xs-offset-1">
-		    <div class="competition-name-header">
-		      <h2>{{fixture.team_home}} vs {{fixture.team_away}}</h2>
-		    </div>
-		  </div>
-		</div>
-	      <div id="game-row" class="mui-row">
-		<div class="mui-col-xs-10 mui-col-xs-offset-1">
-		  <div id="game-panel" class="mui-panel">
-		    <div id="scoreline-row" class="mui-row">
-		      <div id="home-team" class="mui-col-xs-4 mui-col-xs-offset-1">
-			<h4>{{fixture.team_home}}</h4>
-		      </div>
-		      <div id="score" class="mui-col-xs-2">
-			<h4>{{fixture.score}}</h4>
-		      </div>
-		      <div id="away-team" class="mui-col-xs-4">
-			<h4>{{fixture.team_away}}</h4>
-		      </div>
-		    </div>
-		    {% if fixture.events %}
-		    <div id="events-row" class="mui-row">
-		      <div id="home-events" class="mui-col-xs-4 mui-col-xs-offset-1">
-			{% for event in fixture.events.home %}
-			<p>{{event.player}} {{event.time}}</p>
-			{% endfor %}
-		      </div>
-		      <div class="mui-col-xs-2">
-		      </div>
-		      <div id="away-events" class="mui-col-xs-4">
-			{% for event in fixture.events.away %}
-			<p>{{event.time}} {{event.player}}</p>
-			{% endfor %}
-		      </div>
-		    </div>
-		    {% endif %}
+    <nav class="sidebar">
+    {% block sidebar %}
+      {{super ()}}
+    {% endblock sidebar %}
+    </nav>
+    <div class="main-panel">
+      {% block main_panel %}
+      {{super ()}}
+      {% endblock main_panel %}
+      {% block header_title %}Details{% endblock %}
+      {% block main_row_header %} {{super ()}}
+      {% endblock main_row_header %}
+      {% block main_row_content %}
+      <div id="fixture-content-row" class="mui-row">
+	<div class="mui-col-xs-10 mui-col-xs-offset-1">
+	  <div id="competition-container" class="mui-container-fluid">
+	    <div id="competition-panel" class="mui-panel mui--z2">
+		      <div id="comp-header-row" class="mui-row">
+			      <div class="mui-col-xs-10 mui-col-xs-offset-1">
+			      <div class="competition-name-header">
+			      <h2>{{fixture.team_home}} vs {{fixture.team_away}}</h2>
 		  </div>
 		</div>
 	      </div>
-	      <div id="lineups-row" class="mui-row">
-		<div class="mui-col-xs-10 mui-col-xs-offset-1">
-		  <div id="lineups-panel" class="mui-panel">
-		    {% if lineups.home %}
-		    <div id="events-row" class="mui-row">
-		      <div id="home-events" class="mui-col-xs-4 mui-col-xs-offset-1">
-			{% for player in lineups.home %}
-			<p>{{player.number}} {{player.name}}</p>
-			{% endfor %}
+		      <div id="game-row" class="mui-row">
+			      <div class="mui-col-xs-10 mui-col-xs-offset-1">
+			      <div id="game-panel" class="mui-panel">
+			      <div id="scoreline-row" class="mui-row">
+			      <div id="home-team" class="mui-col-xs-4 mui-col-xs-offset-1">
+				      <h4>{{fixture.team_home}}</h4>
 		      </div>
-		      <div class="mui-col-xs-2">
+			      <div id="score" class="mui-col-xs-2">
+				      <h4>{{fixture.score}}</h4>
 		      </div>
-		      <div id="away-events" class="mui-col-xs-4">
-			{% for player in lineups.away %}
-			<p>{{player.number}} {{player.name}}</p>
-			{% endfor %}
+			      <div id="away-team" class="mui-col-xs-4">
+				      <h4>{{fixture.team_away}}</h4>
 		      </div>
 		    </div>
-		    {% endif %}
+			      {% if fixture.events %}
+			      <div id="events-row" class="mui-row">
+			      <div id="home-events" class="mui-col-xs-4 mui-col-xs-offset-1">
+				      {% for event in fixture.events.home %}
+				      <p>{{event.player}} {{event.time}}</p>
+				      {% endfor %}
+		      </div>
+			      <div class="mui-col-xs-2">
+		      </div>
+			      <div id="away-events" class="mui-col-xs-4">
+				      {% for event in fixture.events.away %}
+				      <p>{{event.time}} {{event.player}}</p>
+				      {% endfor %}
+		      </div>
+		    </div>
+			      {% endif %}
 		  </div>
 		</div>
 	      </div>
-	    </div>
+		      <div id="lineups-row" class="mui-row">
+			      <div class="mui-col-xs-10 mui-col-xs-offset-1">
+			      <div id="lineups-panel" class="mui-panel">
+			      {% if lineups.home %}
+			      <div id="events-row" class="mui-row">
+			      <div id="home-events" class="mui-col-xs-4 mui-col-xs-offset-1">
+				      {% for player in lineups.home %}
+				      <p>{{player.number}} {{player.name}}</p>
+				      {% endfor %}
+		      </div>
+			      <div class="mui-col-xs-2">
+		      </div>
+			      <div id="away-events" class="mui-col-xs-4">
+				      {% for player in lineups.away %}
+				      <p>{{player.number}} {{player.name}}</p>
+				      {% endfor %}
+		      </div>
+		    </div>
+			      {% endif %}
+		  </div>
+		</div>
+	      </div>
+		    </div>
 	  </div>
 	</div>
       </div>
+      {% endblock main_row_content %}
     </div>
   </body>
 </html>

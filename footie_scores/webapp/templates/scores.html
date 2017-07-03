@@ -19,6 +19,7 @@
     <div class="main-panel">
     {% block main_panel %}
       {{super ()}}
+    {% endblock main_panel %}
 	{% block header_title %}Today's Games{% endblock %}
 	{% block main_row_header %} {{super ()}}
 	{% endblock main_row_header %}
@@ -87,7 +88,6 @@
 	  </div>
 	</div>
 	{% endblock main_row_content %}
-    {% endblock main_panel %}
     </div>
   </body>
 </html>
