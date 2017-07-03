@@ -28,9 +28,11 @@ body {
 .sidebar li strong {
     display: block;
     padding: 15px 22px;
+    user-select: none;
 }
 .sidebar li strong:hover  {
     background-color: #ded8d8;
+    cursor: pointer;
 }
 .sub-list{display: none;}
 .sidebar .sub-list li {
@@ -70,7 +72,7 @@ body {
     overflow: hidden;
 }
 
-#competition-container.mui-container-fluid,
+.competition-container .mui-container-fluid,
 #view-header-container.mui-container
 {
     max-width: 800px;

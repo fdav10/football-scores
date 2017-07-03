@@ -12,6 +12,7 @@
     <script src="//cdn.muicss.com/mui-0.9.16/js/mui.min.js"></script>
   </head>
   <body>
+    {% set months = ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December') %}
     <header id="header">
       <div class="mui-appbar mui--appbar-line-height">
 	<div class="mui-container-fluid">
@@ -25,24 +26,40 @@
       <div class="mui--appbar-height"></div>
       <ul class="mui-list--unstyled">
 	<li>
-	  <strong>Competitions</strong>
-	  <ul class="mui-list--unstyled">
-	    <div class="sub-list">
-	      {% for comp in competitions %}
-	      <a href="http://www.google.com">
-		<li>{{comp.name}}</li>
+	  <strong id="todays-games">Today's Games</strong>
+	  <div class="sub-list">
+	    <ul class="mui-list--unstyled">
+	      <a href="#">
+		<li id="all-comps-button">All Competitions</li>
 	      </a>
+	      {% for comp in competitions %}
+	      {% if comp.fixtures %}
+	      <a href="#">
+		<li class="individual-competitions">{{comp.name}}</li>
+	      </a>
+	      {% endif %}
 	      {% endfor %}
-	    </div>
-	  </ul>
-	  </li>
-	  <li>
-	  <strong>Fixtures</strong>
+	    </ul>
+	  </div>
 	</li>
 	<li>
-	  <strong>Results</strong>
+	  <strong>Competitions</strong>
 	</li>
-	
+	<li>
+	  <strong id="past-results">Past Results</strong>
+	  <div class="sub-list">
+	    <ul class="mui-list--unstyled">
+	      <a href="#">
+		<li id="all-comps-button">All Competitions</li>
+	      </a>
+	      {% for comp in competitions %}
+	      <a href="#">
+		<li class="individual-competitions">{{comp.name}}</li>
+	      </a>
+	      {% endfor %}
+	    </ul>
+	  </div>
+	</li>
       </ul>
     </nav>
     <div class="main-panel">
@@ -53,7 +70,7 @@
 	    <div id="view-header-container" class="mui-container">
 	      <div class="invisible-panel">
 		<div id="view-header-panel" class="mui-panel">
-		  <h1>Today's Fixtures</h1>
+		  <h1>Today's Games</h1>
 		</div>
 	      </div>
 	    </div>
@@ -63,57 +80,59 @@
 	  <div class="mui-col-xs-10 mui-col-xs-offset-1">
 	    {% for comp in competitions %}
 	    {% if comp.fixtures %}
-	    <div id="competition-container" class="mui-container-fluid">
-	      <div id="competition-panel" class="mui-panel mui--z2">
-		<div id="comp-header-row" class="mui-row">
-		  <div class="mui-col-xs-10 mui-col-xs-offset-1">
-		    <div class="competition-name-header">
-		      <h2> {{comp.name}} </h2>
+	    <div id="{{comp.name | replace (' ', '-')}}" class="competition-container">
+	      <div class="mui-container-fluid">
+		<div id="competition-panel" class="mui-panel mui--z2">
+		  <div id="comp-header-row" class="mui-row">
+		    <div class="mui-col-xs-10 mui-col-xs-offset-1">
+		      <div class="competition-name-header">
+			<h2> {{comp.name}} </h2>
+		      </div>
 		    </div>
 		  </div>
-		</div>
-		{% for fixture in comp.fixtures %}
-		<div id="game-row" class="mui-row">
-		  <div class="mui-col-xs-10 mui-col-xs-offset-1">
-		    <div id="game-panel" class="mui-panel">
-		      <div id="scoreline-row" class="mui-row">
-			<div id="home-team" class="mui-col-xs-4 mui-col-xs-offset-1">
-			  <h4>{{fixture.team_home}}</h4>
+		  {% for fixture in comp.fixtures %}
+		  <div id="game-row" class="mui-row">
+		    <div class="mui-col-xs-10 mui-col-xs-offset-1">
+		      <div id="game-panel" class="mui-panel">
+			<div id="scoreline-row" class="mui-row">
+			  <div id="home-team" class="mui-col-xs-4 mui-col-xs-offset-1">
+			    <h4>{{fixture.team_home}}</h4>
+			  </div>
+			  <div id="score" class="mui-col-xs-2">
+			    <h4>{{fixture.score}}</h4>
+			  </div>
+			  <div id="away-team" class="mui-col-xs-4">
+			    <h4>{{fixture.team_away}}</h4>
+			  </div>
 			</div>
-			<div id="score" class="mui-col-xs-2">
-			  <h4>{{fixture.score}}</h4>
+			{% if fixture.events %}
+			<div id="events-row" class="mui-row">
+			  <div id="home-events" class="mui-col-xs-4 mui-col-xs-offset-1">
+			    {% for event in fixture.events.home %}
+			    <p>{{event.player}} {{event.time}}</p>
+			    {% endfor %}
+			  </div>
+			  <div class="mui-col-xs-2">
+			  </div>
+			  <div id="away-events" class="mui-col-xs-4">
+			    {% for event in fixture.events.away %}
+			    <p>{{event.time}} {{event.player}}</p>
+			    {% endfor %}
+			  </div>
 			</div>
-			<div id="away-team" class="mui-col-xs-4">
-			  <h4>{{fixture.team_away}}</h4>
+			{% endif %}
+			{% if fixture.lineups %}
+			<div id="details-row" class="mui-row">
+			  <div id="match-details" class="mui=col-xs-6">
+			    <a href= {{ url_for('match_details', fixture_id=fixture.api_fixture_id) }} >match details</a>
+			  </div>
 			</div>
+			{% endif %}
 		      </div>
-		      {% if fixture.events %}
-		      <div id="events-row" class="mui-row">
-			<div id="home-events" class="mui-col-xs-4 mui-col-xs-offset-1">
-			  {% for event in fixture.events.home %}
-			  <p>{{event.player}} {{event.time}}</p>
-			  {% endfor %}
-			</div>
-			<div class="mui-col-xs-2">
-			</div>
-			<div id="away-events" class="mui-col-xs-4">
-			  {% for event in fixture.events.away %}
-			  <p>{{event.time}} {{event.player}}</p>
-			  {% endfor %}
-			</div>
-		      </div>
-		      {% endif %}
-		      {% if fixture.lineups %}
-		      <div id="details-row" class="mui-row">
-			<div id="match-details" class="mui=col-xs-6">
-			  <a href= {{ url_for('match_details', fixture_id=fixture.api_fixture_id) }} >match details</a>
-			</div>
-		      </div>
-		      {% endif %}
 		    </div>
 		  </div>
+		  {% endfor %}
 		</div>
-		{% endfor %}
 	      </div>
 	    </div>
 	    {% endif %}
