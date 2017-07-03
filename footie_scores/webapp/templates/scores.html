@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title> Scores for 16/01/2017 </title>
+    <title>Football Scores</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="//cdn.muicss.com/mui-0.9.16/css/mui.min.css" rel="stylesheet" type="text/css" />
-    <script src="//cdn.muicss.com/mui-0.9.16/js/mui.min.js"></script>
-    <link href="https://fonts.googleapis.com/css?family=Arimo" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='js/main.js') }}">
+    <script src="//cdn.muicss.com/mui-0.9.16/js/mui.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   </head>
   <body>
     <header id="header">
@@ -20,48 +21,21 @@
 	</div>
       </div>
     </header>
-    <!-- <nav id="sidebar">
-	 <div class="mui--appbar-height"></div>
-	 <ul class="mui-list--unstyled">
-	 <li>
-	 <a href="#">January</a>
-	 </li>
-	 <li>
-	 <a href="#">February</a>
-	 </li>
-	 <li>
-	 <a href="#">March</a>
-	 </li>
-	 <li>
-	 <a href="#">April</a>
-	 </li>
-	 <li>
-	 <a href="#">May</a>
-	 </li>
-	 <li>
-	 <a href="#">June</a>
-	 </li>
-	 <li>
-	 <a href="#">July</a>
-	 </li>
-	 <li>
-	 <a href="#">August</a>
-	 </li>
-	 <li>
-	 <a href="#">September</a>
-	 </li>
-	 <li>
-	 <a href="#">October</a>
-	 </li>
-	 <li>
-	 <a href="#">November</a>
-	 </li>
-	 <li>
-	 <a href="#">December</a>
-	 </li>
-	 </ul>
-	 </nav> -->
-    <div id="main-panel">
+    <nav class="sidebar">
+      <div class="mui--appbar-height"></div>
+      <ul class="mui-list--unstyled">
+	<li>
+	  <strong>Fixtures</strong>
+	</li>
+	<li>
+	  <strong>Results</strong>
+	</li>
+	<li>
+	  <strong>Competitions</strong>
+	</li>
+      </ul>
+    </nav>
+    <div class="main-panel">
       <div class="mui--appbar-height"></div>
       <div class="mui-container-fluid">
 	<div id="view-header-row" class="mui-row">

@@ -6,7 +6,7 @@ body {
     /* margin: auto; */
 }
 
-/* #main-panel {margin-left: 200px;} */
+.main-panel {margin-left: 200px;}
 
 #header {
     z-index: 999;
@@ -16,13 +16,25 @@ body {
     right: 0px;
 }
 
-#sidebar {
+.sidebar {
     position: fixed;
     overflow: auto;
     top: 0;
     bottom: 0;
     width: 200px;
     background-color: white;
+}
+
+.sidebar li strong {
+    display: block;
+    padding: 15px 22px;
+}
+.sidebar li {
+}
+.sidebar li strong:hover {
+    display: block;
+    background-color: #ded8d8;
+    padding: 15px 22px;
 }
 
 .invisible-panel .mui-panel {
@@ -53,13 +65,9 @@ body {
 #view-header-container.mui-container
 {
     max-width: 800px;
+    overflow: hidden;
 }
 
-
-#sidebar ul {
-    padding-top: 15px;
-    padding-left: 15px;}
-#sidebar li {line-height: 1.5;}
 
 #game-panel.mui-panel,
 #lineups-panel.mui-panel
