@@ -85,7 +85,9 @@ def get_comp_grouped_fixtures_for_date(session, dt_date, comp_ids=settings.COMPS
         competition = cq.filter(Competition.api_id == id_).one()
         fixtures = cfq.filter(Fixture.date==date_).filter(Competition.api_id==id_).all()
         fixtures_by_comp.append({'name': competition.name,
-                                 'fixtures': fixtures,})
+                                 'fixtures': fixtures,
+                                 'api_id': id_,
+                                 'display': True})
     return fixtures_by_comp
 
 def fixture_has_lineups(session, fixture_id):

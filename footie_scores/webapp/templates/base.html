@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    {% block head %}
     <title>Footie Scores{% block title %}{% endblock %}</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,11 +12,9 @@
     <script type="text/javascript" src="//cdn.muicss.com/mui-0.9.16/js/mui.min.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% set months = ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December') %}
-    {% endblock head %}
   </head>
   <body>
     <header id="header">
-      {% block header_bar %}
       <div class="mui-appbar mui--appbar-line-height">
 	<div class="mui-container-fluid">
 	  <!-- <a class="sidedrawer-toggle mui--visible-xs-inline-block mui--visible-sm-inline-block js-show-sidedrawer">☰</a>
@@ -25,29 +22,32 @@
 	  <span class="mui--text-title mui--visible-xs-inline-block">Football Scores</span>
 	</div>
       </div>
-      {% endblock header_bar %}
     </header>
     <nav class="sidebar">
-    {% block sidebar %}
       <div class="mui--appbar-height"></div>
       <ul class="mui-list--unstyled">
+	{% block games_today_filter %}
 	<li>
-	  <strong id="todays-games">Today's Games</strong>
+	  <strong>Games Today</strong>
 	  <div class="sub-list">
-	    <ul class="mui-list--unstyled">
-	      <a href="#">
+	    <ul id="todays-games" class="mui-list--unstyled">
 		<li id="all-comps-button">All Competitions</li>
-	      </a>
 	      {% for comp in competitions %}
 	      {% if comp.fixtures %}
-	      <a href="#">
 		<li class="individual-competitions">{{comp.name}}</li>
-	      </a>
 	      {% endif %}
 	      {% endfor %}
 	    </ul>
 	  </div>
 	</li>
+	{% endblock games_today_filter %}
+	{% block games_today_link %}
+	<li>
+	  <a href={{ url_for('todays_fixtures') }}>
+	    <strong>Games Today</strong>
+	  </a>
+	</li>
+	{% endblock games_today_link %}
 	<li>
 	  <strong>Competitions</strong>
 	</li>
@@ -59,7 +59,7 @@
 		<li id="all-comps-button">All Competitions</li>
 	      </a>
 	      {% for comp in competitions %}
-	      <a href="#">
+	      <a href={{ url_for('past_results', comp_id=comp.api_id) }}>
 		<li class="individual-competitions">{{comp.name}}</li>
 	      </a>
 	      {% endfor %}
@@ -67,13 +67,10 @@
 	  </div>
 	</li>
       </ul>
-    {% endblock sidebar %}
     </nav>
     <div class="main-panel">
-    {% block main_panel %}
       <div class="mui--appbar-height"></div>
       <div class="mui-container-fluid">
-	{% block main_row_header %}
 	<div id="view-header-row" class="mui-row">
 	  <div class="mui-col-xs-10 mui-col-xs-offset-1">
 	    <div id="view-header-container" class="mui-container">
@@ -85,11 +82,9 @@
 	    </div>
 	  </div>
 	</div>
-	{% endblock main_row_header %}
 	{% block main_row_content %}
 	{% endblock main_row_content %}
       </div>
-    {% endblock main_panel %}
     </div>
   </body>
 </html>

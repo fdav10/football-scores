@@ -40,9 +40,11 @@ body {
     padding-left: 40px;
     padding-top: 5px;
     padding-bottom: 5px;
+    user-select: none;
 }
 .sidebar .sub-list li:hover {
     background-color: #ded8d8;
+    cursor: pointer;
 }
 .sidebar .sub-list a:hover{
     text-decoration: none;

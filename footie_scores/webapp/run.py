@@ -21,13 +21,32 @@ COMPS_FOR_PAGE = settings.COMPS
 
 @app.route("/todays_games")
 def todays_fixtures():
-    # TODO make details link appear only if lineups etc. are available for fixture
     with db.session_scope() as session:
         comps = page_comps_only(queries.get_competitions(session))
         comp_ids = [c.api_id for c in comps]
         fixtures = queries.get_comp_grouped_fixtures_for_date(session, TODAY, comp_ids)
-        todays_games = games_template(fixtures, utils.time.today())
+        todays_games = games_template(
+            fixtures,
+            utils.time.today(),
+            games_today_as_filter=True,
+            games_today_as_link=False,
+        )
     return todays_games
+
+
+@app.route("/past_results_<comp_id>")
+def past_results(comp_id):
+    with db.session_scope() as session:
+        comps = page_comps_only(queries.get_competitions(session))
+        comp_ids = [c.api_id for c in comps]
+        fixtures = queries.get_comp_grouped_fixtures_for_date(session, TODAY, comp_ids)
+        for fixture in fixtures:
+            if fixture['api_id'] != int(comp_id):
+                fixture['display'] = False
+            else:
+                fixture['display'] = True
+            past_games = games_template(fixtures, utils.time.today())
+    return past_games
 
 
 @app.route("/details_<fixture_id>")
@@ -39,11 +58,16 @@ def match_details(fixture_id):
     return template 
 
 
-def games_template(competitions, date_):
+def games_template(
+        competitions, date_, games_today_as_filter=False,
+        games_today_as_link=True):
+
     return render_template(
         'scores.html',
         date=date_.strftime(WEBDATEFORMAT),
         competitions=competitions,
+        games_today_filter=games_today_as_filter,
+        games_today_link=games_today_as_link,
     )
 
 
@@ -57,7 +81,12 @@ def details_template(fixture, lineups):
 
 def page_comps_only(competitions):
     to_keep = COMPS_FOR_PAGE
+    return filter_comps(competitions, to_keep)
+
+
+def filter_comps(competitions, to_keep):
     return [comp for comp in competitions if comp.api_id in to_keep]
+    
 
 
 if __name__ == '__main__':

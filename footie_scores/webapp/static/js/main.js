@@ -25,8 +25,8 @@ function showAllCompetitions () {
 
 $( document ).ready(function() {
   $(".sidebar strong").on("click", showSubList);
-  $(".sidebar .sub-list li.individual-competitions").on("click", filterCompetitions);
-  $(".sidebar .sub-list li#all-comps-button").on("click", showAllCompetitions);
+  $(".sidebar .sub-list #todays-games li.individual-competitions").on("click", filterCompetitions);
+  $(".sidebar .sub-list #todays-games li#all-comps-button").on("click", showAllCompetitions);
   console.log(document.createElement('link'));
 });
 
