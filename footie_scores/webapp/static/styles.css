@@ -26,13 +26,10 @@ body {
 }
 
 .sidebar li strong {
+    color: rgba(0, 0, 0, .87);
     display: block;
     padding: 15px 22px;
     user-select: none;
-}
-.sidebar li strong:hover  {
-    background-color: #ded8d8;
-    cursor: pointer;
 }
 .sub-list{display: none;}
 .sidebar .sub-list li {
@@ -42,12 +39,14 @@ body {
     padding-bottom: 5px;
     user-select: none;
 }
-.sidebar .sub-list li:hover {
+
+.sidebar .sub-list li:hover,
+.sidebar .sub-list a:hover,
+.sidebar li strong:hover,
+.sidebar li a:hover  {
     background-color: #ded8d8;
-    cursor: pointer;
-}
-.sidebar .sub-list a:hover{
     text-decoration: none;
+    cursor: pointer;
 }
 
 .invisible-panel .mui-panel {
@@ -62,16 +61,22 @@ body {
 }
 
 #view-header-row.mui-row,
+#filter-options-row.mui-row,
 #fixture-content-row.mui-row
 {
     margin-left: -80px;
     margin-right: -80px;
 }
+#filter-options-row.mui-row {
+    margin-bottom: 20px;}
 
 #competition-panel.mui-panel,
 #view-header-panel.mui-panel {
     /* min-width: 275px; */
     overflow: hidden;
+}
+#view-header-panel h1 {
+    margin-bottom: 20px;
 }
 
 .competition-container .mui-container-fluid,
@@ -81,20 +86,25 @@ body {
     overflow: hidden;
 }
 
-
 #game-panel.mui-panel,
 #lineups-panel.mui-panel
 {
     margin-bottom: 0px;
     white-space: nowrap;
 }
-#game-row.mui-row, #comp-header-row.mui-row, #lineups-row.mui-row {
+#game-row.mui-row,
+#comp-header-row.mui-row,
+#lineups-row.mui-row {
     margin-left: -50px; margin-right: -50px;
 }
 
 .competition-name-header h2 {
     margin-top: 0px;
 }
+
+#filter-options-row a {
+    text-align: center;
+ }
 
 #scoreline-row h4 {
     margin-top: 0;

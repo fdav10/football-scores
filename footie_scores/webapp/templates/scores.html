@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}This title{% endblock title %}
-{% block header_title %}Games Today{% endblock %}
+{% block title %}{{title}}{% endblock title %}
+{% block header_title %}{{title}}{% endblock %}
 {% block games_today_filter %}
     {% if games_today_filter %}
 	{{super ()}}

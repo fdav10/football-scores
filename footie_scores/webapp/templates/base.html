@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Footie Scores{% block title %}{% endblock %}</title>
+    <title>Footie Scores - {% block title %}{% endblock %}</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,6 +12,7 @@
     <script type="text/javascript" src="//cdn.muicss.com/mui-0.9.16/js/mui.min.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% set months = ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December') %}
+    {% set short_months = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec') %}
   </head>
   <body>
     <header id="header">
@@ -80,6 +81,17 @@
 		</div>
 	      </div>
 	    </div>
+	  </div>
+	</div>
+	<div id="filter-options-row" class="mui-row">
+	  <div class="mui-col-xs-10 mui-col-xs-offset-1">
+	    {% for month in short_months %}
+	    <div class="mui-col-xs-1">
+	      <a href="https://www.google.com">
+		{{month}}
+	      </a>
+	    </div>
+	    {% endfor %}
 	  </div>
 	</div>
 	{% block main_row_content %}
