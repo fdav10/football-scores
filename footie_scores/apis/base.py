@@ -6,11 +6,10 @@ import datetime as dt
 
 import requests
 
-from footie_scores import db, utils
+from footie_scores import utils
 from footie_scores import settings
 from footie_scores.utils.exceptions import *
 from footie_scores.utils.scheduling import batch_request
-from footie_scores.db.queries import save_competitions_to_db
 from footie_scores.utils.strings import correct_unicode_to_bin
 
 logger = logging.getLogger(__name__)
@@ -66,9 +65,7 @@ class FootballAPICaller(object):
         return lineups
 
     def competitions_to_db(self):
-        competitions = self.get_competitions()
-        with db.session_scope() as session:
-            save_competitions_to_db(session, competitions)
+        return self.get_competitions()
 
     def get_competitions(self):
         raise NotImplementedError(

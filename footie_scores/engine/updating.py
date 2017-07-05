@@ -8,11 +8,19 @@ import time
 import logging
 
 from footie_scores import db, settings, utils
+from footie_scores.interfaces import api_to_db
 from footie_scores.utils.log import start_logging, log_list, log_time_util_next_fixture
 from footie_scores.apis.football_api import FootballAPI
 
 
 logger = logging.getLogger(__name__)
+
+
+def save_competitions_to_db():
+    api = FootballAPI()
+    competitions = api.competitions_to_db()
+    with db.session_scope() as session:
+        api_to_db.save_competitions(session, competitions)
 
 
 def start_updater():
@@ -38,11 +46,11 @@ class _UpdaterState():
         logger.info('%d fixtures kicking off soon do not have lineups:\n%s', len(needs_lineups), needs_lineups)
         fixture_ids = [f.api_fixture_id for f in needs_lineups]
         lineups = self.api.fixture_lineups(session, fixture_ids)
-        db.queries.save_lineups_to_db(session, lineups)
+        api_to_db.save_lineups(session, lineups)
 
     def refresh_and_get_todays_fixtures(self, session):
         todays_fixtures = self.api.todays_fixtures(settings.COMPS)
-        db.queries.save_fixtures_to_db(session, todays_fixtures)
+        api_to_db.save_fixtures(session, todays_fixtures)
         return db.queries.get_fixtures_by_date(session, utils.time.today())
 
     def time_to_next_kickoff(self, fixtures):
@@ -148,5 +156,6 @@ class _ActiveState(_UpdaterState):
 
 
 if __name__ == '__main__':
-    start_logging()
-    start_updater()
+    # start_logging()
+    # start_updater()
+    save_competitions_to_db()

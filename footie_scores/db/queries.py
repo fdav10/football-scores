@@ -17,45 +17,6 @@ def row_exists(session, row_class, id_, value):
     return occurences > 0
 
 
-def save_fixtures_to_db(session, fixtures):
-    for fixture in fixtures:
-        save_fixture_to_db(session, fixture)
-
-
-def save_fixture_to_db(session, api_fixture):
-    db_fixture = Fixture(**api_fixture)
-    fq = session.query(Fixture)
-    cq = session.query(Competition)
-    if not row_exists(session, Fixture, Fixture.api_fixture_id, db_fixture.api_fixture_id):
-        db_fixture.competition = cq.filter(Competition.api_id == db_fixture.comp_api_id).one()
-        session.add(db_fixture)
-        logger.info('%s added to db', db_fixture.api_fixture_id)
-    else:
-        db_fixture = fq.filter(Fixture.api_fixture_id == db_fixture.api_fixture_id).first()
-        db_fixture.update_from_equivalent(db_fixture)
-        logger.info('%s updated in db', db_fixture)
-
-
-def save_competitions_to_db(session, competitions):
-    for comp in competitions:
-        if not row_exists(session, Competition, Competition.api_id, comp['id']):
-            db_comp = Competition(int(comp['id']), comp['name'], comp['region'])
-            session.add(db_comp)
-
-
-def save_lineups_to_db(session, api_lineups):
-    fq = session.query(Fixture)
-    for api_lineup in api_lineups:
-        db_lineup = Lineups(**api_lineup)
-        fixture = fq.filter(Fixture.api_fixture_id == db_lineup.api_fixture_id).one()
-        if fixture.lineups is None:
-            fixture.lineups = db_lineup
-            logger.info('%s added to db', db_lineup.api_fixture_id)
-        else:
-            fixture.lineups.update_from_equivalent(db_lineup)
-            logger.info('%s updated in db', fixture.lineups)
-
-
 def get_competitions(session):
     comps = session.query(Competition).all()
     return comps
@@ -91,6 +52,3 @@ def get_comp_grouped_fixtures_for_date(session, dt_date, comp_ids=settings.COMPS
                                  'api_id': id_,
                                  'display': True})
     return fixtures_by_comp
-
-def fixture_has_lineups(session, fixture_id):
-    pass
