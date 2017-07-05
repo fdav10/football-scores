@@ -32,9 +32,9 @@ class FootballAPI(FootballAPICaller):
 
     def get_competitions(self):
         competitions_url = 'competitions?'
-        response = self.request(competitions_url)
+        competitions = self.request(competitions_url)
         logger.info('Competitions retrieved from football-api API')
-        return response
+        return self._format_competitions(competitions)
 
     def _get_fixtures_for_date(self, date_=TODAY, competitions=settings.COMPS):
         str_date = date_.strftime(self.api_date_format)
@@ -44,6 +44,14 @@ class FootballAPI(FootballAPICaller):
             'Fixtures for all competitions on date %s retrieved', TODAY)
         fixtures = self._filter_by_competition(all_fixtures, competitions)
         return fixtures
+
+    def _format_competitions(self, competitions):
+        formatted_competitions = [{
+            'api_id': c['id'],
+            'region': c['region'],
+            'name': c['name']
+        } for c in competitions]
+        return formatted_competitions
 
     def _format_fixtures(self, fixtures):
         formatted_fixtures = [{ 
