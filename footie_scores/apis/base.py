@@ -10,7 +10,7 @@ from footie_scores import db, utils
 from footie_scores import settings
 from footie_scores.utils.exceptions import *
 from footie_scores.utils.scheduling import batch_request
-from footie_scores.db.queries import save_fixtures_to_db, save_competitions_to_db, save_lineups_to_db
+from footie_scores.db.queries import save_fixtures_to_db, save_competitions_to_db
 from footie_scores.utils.strings import correct_unicode_to_bin
 
 logger = logging.getLogger(__name__)
@@ -66,9 +66,9 @@ class FootballAPICaller(object):
         with db.session_scope() as session:
             save_fixtures_to_db(session, fixtures)
 
-    def fixture_lineups_to_db(self, session, fixture_ids):
+    def fixture_lineups(self, session, fixture_ids):
         lineups = self._get_lineups_for_fixtures(fixture_ids)
-        save_lineups_to_db(session, lineups)
+        return lineups
 
     def competitions_to_db(self):
         competitions = self.get_competitions()
@@ -79,9 +79,9 @@ class FootballAPICaller(object):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 
-    def _todays_fixtures(self, competitions):
+    def todays_fixtures(self, competitions):
         fixtures = self._get_fixtures_for_date(utils.time.today(), competitions)
-        return self._make_fixtures_db_ready(fixtures)
+        return self._format_fixtures(fixtures)
 
     def _make_date_db_ready(self, sdate):
         dt_obj = dt.datetime.strptime(sdate, self.db_date_format).date()
@@ -107,7 +107,7 @@ class FootballAPICaller(object):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 
-    def _make_fixtures_db_ready(self, *args):
+    def _format_fixtures(self, *args):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 

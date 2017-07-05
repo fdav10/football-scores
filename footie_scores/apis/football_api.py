@@ -5,7 +5,6 @@ import logging
 
 from footie_scores import utils
 from footie_scores import settings
-from footie_scores.db.schema import Fixture, Lineups
 from footie_scores.apis.base import FootballAPICaller
 from footie_scores.utils.exceptions import *
 
@@ -46,34 +45,31 @@ class FootballAPI(FootballAPICaller):
         fixtures = self._filter_by_competition(all_fixtures, competitions)
         return fixtures
 
-    def _make_fixtures_db_ready(self, fixtures):
-        db_ready_fixtures = [
-            Fixture(
-                f['localteam_name'],
-                f['visitorteam_name'],
-                int(f['comp_id']),
-                f['id'],
-                self._format_fixture_score(f),
-                self._make_date_db_ready(f['formatted_date']),
-                self._format_fixture_time(f['time']),
-                f['status'],
-                self._make_events_db_ready(f),
-            ) for f in fixtures]
-        return db_ready_fixtures
+    def _format_fixtures(self, fixtures):
+        formatted_fixtures = [{ 
+               'team_home': f['localteam_name'],
+               'team_away': f['visitorteam_name'],
+               'comp_api_id': int(f['comp_id']),
+               'api_fixture_id': f['id'],
+               'score': self._format_fixture_score(f),
+               'date': self._make_date_db_ready(f['formatted_date']),
+               'time': self._format_fixture_time(f['time']),
+               'status': f['status'],
+               'events': self._format_events(f)
+            } for f in fixtures]
+        return formatted_fixtures
 
     def _get_lineups_for_fixtures(self, fixture_ids):
         urls = ['commentaries/{}?'.format(id_) for id_ in fixture_ids]
         commentaries = self.batch_request(urls, correct_unicode=True)
-        return [self._make_lineups_db_ready(c) for c in commentaries]
+        return [self._format_lineups(c) for c in commentaries]
 
-    def _make_lineups_db_ready(self, commentary):
-        return Lineups(
-            commentary['match_id'],
-            commentary['lineup']['localteam'],
-            commentary['lineup']['visitorteam']
-        )
+    def _format_lineups(self, commentary):
+        return {'api_fixture_id': commentary['match_id'],
+                'home_lineup': commentary['lineup']['localteam'],
+                'away_lineup': commentary['lineup']['visitorteam']}
 
-    def _make_events_db_ready(self, fixture):
+    def _format_events(self, fixture):
         events = fixture['events']
         filter_keys = ('goal',)
         h_events = [e for e in events if e['team'] == 'localteam' and e['type'] in filter_keys]
@@ -110,7 +106,7 @@ class FootballAPI(FootballAPICaller):
 
 
     def _filter_by_competition(self, fixtures, comp_ids):
-        return [f for f in fixtures if f['comp_id'] in comp_ids]
+        return [f for f in fixtures if int(f['comp_id']) in comp_ids]
 
 
     def _is_valid_response(self, response):

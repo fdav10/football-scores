@@ -15,8 +15,8 @@ DB_DATETIMEFORMAT = DB_DATEFORMAT + '-' + DB_TIMEFORMAT
 START_TIME = dt.datetime.now()
 # OVERRIDE_DAY = None
 # OVERRIDE_TIME = None
-OVERRIDE_DAY = dt.date(2017, 5, 28)
-OVERRIDE_TIME = dt.time(16, 58, 00)
+OVERRIDE_DAY = dt.date(2017, 8, 12)
+OVERRIDE_TIME = dt.time(15, 58, 00)
 
 WEB_DATEFORMAT =  "%A %d %B %y" # e.g. Sunday 16 April 2017
 WEB_TIMEFORMAT = None
