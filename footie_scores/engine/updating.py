@@ -156,6 +156,5 @@ class _ActiveState(_UpdaterState):
 
 
 if __name__ == '__main__':
-    # start_logging()
-    # start_updater()
-    save_competitions_to_db()
+    start_logging()
+    start_updater()
