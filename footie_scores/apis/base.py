@@ -79,9 +79,9 @@ class FootballAPICaller(object):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 
-    def _todays_fixtures(self, competitions):
+    def todays_fixtures(self, competitions):
         fixtures = self._get_fixtures_for_date(utils.time.today(), competitions)
-        return self._make_fixtures_db_ready(fixtures)
+        return self._format_fixtures(fixtures)
 
     def _make_date_db_ready(self, sdate):
         dt_obj = dt.datetime.strptime(sdate, self.db_date_format).date()
@@ -107,7 +107,8 @@ class FootballAPICaller(object):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 
-    def _make_fixtures_db_ready(self, *args):
+    # def _make_fixtures_db_ready(self, *args):
+    def _format_fixtures(self, *args):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 

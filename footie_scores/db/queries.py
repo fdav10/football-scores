@@ -22,16 +22,17 @@ def save_fixtures_to_db(session, fixtures):
         save_fixture_to_db(session, fixture)
 
 
-def save_fixture_to_db(session, fixture):
+def save_fixture_to_db(session, api_fixture):
+    db_fixture = Fixture(**api_fixture)
     fq = session.query(Fixture)
     cq = session.query(Competition)
-    if not row_exists(session, Fixture, Fixture.api_fixture_id, fixture.api_fixture_id):
-        fixture.competition = cq.filter(Competition.api_id == fixture.comp_api_id).one()
-        session.add(fixture)
-        logger.info('%s added to db', fixture.api_fixture_id)
+    if not row_exists(session, Fixture, Fixture.api_fixture_id, db_fixture.api_fixture_id):
+        db_fixture.competition = cq.filter(Competition.api_id == db_fixture.comp_api_id).one()
+        session.add(db_fixture)
+        logger.info('%s added to db', db_fixture.api_fixture_id)
     else:
-        db_fixture = fq.filter(Fixture.api_fixture_id == fixture.api_fixture_id).first()
-        db_fixture.update_from_equivalent(fixture)
+        db_fixture = fq.filter(Fixture.api_fixture_id == db_fixture.api_fixture_id).first()
+        db_fixture.update_from_equivalent(db_fixture)
         logger.info('%s updated in db', db_fixture)
 
 

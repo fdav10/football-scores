@@ -40,7 +40,8 @@ class _UpdaterState():
         self.api.fixture_lineups_to_db(session, fixture_ids)
 
     def refresh_and_get_todays_fixtures(self, session):
-        self.api.todays_fixtures_to_db(settings.COMPS)
+        todays_fixtures = self.api.todays_fixtures(settings.COMPS)
+        db.queries.save_fixtures_to_db(session, todays_fixtures)
         return db.queries.get_fixtures_by_date(session, utils.time.today())
 
     def time_to_next_kickoff(self, fixtures):
@@ -59,9 +60,8 @@ class _StartupState(_UpdaterState):
         logger.info('Entered idle state')
 
     def run(self):
-        self.api.todays_fixtures_to_db(settings.COMPS)
         with db.session_scope() as session:
-            fixtures_today = db.queries.get_fixtures_by_date(session, utils.time.today())
+            fixtures_today = self.refresh_and_get_todays_fixtures(session)
             self.update_fixtures_lineups(session, fixtures_today)
             fixtures_active = any([f.is_active() for f in fixtures_today])
         if fixtures_active:
