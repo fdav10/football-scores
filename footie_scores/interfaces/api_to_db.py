@@ -26,7 +26,7 @@ def save_fixture(session, api_fixture):
     if not row_exists(session, Fixture, Fixture.api_fixture_id, db_fixture.api_fixture_id):
         db_fixture.competition = cq.filter(Competition.api_id == db_fixture.comp_api_id).one()
         session.add(db_fixture)
-        logger.info('%s added to db', db_fixture.api_fixture_id)
+        logger.info('%s added to db', db_fixture)
     else:
         db_fixture = fq.filter(Fixture.api_fixture_id == db_fixture.api_fixture_id).first()
         db_fixture.update_from_equivalent(db_fixture)

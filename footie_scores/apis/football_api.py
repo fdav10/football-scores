@@ -19,7 +19,6 @@ class FootballAPI(FootballAPICaller):
     https://football-api.com/
     '''
 
-
     def __init__(self, id_season=''):
         super().__init__()
         self.id_season = id_season
@@ -36,14 +35,17 @@ class FootballAPI(FootballAPICaller):
         logger.info('Competitions retrieved from football-api API')
         return self._format_competitions(competitions)
 
-    def _get_fixtures_for_date(self, date_=TODAY, competitions=settings.COMPS):
-        str_date = date_.strftime(self.api_date_format)
-        fixtures_url = 'matches?match_date={}&'.format(str_date)
+    def get_fixtures_for_date(self, start_date=TODAY,
+            competitions=settings.COMPS, end_date=None):
+
+        end_date = start_date if end_date is None else end_date
+        str_start, str_end = [d.strftime(self.api_date_format) for d in (start_date, end_date)]
+        fixtures_url = 'matches?from_date={}&to_date={}&'.format(str_start, str_end)
         all_fixtures = self.request(fixtures_url)
-        logger.info(
-            'Fixtures for all competitions on date %s retrieved', TODAY)
         fixtures = self._filter_by_competition(all_fixtures, competitions)
-        return fixtures
+
+        logger.info('Fixtures for all competitions for %s to %s retrieved', str_start, str_end)
+        return self._format_fixtures(fixtures)
 
     def _format_competitions(self, competitions):
         formatted_competitions = [{
@@ -54,16 +56,16 @@ class FootballAPI(FootballAPICaller):
         return formatted_competitions
 
     def _format_fixtures(self, fixtures):
-        formatted_fixtures = [{ 
-               'team_home': f['localteam_name'],
-               'team_away': f['visitorteam_name'],
-               'comp_api_id': int(f['comp_id']),
-               'api_fixture_id': f['id'],
-               'score': self._format_fixture_score(f),
-               'date': self._make_date_db_ready(f['formatted_date']),
-               'time': self._format_fixture_time(f['time']),
-               'status': f['status'],
-               'events': self._format_events(f)
+        formatted_fixtures = [{
+            'team_home': f['localteam_name'],
+            'team_away': f['visitorteam_name'],
+            'comp_api_id': int(f['comp_id']),
+            'api_fixture_id': f['id'],
+            'score': self._format_fixture_score(f),
+            'date': self._make_date_db_ready(f['formatted_date']),
+            'time': self._format_fixture_time(f['time']),
+            'status': f['status'],
+            'events': self._format_events(f)
             } for f in fixtures]
         return formatted_fixtures
 
@@ -106,16 +108,16 @@ class FootballAPI(FootballAPICaller):
         where changing the timezone offsets the minutes rather than
         hours.
         '''
+        if fixture_time == 'TBA':
+            return fixture_time
         formatted_time = utils.time.naive_utc_to_uk_tz(
             fixture_time,
             self.api_time_format,
             self.db_time_format)
         return self._make_time_db_ready(formatted_time)
 
-
     def _filter_by_competition(self, fixtures, comp_ids):
         return [f for f in fixtures if int(f['comp_id']) in comp_ids]
-
 
     def _is_valid_response(self, response):
         # TODO this is pretty ugly and unclear

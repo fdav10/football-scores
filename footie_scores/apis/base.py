@@ -60,7 +60,7 @@ class FootballAPICaller(object):
                 responses.append(response)
         return responses
 
-    def fixture_lineups(self, session, fixture_ids):
+    def fixture_lineups(self, fixture_ids):
         lineups = self._get_lineups_for_fixtures(fixture_ids)
         return lineups
 
@@ -72,8 +72,8 @@ class FootballAPICaller(object):
             "Implemented in child classes - base class should not be instantiated")
 
     def todays_fixtures(self, competitions):
-        fixtures = self._get_fixtures_for_date(utils.time.today(), competitions)
-        return self._format_fixtures(fixtures)
+        fixtures = self.get_fixtures_for_date(utils.time.today(), competitions)
+        return fixtures
 
     def _make_date_db_ready(self, sdate):
         dt_obj = dt.datetime.strptime(sdate, self.db_date_format).date()
@@ -83,11 +83,11 @@ class FootballAPICaller(object):
         dt_obj = dt.datetime.strptime(stime, self.db_time_format).time()
         return dt.time.strftime(dt_obj, self.db_time_format)
 
-    def _filter_by_competition(self, competitions):
+    def get_fixtures_for_date(self, *args):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 
-    def _get_fixtures_for_date(self, *args):
+    def _filter_by_competition(self, *args):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 

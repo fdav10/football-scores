@@ -45,7 +45,7 @@ class _UpdaterState():
         needs_lineups = [f for f in fixtures if not f.has_lineups()]
         logger.info('%d fixtures kicking off soon do not have lineups:\n%s', len(needs_lineups), needs_lineups)
         fixture_ids = [f.api_fixture_id for f in needs_lineups]
-        lineups = self.api.fixture_lineups(session, fixture_ids)
+        lineups = self.api.fixture_lineups(fixture_ids)
         api_to_db.save_lineups(session, lineups)
 
     def refresh_and_get_todays_fixtures(self, session):
