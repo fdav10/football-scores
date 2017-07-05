@@ -43,15 +43,16 @@ def save_competitions_to_db(session, competitions):
             session.add(db_comp)
 
 
-def save_lineups_to_db(session, lineups):
+def save_lineups_to_db(session, api_lineups):
     fq = session.query(Fixture)
-    for lineup in lineups:
-        fixture = fq.filter(Fixture.api_fixture_id == lineup.api_fixture_id).one()
+    for api_lineup in api_lineups:
+        db_lineup = Lineups(**api_lineup)
+        fixture = fq.filter(Fixture.api_fixture_id == db_lineup.api_fixture_id).one()
         if fixture.lineups is None:
-            fixture.lineups = lineup
-            logger.info('%s added to db', lineup.api_fixture_id)
+            fixture.lineups = db_lineup
+            logger.info('%s added to db', db_lineup.api_fixture_id)
         else:
-            fixture.lineups.update_from_equivalent(lineup)
+            fixture.lineups.update_from_equivalent(db_lineup)
             logger.info('%s updated in db', fixture.lineups)
 
 

@@ -5,7 +5,6 @@ import logging
 
 from footie_scores import utils
 from footie_scores import settings
-from footie_scores.db.schema import Lineups
 from footie_scores.apis.base import FootballAPICaller
 from footie_scores.utils.exceptions import *
 
@@ -47,7 +46,7 @@ class FootballAPI(FootballAPICaller):
         return fixtures
 
     def _format_fixtures(self, fixtures):
-        db_ready_fixtures = [{ 
+        formatted_fixtures = [{ 
                'team_home': f['localteam_name'],
                'team_away': f['visitorteam_name'],
                'comp_api_id': int(f['comp_id']),
@@ -56,23 +55,21 @@ class FootballAPI(FootballAPICaller):
                'date': self._make_date_db_ready(f['formatted_date']),
                'time': self._format_fixture_time(f['time']),
                'status': f['status'],
-               'events': self._make_events_db_ready(f)
+               'events': self._format_events(f)
             } for f in fixtures]
-        return db_ready_fixtures
+        return formatted_fixtures
 
     def _get_lineups_for_fixtures(self, fixture_ids):
         urls = ['commentaries/{}?'.format(id_) for id_ in fixture_ids]
         commentaries = self.batch_request(urls, correct_unicode=True)
-        return [self._make_lineups_db_ready(c) for c in commentaries]
+        return [self._format_lineups(c) for c in commentaries]
 
-    def _make_lineups_db_ready(self, commentary):
-        return Lineups(
-            commentary['match_id'],
-            commentary['lineup']['localteam'],
-            commentary['lineup']['visitorteam']
-        )
+    def _format_lineups(self, commentary):
+        return {'api_fixture_id': commentary['match_id'],
+                'home_lineup': commentary['lineup']['localteam'],
+                'away_lineup': commentary['lineup']['visitorteam']}
 
-    def _make_events_db_ready(self, fixture):
+    def _format_events(self, fixture):
         events = fixture['events']
         filter_keys = ('goal',)
         h_events = [e for e in events if e['team'] == 'localteam' and e['type'] in filter_keys]
