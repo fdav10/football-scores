@@ -2,12 +2,18 @@
 
 import logging
 
-from footie_scores.engine import updating
+from footie_scores import db
+from footie_scores import utils
 from footie_scores.utils.log import start_logging
 from footie_scores.db.schema import create_tables_if_not_present
+from footie_scores.interfaces import api_to_db
+from footie_scores.apis.football_api import FootballAPI
 
 logger = logging.getLogger(__name__)
 
 start_logging()
 create_tables_if_not_present()
-updating.single_api_call()
+date_ = utils.time.today()
+fixtures = FootballAPI().get_fixtures_for_date(start_date=date_)
+with db.session_scope() as session:
+    api_to_db.save_fixtures(session, fixtures)

@@ -76,8 +76,11 @@ class FootballAPICaller(object):
         return fixtures
 
     def _make_date_db_ready(self, sdate):
+        # Convert string date to date object
+        # TODO change date type
         dt_obj = dt.datetime.strptime(sdate, self.db_date_format).date()
-        return dt.datetime.strftime(dt_obj, self.db_date_format)
+        return dt_obj
+        # return dt.datetime.strftime(dt_obj, self.db_date_format)
 
     def _make_time_db_ready(self, stime):
         dt_obj = dt.datetime.strptime(stime, self.db_time_format).time()

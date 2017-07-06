@@ -80,7 +80,7 @@ class Fixture(Base, Updatable):
     __tablename__ = 'fixtures'
 
     id = sqla.Column(sqla.Integer, primary_key=True)
-    date = sqla.Column(sqla.String)
+    date = sqla.Column(sqla.Date)
     time = sqla.Column(sqla.String)
     team_home = sqla.Column(sqla.String)
     team_away = sqla.Column(sqla.String)
@@ -99,7 +99,7 @@ class Fixture(Base, Updatable):
 
     atts_to_update = ('score', 'events', 'status')
     date_format = settings.DB_DATEFORMAT
-    time_format = settings.DB_DATEFORMAT
+    time_format = settings.DB_TIMEFORMAT
     datetime_format = settings.DB_DATETIMEFORMAT
 
     def __init__(self, team_home, team_away, comp_api_id,
@@ -120,8 +120,9 @@ class Fixture(Base, Updatable):
 
 
     def __repr__(self):
+        sdate = self.date.strftime(settings.DB_DATEFORMAT)
         return "<Fixture(%s vs %s on %s at %s id %s)>" %(
-            self.team_home, self.team_away, self.date, self.time, self.api_fixture_id)
+            self.team_home, self.team_away, sdate, self.time, self.api_fixture_id)
 
     def is_active(self):
         timer_re = re.compile('\d+$')
@@ -134,7 +135,8 @@ class Fixture(Base, Updatable):
         return self.lineups is not None
 
     def time_to_kickoff(self):
-        kick_off_time = dt.datetime.strptime(self.date+'-'+self.time, self.datetime_format)
+        dttime = dt.datetime.strptime(self.time, self.time_format).time()
+        kick_off_time = dt.datetime.combine(self.date, dttime)
         timedelta_to_kickoff = kick_off_time - utils.time.now()
         return timedelta_to_kickoff.total_seconds()
 
