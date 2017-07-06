@@ -11,6 +11,19 @@
 	{{super ()}}
     {% endif %}
 {% endblock games_today_link %}
+{% block filter_row %}
+<div id="filter-options-row" class="mui-row">
+  <div class="mui-col-xs-10 mui-col-xs-offset-1">
+    {% for month in short_months %}
+    <div class="mui-col-xs-1">
+      <a href= {{ url_for('past_results', comp_id=1204, month_index=loop.index) }} >
+	{{month}}
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock filter_row %}
 {% block main_row_content %}
 <div id="fixture-content-row" class="mui-row">
   <div class="mui-col-xs-10 mui-col-xs-offset-1">

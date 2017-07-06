@@ -35,8 +35,8 @@ def todays_fixtures():
     return todays_games
 
 
-@app.route("/past_results_<comp_id>")
-def past_results(comp_id):
+@app.route("/past_results_<comp_id>_<month_index>")
+def past_results(comp_id, month_index=TODAY.month):
     with db.session_scope() as session:
         comps = page_comps_only(queries.get_competitions(session))
         comp_ids = [c.api_id for c in comps]
