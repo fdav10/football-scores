@@ -121,7 +121,10 @@ class Fixture(Base, Updatable):
 
     def __repr__(self):
         sdate = self.date.strftime(self.date_format)
-        stime = self.time.strftime(self.time_format)
+        if type(self.time) != str:
+            stime = self.time.strftime(self.time_format)
+        else:
+            stime = time
         return "<Fixture(%s vs %s on %s at %s id %s)>" %(
             self.team_home, self.team_away, sdate, stime, self.api_fixture_id)
 
