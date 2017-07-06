@@ -26,6 +26,7 @@ def todays_fixtures():
         comp_ids = [c.api_id for c in comps]
         fixtures = queries.get_comp_grouped_fixtures_for_date(session, TODAY, comp_ids)
         todays_games = games_template(
+            'scores.html',
             fixtures,
             utils.time.today(),
             'Games Today',
@@ -53,6 +54,7 @@ def past_results(comp_id, month_index=TODAY.month):
             else:
                 fixture['display'] = True
             past_games = games_template(
+                'fixtures_results.html',
                 fixtures,
                 utils.time.today(),
                 'Past Results - ' + selected_comp,
@@ -69,15 +71,12 @@ def match_details(fixture_id):
     return template 
 
 
-def games_template(competitions,
-                   date_, 
-                   title,
-                   comp_id='',
-                   games_today_as_filter=False,
-                   games_today_as_link=True):
+def games_template(
+        template, competitions, date_, title, comp_id='',
+        games_today_as_filter=False, games_today_as_link=True):
 
     return render_template(
-        'scores.html',
+        template,
         title=title,
         date=date_.strftime(WEBDATEFORMAT),
         competitions=competitions,
