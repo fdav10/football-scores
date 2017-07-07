@@ -112,7 +112,10 @@ class Fixture(Base, Updatable):
         self.api_fixture_id = api_fixture_id
         self.score = score
         self.date = date
-        self.time = time
+        if not isinstance(time, str):
+            self.time = time
+        else:
+            self.stime = time
         self.status = status
         if events:
             self.events = events
@@ -121,10 +124,10 @@ class Fixture(Base, Updatable):
 
     def __repr__(self):
         sdate = self.date.strftime(self.date_format)
-        if type(self.time) != str:
+        if self.time:
             stime = self.time.strftime(self.time_format)
         else:
-            stime = time
+            stime = self.stime
         return "<Fixture(%s vs %s on %s at %s id %s)>" %(
             self.team_home, self.team_away, sdate, stime, self.api_fixture_id)
 
