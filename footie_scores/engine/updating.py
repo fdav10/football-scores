@@ -16,13 +16,6 @@ from footie_scores.apis.football_api import FootballAPI
 logger = logging.getLogger(__name__)
 
 
-def save_competitions_to_db():
-    api = FootballAPI()
-    competitions = api.competitions_to_db()
-    with db.session_scope() as session:
-        api_to_db.save_competitions(session, competitions)
-
-
 def start_updater():
     next_state = _StartupState
     while True:

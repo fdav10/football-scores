@@ -19,6 +19,7 @@ OVERRIDE_DAY = dt.date(2017, 8, 12)
 OVERRIDE_TIME = dt.time(15, 58, 00)
 
 WEB_DATEFORMAT =  "%A %d %B, %Y" # e.g. Sun 16 April '17
+WEB_DATEFORMAT_SHORT =  "%A %d %B" # e.g. Sun 16 April '17
 WEB_TIMEFORMAT = None
 FLASK_DEBUG = True
 

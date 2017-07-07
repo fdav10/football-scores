@@ -2,12 +2,13 @@
 
 import logging
 
-from footie_scores.engine import updating
+from footie_scores.interfaces import api_to_db
 from footie_scores.utils.log import start_logging
 from footie_scores.db.schema import create_tables_if_not_present
+
 
 logger = logging.getLogger(__name__)
 
 start_logging()
 create_tables_if_not_present()
-updating.save_competitions_to_db()
+api_to_db.save_competitions()

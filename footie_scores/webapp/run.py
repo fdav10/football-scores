@@ -24,12 +24,13 @@ def todays_fixtures():
     with db.session_scope() as session:
         comps = db_to_web.get_competitions_by_id(session, COMPS_FOR_PAGE)
         fixtures = db_to_web.get_comp_grouped_fixtures(session, TODAY, COMPS_FOR_PAGE)
+        web_date = utils.time.custom_strftime(settings.WEB_DATEFORMAT_SHORT, TODAY)
         todays_games = games_template(
             'scores.html',
             comps,
             fixtures,
             utils.time.today(),
-            'Games Today',
+            'Live Scores - ' + web_date,
             games_today_as_filter=True,
             games_today_as_link=False,
         )
@@ -52,7 +53,7 @@ def past_results(comp_id, month_index=TODAY.month):
             comps,
             fixtures,
             utils.time.today(),
-            'Past Results - ' + selected_comp.name,
+            selected_comp.name + ' - Results / Fixtures',
             comp_id)
     return past_games
 

@@ -8,6 +8,7 @@ Should be the single link between API and db.
 import logging
 
 from footie_scores import db
+from footie_scores.apis import FootballAPI
 from footie_scores.db.schema import Fixture, Competition, Lineups
 from footie_scores.db.queries import row_exists
 
@@ -46,8 +47,11 @@ def save_lineups(session, api_lineups):
             logger.info('%s updated in db', fixture.lineups)
 
 
-def save_competitions(session, api_competitions):
-    for comp in api_competitions:
-        if not row_exists(session, Competition, Competition.api_id, comp['api_id']):
-            db_comp = Competition(**comp)
-            session.add(db_comp)
+def save_competitions():
+    api = FootballAPI()
+    api_competitions = api.competitions_to_db()
+    with db.session_scope() as session:
+        for comp in api_competitions:
+            if not row_exists(session, Competition, Competition.api_id, comp['api_id']):
+                db_comp = Competition(**comp)
+                session.add(db_comp)
