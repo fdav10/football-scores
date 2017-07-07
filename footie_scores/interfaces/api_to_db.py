@@ -8,7 +8,7 @@ Should be the single link between API and db.
 import logging
 
 from footie_scores import db
-from footie_scores.apis import FootballAPI
+from footie_scores.apis.football_api import FootballAPI
 from footie_scores.db.schema import Fixture, Competition, Lineups
 from footie_scores.db.queries import row_exists
 
