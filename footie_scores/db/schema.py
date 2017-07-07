@@ -112,10 +112,13 @@ class Fixture(Base, Updatable):
         self.api_fixture_id = api_fixture_id
         self.score = score
         self.date = date
+
+        # TODO think about what to do here 
         if not isinstance(time, str):
             self.time = time
         else:
             self.stime = time
+
         self.status = status
         if events:
             self.events = events

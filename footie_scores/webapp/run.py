@@ -22,15 +22,17 @@ COMPS_FOR_PAGE = settings.COMPS
 @app.route("/todays_games")
 def todays_fixtures():
     with db.session_scope() as session:
-        comps = db_to_web.get_competitions_by_id(session, COMPS_FOR_PAGE)
+        all_comps = db_to_web.get_competitions_by_id(session, COMPS_FOR_PAGE)
         fixtures = db_to_web.get_comp_grouped_fixtures(session, TODAY, COMPS_FOR_PAGE)
+        comps_with_games = [f['name'] for f in fixtures if f['fixtures']]
         web_date = utils.time.custom_strftime(settings.WEB_DATEFORMAT_SHORT, TODAY)
         todays_games = games_template(
             'scores.html',
-            comps,
+            all_comps,
             fixtures,
             utils.time.today(),
             'Live Scores - ' + web_date,
+            competitions_with_games_today=comps_with_games,
             games_today_as_filter=True,
             games_today_as_link=False,
         )
@@ -45,16 +47,19 @@ def past_results(comp_id, month_index=TODAY.month):
                - dt.timedelta(days=1))
 
     with db.session_scope() as session:
-        comps = db_to_web.get_competitions_by_id(session, COMPS_FOR_PAGE)
+        fixtures_today = db_to_web.get_comp_grouped_fixtures(session, TODAY, COMPS_FOR_PAGE)
+        comps_with_games = [f['name'] for f in fixtures_today if f['fixtures']]
+        all_comps = db_to_web.get_competitions_by_id(session, COMPS_FOR_PAGE)
         selected_comp = db_to_web.get_competition_by_id(session, int(comp_id))
         fixtures = db_to_web.get_date_grouped_fixtures(session, start_day, int(comp_id), end_day)
         past_games = games_template(
             'fixtures_results.html',
-            comps,
+            all_comps,
             fixtures,
             utils.time.today(),
             selected_comp.name + ' - Results / Fixtures',
-            comp_id)
+            comp_id,
+            comps_with_games)
     return past_games
 
 
@@ -68,7 +73,8 @@ def match_details(fixture_id):
 
 
 def games_template(
-        template, page_competitions, grouped_fixtures, date_, title, comp_id='',
+        template, page_competitions, grouped_fixtures, date_, title,
+        comp_id='', competitions_with_games_today=None,
         games_today_as_filter=False, games_today_as_link=True):
 
     return render_template(
@@ -76,6 +82,7 @@ def games_template(
         title=title,
         date=date_.strftime(WEBDATEFORMAT),
         competitions=page_competitions,
+        competitions_with_games=competitions_with_games_today,
         grouped_fixtures=grouped_fixtures,
         comp_id=comp_id,
         games_today_filter=games_today_as_filter,

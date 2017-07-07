@@ -32,10 +32,8 @@
 	  <div class="sub-list">
 	    <ul id="todays-games" class="mui-list--unstyled">
 		<li id="all-comps-button">All Competitions</li>
-	      {% for comp in competitions %}
-		<!-- {% if comp.fixtures %} -->
-		<li class="individual-competitions">{{comp.name}}</li>
-		<!-- {% endif %} -->
+	      {% for comp in competitions_with_games %}
+		<li class="individual-competitions">{{comp}}</li>
 	      {% endfor %}
 	    </ul>
 	  </div>
