@@ -80,7 +80,8 @@ body {
 }
 
 .competition-container .mui-container-fluid,
-#view-header-container.mui-container
+#view-header-container.mui-container,
+#filter-container.mui-container-fluid
 {
     max-width: 800px;
     overflow: hidden;

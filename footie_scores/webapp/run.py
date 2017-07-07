@@ -9,7 +9,7 @@ from flask import Flask, render_template, request
 from footie_scores import settings, db, utils
 from footie_scores.utils.log import start_logging
 from footie_scores.db import queries
-import footie_scores.engine.updating as api_interface
+from footie_scores.interfaces import db_to_web
 
 
 app = Flask(__name__)
@@ -22,11 +22,11 @@ COMPS_FOR_PAGE = settings.COMPS
 @app.route("/todays_games")
 def todays_fixtures():
     with db.session_scope() as session:
-        comps = page_comps_only(queries.get_competitions(session))
-        comp_ids = [c.api_id for c in comps]
-        fixtures = queries.get_comp_grouped_fixtures_for_date(session, TODAY, comp_ids)
+        comps = db_to_web.get_competitions_by_id(session, COMPS_FOR_PAGE)
+        fixtures = db_to_web.get_comp_grouped_fixtures(session, TODAY, COMPS_FOR_PAGE)
         todays_games = games_template(
             'scores.html',
+            comps,
             fixtures,
             utils.time.today(),
             'Games Today',
@@ -44,21 +44,21 @@ def past_results(comp_id, month_index=TODAY.month):
                - dt.timedelta(days=1))
 
     with db.session_scope() as session:
-        comps = page_comps_only(queries.get_competitions(session))
-        comp_ids = [c.api_id for c in comps]
-        selected_comp = next(c.name for c in comps if c.api_id == int(comp_id))
-        fixtures = queries.get_comp_grouped_fixtures_for_date(session, start_day, comp_ids, end_day)
-        for fixture in fixtures:
-            if fixture['api_id'] != int(comp_id):
-                fixture['display'] = False
-            else:
-                fixture['display'] = True
-            past_games = games_template(
-                'fixtures_results.html',
-                fixtures,
-                utils.time.today(),
-                'Past Results - ' + selected_comp,
-                comp_id)
+        comps = db_to_web.get_competitions_by_id(session, COMPS_FOR_PAGE)
+        selected_comp = db_to_web.get_competition_by_id(session, int(comp_id))
+        fixtures = db_to_web.get_date_grouped_fixtures(session, start_day, int(comp_id), end_day)
+        # for fixture in fixtures:
+            # if fixture['api_id'] != int(comp_id):
+            #     fixture['display'] = False
+            # else:
+            #     fixture['display'] = True
+        past_games = games_template(
+            'fixtures_results.html',
+            comps,
+            fixtures,
+            utils.time.today(),
+            'Past Results - ' + selected_comp.name,
+            comp_id)
     return past_games
 
 
@@ -72,14 +72,15 @@ def match_details(fixture_id):
 
 
 def games_template(
-        template, competitions, date_, title, comp_id='',
+        template, page_competitions, grouped_fixtures, date_, title, comp_id='',
         games_today_as_filter=False, games_today_as_link=True):
 
     return render_template(
         template,
         title=title,
         date=date_.strftime(WEBDATEFORMAT),
-        competitions=competitions,
+        competitions=page_competitions,
+        grouped_fixtures=grouped_fixtures,
         comp_id=comp_id,
         games_today_filter=games_today_as_filter,
         games_today_link=games_today_as_link,

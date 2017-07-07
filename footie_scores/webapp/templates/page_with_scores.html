@@ -14,6 +14,7 @@
 {% block filter_row %}
 <div id="filter-options-row" class="mui-row">
   <div class="mui-col-xs-10 mui-col-xs-offset-1">
+    <div id="filter-container" class="mui-container-fluid">
     {% for month in short_months %}
     <div class="mui-col-xs-1">
       <a href= {{ url_for('past_results', comp_id=comp_id, month_index=loop.index) }} >
@@ -21,25 +22,26 @@
       </a>
     </div>
     {% endfor %}
+    </div>
   </div>
 </div>
 {% endblock filter_row %}
 {% block main_row_content %}
 <div id="fixture-content-row" class="mui-row">
   <div class="mui-col-xs-10 mui-col-xs-offset-1">
-    {% for comp in competitions %}
-    {% if comp.fixtures and comp.display %}
-    <div id="{{comp.name | replace (' ', '-')}}" class="competition-container">
+    {% for group in grouped_fixtures %}
+    {% if group.fixtures %}
+    <div id="{{group.name | replace (' ', '-')}}" class="competition-container">
       <div class="mui-container-fluid">
 	<div id="competition-panel" class="mui-panel mui--z2">
 	  <div id="comp-header-row" class="mui-row">
 	    <div class="mui-col-xs-10 mui-col-xs-offset-1">
 	      <div class="competition-name-header">
-		<h2> {{comp.name}} </h2>
+		<h2> {{group.name}} </h2>
 	      </div>
 	    </div>
 	  </div>
-	  {% for fixture in comp.fixtures %}
+	  {% for fixture in group.fixtures %}
 	  <div id="game-row" class="mui-row">
 	    <div class="mui-col-xs-10 mui-col-xs-offset-1">
 	      <div id="game-panel" class="mui-panel">
