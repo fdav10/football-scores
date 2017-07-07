@@ -43,8 +43,20 @@ def naive_utc_to_uk_tz(stime, time_format, desired_time_format='%H:%M'):
     local_time = utc_time.astimezone(local_tz)
     return local_time.strftime(desired_time_format)
 
+
 def chop_microseconds(tdelta):
     return tdelta - dt.timedelta(microseconds=tdelta.microseconds)
+
+
+
+def custom_strftime(dt_format, t):
+    # credit to https://stackoverflow.com/a/5891598
+    def suffix(d):
+        return 'th' if 11 <= d <= 13 else {1:'st', 2:'nd', 3:'rd'}.get(d%10, 'th')
+
+    assert '%d' in dt_format, 'Expecting a %d directive'
+    custom_format = dt_format.replace('%d', '{S}')
+    return t.strftime(custom_format).replace('{S}', str(t.day) + suffix(t.day))
 
 
 if OVERRIDE_DAY:

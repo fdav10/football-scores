@@ -4,6 +4,7 @@ from collections import defaultdict
 from sqlalchemy import and_
 
 from footie_scores import settings
+from footie_scores import utils
 from footie_scores.db import queries
 from footie_scores.db.schema import Competition, Fixture
 
@@ -17,10 +18,7 @@ def get_comp_grouped_fixtures(
         competition = queries.get_competition_by_id(session, id_)
         fixtures = queries.get_fixtures_by_date_and_comp(session, start_date, id_, end_date)
         grouped_fixtures.append({'name': competition.name,
-                                 'fixtures': fixtures,
-                                 # 'api_id': id_,
-                                 # 'display': True
-        })
+                                 'fixtures': fixtures})
     return grouped_fixtures
 
 
@@ -36,11 +34,9 @@ def get_date_grouped_fixtures(
         date_keyed_dict[fixture.date].append(fixture)
 
     for date, fixtures in date_keyed_dict.items():
-        grouped_fixtures.append({'name': date,
-                                'fixtures': fixtures,
-                                # 'api_id': id_,
-                                # 'display': True
-        })
+        web_format_time = utils.time.custom_strftime(settings.WEB_DATEFORMAT, date)
+        grouped_fixtures.append({'name': web_format_time,
+                                 'fixtures': fixtures})
 
     return grouped_fixtures
 

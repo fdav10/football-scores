@@ -47,11 +47,6 @@ def past_results(comp_id, month_index=TODAY.month):
         comps = db_to_web.get_competitions_by_id(session, COMPS_FOR_PAGE)
         selected_comp = db_to_web.get_competition_by_id(session, int(comp_id))
         fixtures = db_to_web.get_date_grouped_fixtures(session, start_day, int(comp_id), end_day)
-        # for fixture in fixtures:
-            # if fixture['api_id'] != int(comp_id):
-            #     fixture['display'] = False
-            # else:
-            #     fixture['display'] = True
         past_games = games_template(
             'fixtures_results.html',
             comps,
