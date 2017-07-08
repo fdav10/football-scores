@@ -1,6 +1,5 @@
 function showSubList () {
   var slideUp = $(this).next().css('display') === 'block';
-  console.log(slideUp);
   $(".sub-list").slideUp(150);
   if (slideUp) {
     $(this).next().slideUp(150);
@@ -12,13 +11,11 @@ function showSubList () {
 function filterCompetitions () {
   $(".competition-container").hide();
   var competition = $(this).text().replace(/ /g, "-");
-  console.log("#" + competition)
   $("#" + competition).show();
 }
 
 function showAllCompetitions () {
   $(".competition-container").show();
-  console.log("all comps pressed");
 }
 
 
