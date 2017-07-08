@@ -29,14 +29,15 @@
 	{% block games_today_filter %}
 	<li>
 	  <strong>Games Today</strong>
-	  <div class="sub-list">
-	    <ul id="todays-games" class="mui-list--unstyled">
+	  <!-- <div style="display: {{todays_games_sublist_display}}" class="sub-list"> -->
+	  <div style="display: none" class="sub-list">
+	      <ul id="todays-games" class="mui-list--unstyled">
 		<li id="all-comps-button">All Competitions</li>
-	      {% for comp in competitions_with_games %}
+		{% for comp in competitions_with_games %}
 		<li class="individual-competitions">{{comp}}</li>
-	      {% endfor %}
-	    </ul>
-	  </div>
+		{% endfor %}
+	      </ul>
+	    </div>
 	</li>
 	{% endblock games_today_filter %}
 	{% block games_today_link %}
@@ -51,7 +52,7 @@
 	</li>
 	<li>
 	  <strong id="past-results">Results & Fixtures</strong>
-	  <div class="sub-list">
+	  <div style="display: {{past_results_sublist_display}}" class="sub-list">
 	    <ul class="mui-list--unstyled">
 	      <a href="#">
 		<li id="all-comps-button">All Competitions</li>

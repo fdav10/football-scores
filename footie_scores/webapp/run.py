@@ -33,8 +33,6 @@ def todays_fixtures():
             utils.time.today(),
             'Live Scores - ' + web_date,
             competitions_with_games_today=comps_with_games,
-            games_today_as_filter=True,
-            games_today_as_link=False,
         )
     return todays_games
 
@@ -75,7 +73,27 @@ def match_details(fixture_id):
 def games_template(
         template, page_competitions, grouped_fixtures, date_, title,
         comp_id='', competitions_with_games_today=None,
-        games_today_as_filter=False, games_today_as_link=True):
+        ):
+
+    options = {
+        'fixtures_results.html': {
+            'display_todays_games_sublist': 'none',
+            'display_results_sublist': 'block',
+            'games_today_filter': False,
+            'games_today_link': True
+        },
+        'scores.html': {
+            'display_todays_games_sublist': 'block',
+            'display_results_sublist': 'none',
+            'games_today_filter': True,
+            'games_today_link': False
+        }
+    }
+
+    display_todays_games_sublist = options[template]['display_todays_games_sublist']
+    display_results_sublist = options[template]['display_results_sublist']
+    games_today_filter = options[template]['games_today_filter']
+    games_today_link = options[template]['games_today_link']
 
     return render_template(
         template,
@@ -85,8 +103,10 @@ def games_template(
         competitions_with_games=competitions_with_games_today,
         grouped_fixtures=grouped_fixtures,
         comp_id=comp_id,
-        games_today_filter=games_today_as_filter,
-        games_today_link=games_today_as_link,
+        games_today_filter=games_today_filter,
+        games_today_link=games_today_link,
+        todays_games_sublist_display=display_todays_games_sublist,
+        past_results_sublist_display=display_results_sublist,
     )
 
 

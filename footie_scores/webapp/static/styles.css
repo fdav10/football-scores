@@ -31,7 +31,6 @@ body {
     padding: 15px 22px;
     user-select: none;
 }
-.sub-list{display: none;}
 .sidebar .sub-list li {
     color: rgba(0, 0, 0, .87);
     padding-left: 40px;

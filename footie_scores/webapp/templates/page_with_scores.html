@@ -1,4 +1,10 @@
 {% extends "base.html" %}
+{% block head %}
+    {{ super() }}
+<script id="vars" type="text/javascript">
+ var open_sublist="todays";
+</script>
+{% endblock head %}
 {% block title %}{{title}}{% endblock title %}
 {% block header_title %}{{title}}{% endblock %}
 {% block games_today_filter %}
