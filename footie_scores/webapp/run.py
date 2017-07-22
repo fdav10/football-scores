@@ -6,7 +6,7 @@ import datetime as dt
 
 from flask import Flask, render_template, request
 
-from footie_scores import settings, db, utils
+from footie_scores import settings, constants, db, utils
 from footie_scores.utils.log import start_logging
 from footie_scores.db import queries
 from footie_scores.interfaces import db_to_web
@@ -14,9 +14,12 @@ from footie_scores.interfaces import db_to_web
 
 app = Flask(__name__)
 WEBDATEFORMAT = "%A %d %B %y" # e.g. Sunday 16 April 2017
+COMPS_FOR_PAGE = settings.COMPS
+
 TODAY = utils.time.today()
 THIS_YEAR = TODAY.year
-COMPS_FOR_PAGE = settings.COMPS
+MONTHS = constants.MONTHS
+SHORT_MONTHS = constants.SHORT_MONTHS
 
 
 @app.route("/todays_games")
