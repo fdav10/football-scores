@@ -42,3 +42,9 @@ ALL_COMPS = (1005, 1007, 1093, 1102, 1184, 1198, 1199,
              1204, 1205, 1221, 1229, 1232, 1265, 1269,
              1322, 1352, 1397, 1399, 1408, 1425, 1428,
              1457)
+
+MONTHS = ('January', 'February', 'March', 'April', 'May', 'June',
+          'July', 'August', 'September', 'October', 'November',
+          'December')
+SHORT_MONTHS = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+                'Aug', 'Sept', 'Oct', 'Nov', 'Dec')
