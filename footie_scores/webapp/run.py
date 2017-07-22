@@ -8,6 +8,7 @@ from flask import Flask, render_template, request
 
 from footie_scores import settings, constants, db, utils
 from footie_scores.utils.log import start_logging
+from footie_scores.utils.time import month_list_define_first
 from footie_scores.db import queries
 from footie_scores.interfaces import db_to_web
 
@@ -110,8 +111,8 @@ def games_template(
         games_today_link=games_today_link,
         todays_games_sublist_display=display_todays_games_sublist,
         past_results_sublist_display=display_results_sublist,
-        months = MONTHS,
-        short_months = SHORT_MONTHS,
+        months = month_list_define_first(TODAY.month),
+        short_months = month_list_define_first(TODAY.month, month_list=SHORT_MONTHS),
     )
 
 
