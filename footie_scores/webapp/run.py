@@ -8,7 +8,7 @@ from flask import Flask, render_template, request
 
 from footie_scores import settings, constants, db, utils
 from footie_scores.utils.log import start_logging
-from footie_scores.utils.time import month_list_define_first
+from footie_scores.utils.time import month_list_define_first, month_list_define_last
 from footie_scores.db import queries
 from footie_scores.interfaces import db_to_web
 

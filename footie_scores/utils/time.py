@@ -71,6 +71,18 @@ def month_list_define_first(first_month_num, month_list=constants.MONTHS):
     return head + tail
 
 
+def month_list_define_last(first_month_num, month_list=constants.MONTHS):
+    '''
+    Rearrange a Jan-Dec month list so that the last list element is
+    that indicated by first_month_num (1-12 - not an index) and the
+    remaining months precede in order, looping around if necessary.
+    '''
+    first_month = month_list[first_month_num-1]
+    head = month_list[first_month_num:]
+    tail = month_list[:first_month_num-1] + (first_month,)
+    return head + tail
+
+
 if OVERRIDE_DAY:
     logger.warning(
         "utils.time.today() function returning %s rather than today's date", today())
