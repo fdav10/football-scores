@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 import pytz
 
+from footie_scores import constants
 from footie_scores.settings import OVERRIDE_TIME, OVERRIDE_DAY, START_TIME
 
 
@@ -57,6 +58,17 @@ def custom_strftime(dt_format, t):
     assert '%d' in dt_format, 'Expecting a %d directive'
     custom_format = dt_format.replace('%d', '{S}')
     return t.strftime(custom_format).replace('{S}', str(t.day) + suffix(t.day))
+
+
+def month_list_define_first(first_month_num, month_list=constants.MONTHS):
+    '''
+    Rearrange a Jan-Dec month list so that the first list element is
+    that indicated by first_month_num (1-12 - not an index) and the
+    remaining months follow in order, looping around if necessary.
+    '''
+    head = month_list[first_month_num-1:]
+    tail = month_list[:first_month_num-1]
+    return head + tail
 
 
 if OVERRIDE_DAY:
