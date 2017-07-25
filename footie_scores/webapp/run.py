@@ -67,6 +67,30 @@ def past_results(comp_id, month_index=TODAY.month):
     return past_games
 
 
+@app.route("/fixtures_<comp_id>_<month_index>")
+def future_fixtures(comp_id, month_index=TODAY.month):
+    start_day = dt.date(year=THIS_YEAR, month=int(month_index), day=1)
+    end_day = (dt.date(year=THIS_YEAR, month=int(month_index) % 12 + 1, day=1)
+               - dt.timedelta(days=1))
+
+    with db.session_scope() as session:
+        fixtures_today = db_to_web.get_comp_grouped_fixtures(session, TODAY, COMPS_FOR_PAGE)
+        comps_with_games = [f['name'] for f in fixtures_today if f['fixtures']]
+        all_comps = db_to_web.get_competitions_by_id(session, COMPS_FOR_PAGE)
+        selected_comp = db_to_web.get_competition_by_id(session, int(comp_id))
+        fixtures = db_to_web.get_date_grouped_fixtures(session, start_day, int(comp_id), end_day)
+        past_games = games_template(
+            'fixtures_results.html',
+            'fixtures',
+            all_comps,
+            fixtures,
+            utils.time.today(),
+            selected_comp.name + ' - Results / Fixtures',
+            comp_id,
+            comps_with_games)
+    return past_games
+
+
 @app.route("/details_<fixture_id>")
 def match_details(fixture_id):
     with db.session_scope() as session:
@@ -87,7 +111,18 @@ def games_template(
             'display_results_sublist': 'block',
             'display_fixtures_sublist': 'none',
             'games_today_filter': False,
-            'games_today_link': True
+            'games_today_link': True,
+            'months': month_list_define_last(TODAY.month),
+            'short_months': month_list_define_last(TODAY.month, month_list=SHORT_MONTHS),
+        },
+        'fixtures': {
+            'display_todays_games_sublist': 'none',
+            'display_results_sublist': 'none',
+            'display_fixtures_sublist': 'block',
+            'games_today_filter': False,
+            'games_today_link': True,
+            'months': month_list_define_first(TODAY.month),
+            'short_months': month_list_define_first(TODAY.month, month_list=SHORT_MONTHS),
         },
         'scores': {
             'display_todays_games_sublist': 'block',
@@ -103,6 +138,8 @@ def games_template(
     display_fixtures_sublist = options[page]['display_fixtures_sublist']
     games_today_filter = options[page]['games_today_filter']
     games_today_link = options[page]['games_today_link']
+    months = options[page]['months']
+    short_months = options[page]['short_months']
 
     return render_template(
         template,
@@ -117,8 +154,8 @@ def games_template(
         todays_games_sublist_display=display_todays_games_sublist,
         past_results_sublist_display=display_results_sublist,
         future_fixtures_sublist_display=display_fixtures_sublist,
-        months = month_list_define_first(TODAY.month),
-        short_months = month_list_define_first(TODAY.month, month_list=SHORT_MONTHS),
+        months=months,
+        short_months=short_months,
     )
 
 
