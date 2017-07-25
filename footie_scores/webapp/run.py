@@ -32,6 +32,7 @@ def todays_fixtures():
         web_date = utils.time.custom_strftime(settings.WEB_DATEFORMAT_SHORT, TODAY)
         todays_games = games_template(
             'scores.html',
+            'scores',
             all_comps,
             fixtures,
             utils.time.today(),
@@ -56,6 +57,7 @@ def past_results(comp_id, month_index=TODAY.month):
         fixtures = db_to_web.get_date_grouped_fixtures(session, start_day, int(comp_id), end_day)
         past_games = games_template(
             'fixtures_results.html',
+            'results',
             all_comps,
             fixtures,
             utils.time.today(),
@@ -75,29 +77,32 @@ def match_details(fixture_id):
 
 
 def games_template(
-        template, page_competitions, grouped_fixtures, date_, title,
+        template, page, page_competitions, grouped_fixtures, date_, title,
         comp_id='', competitions_with_games_today=None,
         ):
 
     options = {
-        'fixtures_results.html': {
+        'results': {
             'display_todays_games_sublist': 'none',
             'display_results_sublist': 'block',
+            'display_fixtures_sublist': 'none',
             'games_today_filter': False,
             'games_today_link': True
         },
-        'scores.html': {
+        'scores': {
             'display_todays_games_sublist': 'block',
             'display_results_sublist': 'none',
+            'display_fixtures_sublist': 'none',
             'games_today_filter': True,
             'games_today_link': False
         }
     }
 
-    display_todays_games_sublist = options[template]['display_todays_games_sublist']
-    display_results_sublist = options[template]['display_results_sublist']
-    games_today_filter = options[template]['games_today_filter']
-    games_today_link = options[template]['games_today_link']
+    display_todays_games_sublist = options[page]['display_todays_games_sublist']
+    display_results_sublist = options[page]['display_results_sublist']
+    display_fixtures_sublist = options[page]['display_fixtures_sublist']
+    games_today_filter = options[page]['games_today_filter']
+    games_today_link = options[page]['games_today_link']
 
     return render_template(
         template,
@@ -111,6 +116,7 @@ def games_template(
         games_today_link=games_today_link,
         todays_games_sublist_display=display_todays_games_sublist,
         past_results_sublist_display=display_results_sublist,
+        future_fixtures_sublist_display=display_fixtures_sublist,
         months = month_list_define_first(TODAY.month),
         short_months = month_list_define_first(TODAY.month, month_list=SHORT_MONTHS),
     )

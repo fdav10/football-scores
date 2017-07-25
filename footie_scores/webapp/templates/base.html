@@ -49,8 +49,23 @@
 	  <strong>Competitions</strong>
 	</li>
 	<li>
-	  <strong id="past-results">Results & Fixtures</strong>
+	  <strong id="past-results">Results</strong>
 	  <div style="display: {{past_results_sublist_display}}" class="sub-list">
+	    <ul class="mui-list--unstyled">
+	      <a href="#">
+		<li id="all-comps-button">All Competitions</li>
+	      </a>
+	      {% for comp in competitions %}
+	      <a href={{ url_for('past_results', comp_id=comp.api_id, month_index=8) }}>
+		<li class="individual-competitions">{{comp.name}}</li>
+	      </a>
+	      {% endfor %}
+	    </ul>
+	  </div>
+	</li>
+	<li>
+	  <strong id="future-fixtures">Fixtures</strong>
+	  <div style="display: {{future_fixtures_sublist_display}}" class="sub-list">
 	    <ul class="mui-list--unstyled">
 	      <a href="#">
 		<li id="all-comps-button">All Competitions</li>
