@@ -59,14 +59,15 @@ class _StartupState(_UpdaterState):
     '''
     def __init__(self):
         super().__init__()
-        logger.info('Entered idle state')
+        logger.info('Entered startup state')
 
     def run(self):
         with db.session_scope() as session:
             fixtures_today = self.refresh_and_get_todays_fixtures(session)
             self.update_fixtures_lineups(session, fixtures_today)
             fixtures_active = any([f.is_active() for f in fixtures_today])
-        if fixtures_active:
+            fixtures_soon = [f for f in fixtures_today if f.kicks_off_within(settings.PRE_GAME_PREP_PERIOD)]
+        if fixtures_active or fixtures_soon:
             return _ActiveState
         else:
             return _IdleState
@@ -83,7 +84,7 @@ class _IdleState(_UpdaterState):
             fixtures_today = db.queries.get_fixtures_by_date(session, utils.time.today())
             future_fixtures = [f for f in fixtures_today if f.status != 'FT']
             if not future_fixtures:
-                logger.info('No games today, sleeping for %d seconds', settings.NO_GAMES_SLEEP)
+                logger.info('No games today, sleeping for %d seconds (time is %s)', settings.NO_GAMES_SLEEP, utils.time.now())
                 time.sleep(settings.NO_GAMES_SLEEP)
                 return _IdleState
             else:
