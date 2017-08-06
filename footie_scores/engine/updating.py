@@ -134,8 +134,8 @@ class _ActiveState(_UpdaterState):
         self.run()
 
     def run(self):
-        active_fixtures = True
-        while active_fixtures:
+        active_fixtures, fixtures_soon = True, True
+        while active_fixtures or fixtures_soon:
             with db.session_scope() as session:
                 fixtures = self.refresh_and_get_todays_fixtures(session)
                 active_fixtures = [f for f in fixtures if f.is_active()]
