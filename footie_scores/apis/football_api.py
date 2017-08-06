@@ -96,7 +96,7 @@ class FootballAPI(FootballAPICaller):
         home_score = fixture['localteam_score']
         away_score = fixture['visitorteam_score']
         if home_score == '?' and away_score == '?':
-            score = self._format_fixture_time(fixture['time'])
+            score = self._format_fixture_time(fixture['time']).strftime(self.db_time_format)
         else:
             score = '{} - {}'.format(home_score, away_score)
         return score
