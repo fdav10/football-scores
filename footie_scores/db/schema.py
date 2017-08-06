@@ -97,7 +97,7 @@ class Fixture(Base, Updatable):
         'Competition',
         back_populates='fixtures')
 
-    atts_to_update = ('score', 'events', 'status')
+    atts_to_update = ('score', 'events', 'status', 'date', 'time')
     date_format = settings.DB_DATEFORMAT
     time_format = settings.DB_TIMEFORMAT
     datetime_format = settings.DB_DATETIMEFORMAT

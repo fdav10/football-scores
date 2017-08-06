@@ -29,8 +29,8 @@ def save_fixture(session, api_fixture):
         session.add(db_fixture)
         logger.info('%s added to db', db_fixture)
     else:
-        db_fixture = fq.filter(Fixture.api_fixture_id == db_fixture.api_fixture_id).first()
-        db_fixture.update_from_equivalent(db_fixture)
+        existing_db_fixture = fq.filter(Fixture.api_fixture_id == db_fixture.api_fixture_id).first()
+        existing_db_fixture.update_from_equivalent(db_fixture)
         logger.info('%s updated in db', db_fixture)
 
 
