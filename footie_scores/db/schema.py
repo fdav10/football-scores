@@ -29,8 +29,15 @@ class Updatable():
         self.atts_to_update = []
 
     def update_from_equivalent(self, equivalent):
+        changed = False
         for name in self.atts_to_update:
+            old = getattr(self, name)
+            new = getattr(equivalent, name)
+            if old != new:
+                logger.info('%s: %s updated. was: %s, now: %s', self, name, old, new)
+                changed = True
             setattr(self, name, getattr(equivalent, name))
+        return changed
 
 
 class Competition(Base):
@@ -97,7 +104,7 @@ class Fixture(Base, Updatable):
         'Competition',
         back_populates='fixtures')
 
-    atts_to_update = ('score', 'events', 'status', 'date', 'time')
+    atts_to_update = ('team_home', 'team_away', 'score', 'events', 'status', 'date', 'time')
     date_format = settings.DB_DATEFORMAT
     time_format = settings.DB_TIMEFORMAT
     datetime_format = settings.DB_DATETIMEFORMAT
