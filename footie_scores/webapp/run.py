@@ -129,7 +129,9 @@ def games_template(
             'display_results_sublist': 'none',
             'display_fixtures_sublist': 'none',
             'games_today_filter': True,
-            'games_today_link': False
+            'games_today_link': False,
+            'months': None,
+            'short_months': None,
         }
     }
 
