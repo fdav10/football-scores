@@ -3,14 +3,13 @@
 import os
 import logging
 
-from footie_scores import utils
+from footie_scores.utils import time as utils_time
 from footie_scores import settings
 from footie_scores.apis.base import FootballAPICaller
 from footie_scores.utils.exceptions import *
 
-
 logger = logging.getLogger(__name__)
-TODAY = utils.time.today()
+TODAY = utils_time.today()
 
 class FootballAPI(FootballAPICaller):
     '''
@@ -110,7 +109,7 @@ class FootballAPI(FootballAPICaller):
         '''
         if fixture_time == 'TBA':
             return fixture_time
-        formatted_time = utils.time.naive_utc_to_uk_tz(
+        formatted_time = utils_time.naive_utc_to_uk_tz(
             fixture_time,
             self.api_time_format,
             self.db_time_format)
@@ -132,8 +131,3 @@ class FootballAPI(FootballAPICaller):
                 raise NoCommentaryAvailable()
         except (AssertionError, KeyError):
             return True
-
-
-if __name__ == '__main__':
-    utils.log.start_logging()
-    fa = FootballAPI()
