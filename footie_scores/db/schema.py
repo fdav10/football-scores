@@ -142,7 +142,7 @@ class Fixture(Base, Updatable):
             self.team_home, self.team_away, sdate, stime, self.api_fixture_id)
 
     def is_active(self):
-        timer_re = re.compile('\d+$')
+        timer_re = re.compile(r'\d+$')
         if TIME_OVERRIDE:
             return self.status in ('HT', 'Pen', 'ET', 'FT') or timer_re.match(self.status)
         else:
