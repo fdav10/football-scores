@@ -123,11 +123,13 @@ p, #home-events, #away-events {
 #score {
     text-align: center;
     min-width: 50px;
-    /* overflow: ; */
 }
-/* #score > h4 { */
-/*     overflow: inherit; */
-/* } */
+
+#status {
+    font-size: 10px;
+    text-align: center;
+    min-width: 50px;
+}
 
 #match-details {
     text-align: right;

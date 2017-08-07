@@ -69,7 +69,8 @@
 		    <p>{{event.player}} {{event.time}}</p>
 		    {% endfor %}
 		  </div>
-		  <div class="mui-col-xs-2">
+		  <div id="status" class="mui-col-xs-2">
+		    {{fixture.status}}
 		  </div>
 		  <div id="away-events" class="mui-col-xs-4">
 		    {% for event in fixture.events.away %}
