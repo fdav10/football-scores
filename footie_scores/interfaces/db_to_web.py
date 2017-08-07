@@ -24,7 +24,7 @@ def get_comp_grouped_fixtures(
         competition = queries.get_competition_by_id(session, id_)
         fixtures = queries.get_fixtures_by_date_and_comp(session, start_date, id_, end_date)
         if TIME_OVERRIDE:
-            fixtures = filter_events_by_time(fixtures)
+            fixtures = filter_fixtures_with_override_time(fixtures)
         grouped_fixtures.append({'name': competition.name,
                                  'fixtures': fixtures})
     return grouped_fixtures
@@ -39,7 +39,7 @@ def get_date_grouped_fixtures(
 
     fixtures = queries.get_fixtures_by_date_and_comp(session, start_date, comp_id, end_date)
     if TIME_OVERRIDE:
-        fixtures = filter_events_by_time(fixtures)
+        fixtures = filter_fixtures_with_override_time(fixtures)
     for fixture in fixtures:
         date_keyed_dict[fixture.date].append(fixture)
 
@@ -59,17 +59,20 @@ def get_competition_by_id(session, id_):
     return queries.get_competition_by_id(session, id_)
 
 
-def filter_events_by_time(fixtures):
-    now = utils.time.now()
+def filter_fixtures_with_override_time(fixtures):
     for f in fixtures:
+        fixture_ko = dt.datetime.combine(f.date, f.time)
+        gametime_elapsed = (utils.time.now() - fixture_ko).total_seconds() / 60
+        logger.info('gametime elapsed: %s', gametime_elapsed)
         time_filtered_events = {'home': [], 'away': []}
         for team in ('home', 'away'):
             for e in f.events[team]:
-                event_real_time = dt.datetime.strptime(e['real_time'], settings.DB_DATETIMEFORMAT)
-                if now > event_real_time:
+                if gametime_elapsed > int(e['time']):
                     time_filtered_events[team].append(e)
                 else:
                     logger.info('%s vs %s: %s at %s filtered',
                                 f.team_home, f.team_away, e['type'], e['real_time'])
+        import ipdb; ipdb.set_trace()
         f.events = time_filtered_events
+        f.score = ' - '.join((str(len(f.events['home'])), str(len(f.events['away']))))
     return fixtures
