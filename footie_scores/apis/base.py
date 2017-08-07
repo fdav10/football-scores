@@ -64,9 +64,6 @@ class FootballAPICaller(object):
         lineups = self._get_lineups_for_fixtures(fixture_ids)
         return lineups
 
-    def competitions_to_db(self):
-        return self.get_competitions()
-
     def get_competitions(self):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")

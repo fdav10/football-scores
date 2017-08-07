@@ -49,7 +49,7 @@ def save_lineups(session, api_lineups):
 
 def save_competitions():
     api = FootballAPI()
-    api_competitions = api.competitions_to_db()
+    api_competitions = api.get_competitions()
     with db.session_scope() as session:
         for comp in api_competitions:
             if not row_exists(session, Competition, Competition.api_id, comp['api_id']):
