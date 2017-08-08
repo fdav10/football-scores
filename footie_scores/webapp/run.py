@@ -158,6 +158,7 @@ def games_template(
         future_fixtures_sublist_display=display_fixtures_sublist,
         months=months,
         short_months=short_months,
+        time=utils.time.now().strftime(settings.DB_DATETIMEFORMAT),
     )
 
 

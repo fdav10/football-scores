@@ -135,3 +135,8 @@ p, #home-events, #away-events {
     text-align: right;
     margin-right: 15px;
 }
+
+.time-footer {
+    position: absolute;
+    bottom: 0;
+}
