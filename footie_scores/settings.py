@@ -7,7 +7,7 @@ from footie_scores import constants
 logger = logging.getLogger(__name__)
 
 DB_PATH = os.environ['DATABASE_URL']
-SQLA_ECHO = False
+SQLA_ECHO = True
 DB_DATEFORMAT = '%d.%m.%Y'
 DB_TIMEFORMAT = '%H:%M'
 DB_DATETIMEFORMAT = DB_DATEFORMAT + '-' + DB_TIMEFORMAT
