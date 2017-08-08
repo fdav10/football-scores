@@ -9,7 +9,6 @@ from flask import Flask, render_template, request
 from footie_scores import settings, constants, db, utils
 from footie_scores.utils.log import start_logging
 from footie_scores.utils.time import month_list_define_first, month_list_define_last
-from footie_scores.db import queries
 from footie_scores.interfaces import db_to_web
 
 
@@ -94,7 +93,7 @@ def future_fixtures(comp_id, month_index=TODAY.month):
 @app.route("/details_<fixture_id>")
 def match_details(fixture_id):
     with db.session_scope() as session:
-        fixture = queries.get_fixture_by_id(session, fixture_id)
+        fixture = db_to_web.get_fixture_by_id(session, fixture_id)
         lineups = fixture.lineups
         template = details_template(fixture, lineups)
     return template 

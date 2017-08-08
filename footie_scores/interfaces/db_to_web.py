@@ -15,6 +15,13 @@ logger = logging.getLogger(__name__)
 TIME_OVERRIDE = settings.OVERRIDE_TIME or settings.OVERRIDE_DAY
 
 
+def get_fixture_by_id(session, id_):
+    fixture = queries.get_fixture_by_id(session, id_)
+    if TIME_OVERRIDE:
+        fixture = filter_fixture_with_override_time(fixture)
+    return fixture
+
+
 def get_comp_grouped_fixtures(
         session, start_date, comp_ids=settings.COMPS, end_date=None):
 
