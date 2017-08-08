@@ -55,26 +55,41 @@
 		  <div id="home-team" class="mui-col-xs-4 mui-col-xs-offset-1">
 		    <h4>{{fixture.team_home}}</h4>
 		  </div>
+		    {% if fixture.override_score %}
+			{% set score = fixture.override_score %}
+		    {% else %}
+			{% set score = fixture.score %}
+		    {% endif %}
 		  <div id="score" class="mui-col-xs-2">
-		    <h4>{{fixture.score}}</h4>
+		    <h4>{{score}}</h4>
 		  </div>
 		  <div id="away-team" class="mui-col-xs-4">
 		    <h4>{{fixture.team_away}}</h4>
 		  </div>
 		</div>
-		{% if fixture.events %}
+		{% if fixture.override_events %}
+		    {% set events = fixture.override_events %}
+		{% else %}
+		    {% set events = fixture.events %}
+		{% endif %}
+		{% if events %}
 		<div id="events-row" class="mui-row">
 		  <div id="home-events" class="mui-col-xs-4 mui-col-xs-offset-1">
-		    {% for event in fixture.events.home %}
+		    {% for event in events.home %}
 		    <p>{{event.player}} {{event.time}}</p>
 		    {% endfor %}
 		  </div>
 		  <div id="status" class="mui-col-xs-2">
-		    {{fixture.status}}
+		    {% if fixture.override_status %}
+			{% set status = fixture.override_status %}
+		    {% else %}
+			{% set status = fixture.status %}
+		    {% endif %}
+		    {{status}}
 		  </div>
 		  <div id="away-events" class="mui-col-xs-4">
-		    {% for event in fixture.events.away %}
-		    <p>{{event.time}} {{event.player}}</p>
+		    {% for event in events.away %}
+			<p>{{event.time}} {{event.player}}</p>
 		    {% endfor %}
 		  </div>
 		</div>

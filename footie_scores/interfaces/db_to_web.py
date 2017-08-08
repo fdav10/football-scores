@@ -62,17 +62,32 @@ def get_competition_by_id(session, id_):
 def filter_fixtures_with_override_time(fixtures):
     for f in fixtures:
         fixture_ko = dt.datetime.combine(f.date, f.time)
-        gametime_elapsed = (utils.time.now() - fixture_ko).total_seconds() / 60
-        logger.info('gametime elapsed: %s', gametime_elapsed)
+        minutes_elapsed = (utils.time.now() - fixture_ko).total_seconds() / 60
+        gametime_elapsed = minutes_elapsed - (15 if minutes_elapsed > 45 else 0)
         time_filtered_events = {'home': [], 'away': []}
-        for team in ('home', 'away'):
-            for e in f.events[team]:
-                if gametime_elapsed > int(e['time']):
-                    time_filtered_events[team].append(e)
-                else:
-                    logger.info('%s vs %s: %s at %s filtered',
-                                f.team_home, f.team_away, e['type'], e['real_time'])
-        import ipdb; ipdb.set_trace()
-        f.events = time_filtered_events
-        f.score = ' - '.join((str(len(f.events['home'])), str(len(f.events['away']))))
+
+        if gametime_elapsed < 0:
+            f.override_score = f.time.strftime(settings.DB_TIMEFORMAT)
+            f.override_events = time_filtered_events
+            f.override_status = ' '
+        else:
+            for team in ('home', 'away'):
+                for event in f.events[team]:
+                    if gametime_elapsed >= int(event['time']):
+                        time_filtered_events[team].append(event)
+                    else:
+                        logger.info('%s vs %s: %s at %s filtered, override game time: %s',
+                                    f.team_home, f.team_away,
+                                    event['type'], event['time'], gametime_elapsed)
+
+            if time_filtered_events != f.events or gametime_elapsed < 115:
+                f.override_events = time_filtered_events
+                f.override_score = ' - '.join(
+                    (str(len(f.override_events['home'])),
+                    str(len(f.override_events['away']))))
+
+                # TODO this is unreliable, e.g. delayed games or games with ET
+                f.override_status = int(gametime_elapsed) if gametime_elapsed <= 115 else 'FT'
+                logger.info('%s vs %s: override score: %s, status: %s',
+                            f.team_home, f.team_away, f.override_score, f.override_status)
     return fixtures
