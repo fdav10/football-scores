@@ -60,26 +60,3 @@ def get_fixtures_by_date_and_comp(
         Fixture.date <= end_date)).filter(Competition.api_id == comp_id).all()
 
     return fixtures
-
-
-
-# def get_comp_grouped_fixtures_for_date(
-#         session, start_date, comp_ids=settings.COMPS, end_date=None):
-
-#     end_date = start_date if end_date is None else end_date
-#     cq = session.query(Competition)
-#     cfq = session.query(Fixture).join(Competition)
-#     fixtures_by_comp = []
-#     for id_ in comp_ids:
-#         competition = cq.filter(Competition.api_id == id_).one()
-
-#         fixtures = cfq.filter(and_(
-#             start_date <= Fixture.date,
-#             Fixture.date <= end_date)).filter(Competition.api_id==id_).all()
-
-#         fixtures_by_comp.append({'name': competition.name,
-#                                  'fixtures': fixtures,
-#                                  # 'api_id': id_,
-#                                  # 'display': True
-#         })
-#     return fixtures_by_comp
