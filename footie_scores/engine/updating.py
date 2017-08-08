@@ -45,8 +45,11 @@ class _UpdaterState():
 
     def refresh_and_get_todays_fixtures(self, session):
         todays_fixtures = self.api.todays_fixtures(settings.COMPS)
+        logger.info('API fixtures: %d', len(todays_fixtures))
         api_to_db.save_fixtures(session, todays_fixtures)
-        return db.queries.get_fixtures_by_date(session, utils.time.today())
+        todays_fixtures_from_db = db.queries.get_fixtures_by_date(session, utils.time.today())
+        logger.info('db fixtures: %d', len(todays_fixtures_from_db))
+        return todays_fixtures_from_db
 
     def time_to_next_kickoff(self, fixtures):
         times_to_kickoff = [f.time_to_kickoff() for f in fixtures]
