@@ -45,7 +45,8 @@ class FootballAPI(FootballAPICaller):
         all_fixtures = self.request(fixtures_url)
         fixtures = self._filter_by_competition(all_fixtures, competitions)
 
-        logger.info('Fixtures for all competitions for %s to %s retrieved', str_start, str_end)
+        logger.info('Fixtures for all competitions for %s to %s retrieved (%d fixtures)',
+                    str_start, str_end, len(fixtures))
         return self._format_fixtures(fixtures)
 
     def _format_competitions(self, competitions):
