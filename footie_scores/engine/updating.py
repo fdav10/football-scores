@@ -35,14 +35,13 @@ class _UpdaterState():
         pass
 
     def update_fixtures_lineups(self, session, fixtures):
-        import sys
-        sys.stdout.write('checking lineups')
-        sys.stdout.flush()
         needs_lineups = [f for f in fixtures if not f.has_lineups()]
-        logger.info('%d fixtures kicking off soon do not have lineups:\n%s', len(needs_lineups), needs_lineups)
-        fixture_ids = [f.api_fixture_id for f in needs_lineups]
-        lineups = self.api.fixture_lineups(fixture_ids)
-        api_to_db.save_lineups(session, lineups)
+        if needs_lineups:
+            logger.info('%d fixtures kicking off soon do not have lineups:\n%s',
+                        len(needs_lineups), needs_lineups)
+            fixture_ids = [f.api_fixture_id for f in needs_lineups]
+            lineups = self.api.fixture_lineups(fixture_ids)
+            api_to_db.save_lineups(session, lineups)
 
     def refresh_and_get_todays_fixtures(self, session):
         todays_fixtures = self.api.todays_fixtures(settings.COMPS)
@@ -68,8 +67,10 @@ class _StartupState(_UpdaterState):
         with db.session_scope() as session:
             fixtures_today = self.refresh_and_get_todays_fixtures(session)
             self.update_fixtures_lineups(session, fixtures_today)
-            fixtures_active = any([f.is_active() for f in fixtures_today])
+            fixtures_active = [f.is_active() for f in fixtures_today]
             fixtures_soon = [f for f in fixtures_today if f.kicks_off_within(settings.PRE_GAME_PREP_PERIOD)]
+            logger.info('fixtures: %d, active: %d, soon: %d',
+                        len(fixtures_today), len(fixtures_active), len(fixtures_soon))
         if fixtures_active or fixtures_soon:
             return _ActiveState
         else:
@@ -87,9 +88,6 @@ class _IdleState(_UpdaterState):
             fixtures_today = db.queries.get_fixtures_by_date(session, utils.time.today())
             future_fixtures = [f for f in fixtures_today if f.status != 'FT']
             if not future_fixtures:
-                import sys
-                sys.stdout.write('about to sleep')
-                sys.stdout.flush()
                 logger.info('No games today, sleeping for %d seconds (time is %s)', settings.NO_GAMES_SLEEP, utils.time.now())
                 time.sleep(settings.NO_GAMES_SLEEP)
                 return _IdleState
