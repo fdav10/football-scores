@@ -44,7 +44,6 @@ def get_lineups_by_id(session, id_):
 
 
 def get_fixtures_by_date(session, dt_date):
-    date_ = dt_date.strftime(settings.DB_DATEFORMAT)
     fq = session.query(Fixture)
     fixtures = fq.filter(Fixture.date == dt_date).all()
     return fixtures
