@@ -196,26 +196,23 @@ def determine_substitutions(lineups, events):
         sub_events = [e for e in events[side] if e['type'] == 'subst']
         players_off = [s['assist_id'] for s in sub_events]
         players_on = [s['player_id'] for s in sub_events]
-        print(players_off)
         for player in lineup:
             player['subbed'] = None
             try:
                 index_ = players_off.index(player['id'])
-                player['subst_event_string'] = '\u2935  ({}\')'.format(sub_events[index_]['minute'])
+                player['subst_event_string'] = '({}\')  \u2935'.format(sub_events[index_]['minute'])
                 player['subbed'] = 'subbed_off'
-            except:
+            except ValueError:
                 player['subst_event_string'] = ''
         for player in subs:
             player['subbed'] = None
             try:
                 index_ = players_on.index(player['id'])
-                player['subst_event_string'] = '\u2934  ({}\')'.format(sub_events[index_]['minute'])
+                player['subst_event_string'] = '({}\')  \u2934'.format(sub_events[index_]['minute'])
                 player['subbed'] = 'subbed_on'
-            except:
+            except ValueError:
                 player['subst_event_string'] = ''
 
-        for player in lineup+subs:
-            print(player['name'], player['subst_event_string'])
     return lineups
 
 
