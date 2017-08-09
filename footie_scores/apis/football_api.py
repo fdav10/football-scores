@@ -89,7 +89,7 @@ class FootballAPI(FootballAPICaller):
         ko_time = dt.datetime.strptime(fixture['time'], settings.DB_TIMEFORMAT).time()
         fixture_ko = dt.datetime.combine(ko_date, ko_time)
         events = fixture['events']
-        filter_keys = ('goal',)
+        filter_keys = ('goal', 'subst')
         h_events = [e for e in events if e['team'] == 'localteam' and e['type'] in filter_keys]
         a_events = [e for e in events if e['team'] == 'visitorteam' and e['type'] in filter_keys]
         for events in (h_events, a_events):
