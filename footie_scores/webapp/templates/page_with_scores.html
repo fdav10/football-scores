@@ -111,11 +111,11 @@
 		{% if fixture.lineups.home %}
 		<div id="events-row" class="mui-row">
 		  <div class="mui-col-xs-10 mui-col-xs-offset-1">
-		    starting lineup
+		    Starting Lineup
 		  </div>
 		  <div id="home-events" class="mui-col-xs-4 mui-col-xs-offset-1">
 		    {% for player in fixture.lineups.home %}
-		    <p>{{player.number}} {{player.name}}</p>
+		    <p>{{player.name}} {{player.number}}</p>
 		    {% endfor %}
 		  </div>
 		  <div class="mui-col-xs-2">
@@ -126,17 +126,17 @@
 		    {% endfor %}
 		  </div>
 		  <div class="mui-col-xs-10 mui-col-xs-offset-1">
-		    subs
+		    Subs
 		  </div>
 		  <div id="home-events" class="mui-col-xs-4 mui-col-xs-offset-1">
-		    {% for player in fixture.lineups.home %}
-		    <p>{{player.number}} {{player.name}}</p>
+		    {% for player in fixture.lineups.home_subs %}
+		    <p>{{player.name}} {{player.number}}</p>
 		    {% endfor %}
 		  </div>
 		  <div class="mui-col-xs-2">
 		  </div>
 		  <div id="away-events" class="mui-col-xs-4">
-		    {% for player in fixture.lineups.away %}
+		    {% for player in fixture.lineups.away_subs %}
 		    <p>{{player.number}} {{player.name}}</p>
 		    {% endfor %}
 		  </div>

@@ -79,7 +79,10 @@ class FootballAPI(FootballAPICaller):
     def _format_lineups(self, commentary):
         return {'api_fixture_id': commentary['match_id'],
                 'home_lineup': commentary['lineup']['localteam'],
-                'away_lineup': commentary['lineup']['visitorteam']}
+                'away_lineup': commentary['lineup']['visitorteam'],
+                'home_subs': commentary['subs']['localteam'],
+                'away_subs': commentary['subs']['visitorteam'],
+        }
 
     def _format_events(self, fixture):
         ko_date = dt.datetime.strptime(fixture['formatted_date'], settings.DB_DATEFORMAT)

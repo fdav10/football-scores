@@ -67,16 +67,20 @@ class Lineups(Base, Updatable):
     api_fixture_id = sqla.Column(sqla.String)
     home = sqla.Column(_JsonEncodedDict)
     away = sqla.Column(_JsonEncodedDict)
+    home_subs = sqla.Column(_JsonEncodedDict)
+    away_subs = sqla.Column(_JsonEncodedDict)
 
     fixture_id = sqla.Column(sqla.Integer, sqla.ForeignKey('fixtures.id'))
     fixture = sqla.orm.relationship('Fixture', back_populates='lineups')
 
     atts_to_update = ('home', 'away')
 
-    def __init__(self, api_fixture_id, home_lineup, away_lineup):
+    def __init__(self, api_fixture_id, home_lineup, away_lineup, home_subs, away_subs):
         self.api_fixture_id = api_fixture_id
         self.home = home_lineup
         self.away = away_lineup
+        self.home_subs = home_subs
+        self.away_subs = away_subs
 
     def __repr__(self):
         return "<Lineups(for match id %s)>" %self.api_fixture_id
