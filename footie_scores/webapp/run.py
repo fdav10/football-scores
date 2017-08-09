@@ -98,7 +98,7 @@ def match_details(fixture_id):
         grouped_fixtures = [{'name': fixture.competition.name, 'fixtures': (fixture,)},]
         comps_with_games = [f['name'] for f in grouped_fixtures if f['fixtures']]
         web_date = utils.time.custom_strftime(settings.WEB_DATEFORMAT_SHORT, TODAY)
-        fixture.lineups = determine_substitutions(fixture.lineups, fixture.events)
+        fixture.lineups = db_to_web.determine_substitutions(fixture.lineups, fixture.events)
         todays_games_with_details = games_template(
             'details.html',
             'details',
@@ -151,8 +151,8 @@ def games_template(
             'display_todays_games_sublist': 'block',
             'display_results_sublist': 'none',
             'display_fixtures_sublist': 'none',
-            'games_today_filter': True,
-            'games_today_link': False,
+            'games_today_filter': False,
+            'games_today_link': True,
             'months': None,
             'short_months': None,
             'display_lineups': True,
@@ -186,34 +186,6 @@ def games_template(
         time=utils.time.now().strftime(settings.DB_DATETIMEFORMAT),
         display_lineups=display_lineups,
     )
-
-
-def determine_substitutions(lineups, events):
-    sides = ('home', 'away')
-    for side in sides:
-        lineup = getattr(lineups, side)
-        subs = getattr(lineups, side+'_subs')
-        sub_events = [e for e in events[side] if e['type'] == 'subst']
-        players_off = [s['assist_id'] for s in sub_events]
-        players_on = [s['player_id'] for s in sub_events]
-        for player in lineup:
-            player['subbed'] = None
-            try:
-                index_ = players_off.index(player['id'])
-                player['subst_event_string'] = '({}\')  \u2935'.format(sub_events[index_]['minute'])
-                player['subbed'] = 'subbed_off'
-            except ValueError:
-                player['subst_event_string'] = ''
-        for player in subs:
-            player['subbed'] = None
-            try:
-                index_ = players_on.index(player['id'])
-                player['subst_event_string'] = '({}\')  \u2934'.format(sub_events[index_]['minute'])
-                player['subbed'] = 'subbed_on'
-            except ValueError:
-                player['subst_event_string'] = ''
-
-    return lineups
 
 
 if __name__ == '__main__':

@@ -10,7 +10,7 @@ from footie_scores import utils
 from footie_scores import settings
 from footie_scores.utils.exceptions import *
 from footie_scores.utils.scheduling import batch_request
-from footie_scores.utils.strings import correct_unicode_to_bin
+from footie_scores.utils.generic import correct_unicode_to_bin
 
 logger = logging.getLogger(__name__)
 

@@ -14,6 +14,17 @@ def correct_unicode_to_bin(bad_bytes):
         return correct_unicode_to_bin(corrected)
 
 
+IDENTITY = lambda x: x
+def query_list_of_dicts(dicts, lookups):
+    for key, value, transform in lookups:
+        if not transform:
+            transform = IDENTITY
+        try:
+            return next(d for d in dicts if transform(d[key]) == transform(value))
+        except StopIteration:
+            pass
+
+
 if __name__ == '__main__':
 
     test_fpath = os.path.join(os.path.split(__file__)[0], '..','..','tmp', 'testlineup.json')
