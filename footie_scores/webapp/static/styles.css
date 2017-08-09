@@ -120,7 +120,7 @@ p, #home-events, #away-events {
     margin-bottom: 0px;
 }
 
-#score {
+#score, .lineups-heading {
     text-align: center;
     min-width: 50px;
 }

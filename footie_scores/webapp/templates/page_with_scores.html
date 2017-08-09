@@ -113,10 +113,14 @@
 	    <div class="mui-col-xs-10 mui-col-xs-offset-1">
 	      <div id="lineups-panel" class="mui-panel">
 		{% if fixture.lineups.home %}
-		<div id="events-row" class="mui-row">
-		  <div class="mui-col-xs-10 mui-col-xs-offset-1">
-		    Starting Lineup
+		<div class="mui-row">
+		  <div class="mui-col-xs-12">
+		    <div class="lineups-heading">
+		      <h4>Starting Lineup</h4>
+		    </div>
 		  </div>
+		</div>
+		<div id="events-row" class="mui-row">
 		  <div id="home-events" class="mui-col-xs-4 mui-col-xs-offset-1">
 		    {% for player in fixture.lineups.home %}
 		    <p class="{{player.subbed}}">{{player.name}} {{player.number}} {{player.subst_event_string}}</p>
@@ -129,8 +133,12 @@
 		    <p class="{{player.subbed}}">{{player.number}} {{player.name}} {{player.subst_event_string}}</p>
 		    {% endfor %}
 		  </div>
-		  <div class="mui-col-xs-10 mui-col-xs-offset-1">
-		    Subs
+		  <div class="mui-row">
+		    <div class="mui-col-xs-12">
+		      <div class="lineups-heading">
+			<h4>Subs</h4>
+		      </div>
+		    </div>
 		  </div>
 		  <div id="home-events" class="mui-col-xs-4 mui-col-xs-offset-1">
 		    {% for player in fixture.lineups.home_subs %}
