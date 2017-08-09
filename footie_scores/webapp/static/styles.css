@@ -140,3 +140,10 @@ p, #home-events, #away-events {
     position: absolute;
     bottom: 0;
 }
+
+p.subbed_on {
+    color: LimeGreen;
+}
+p.subbed_off{
+    color: DarkOrange;
+}
