@@ -98,7 +98,7 @@ def match_details(fixture_id):
         grouped_fixtures = [{'name': fixture.competition.name, 'fixtures': (fixture,)},]
         comps_with_games = [f['name'] for f in grouped_fixtures if f['fixtures']]
         web_date = utils.time.custom_strftime(settings.WEB_DATEFORMAT_SHORT, TODAY)
-        determine_substitutions(fixture.lineups, fixture.events)
+        fixture.lineups = determine_substitutions(fixture.lineups, fixture.events)
         todays_games_with_details = games_template(
             'details.html',
             'details',
@@ -198,20 +198,25 @@ def determine_substitutions(lineups, events):
         players_on = [s['player_id'] for s in sub_events]
         print(players_off)
         for player in lineup:
+            player['subbed'] = None
             try:
                 index_ = players_off.index(player['id'])
                 player['subst_event_string'] = '\u2935  ({}\')'.format(sub_events[index_]['minute'])
+                player['subbed'] = 'subbed_off'
             except:
-                player['subst_event_string'] = None
+                player['subst_event_string'] = ''
         for player in subs:
+            player['subbed'] = None
             try:
                 index_ = players_on.index(player['id'])
                 player['subst_event_string'] = '\u2934  ({}\')'.format(sub_events[index_]['minute'])
+                player['subbed'] = 'subbed_on'
             except:
-                player['subst_event_string'] = None
+                player['subst_event_string'] = ''
 
         for player in lineup+subs:
             print(player['name'], player['subst_event_string'])
+    return lineups
 
 
 if __name__ == '__main__':
