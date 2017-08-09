@@ -119,14 +119,14 @@
 		  </div>
 		  <div id="home-events" class="mui-col-xs-4 mui-col-xs-offset-1">
 		    {% for player in fixture.lineups.home %}
-		    <p>{{player.name}} {{player.number}}</p>
+		    <p>{{player.name}} {{player.number}} {{player.subst_event_string}}</p>
 		    {% endfor %}
 		  </div>
 		  <div class="mui-col-xs-2">
 		  </div>
 		  <div id="away-events" class="mui-col-xs-4">
 		    {% for player in fixture.lineups.away %}
-		    <p>{{player.number}} {{player.name}} </p>
+		    <p>{{player.number}} {{player.name}} {{player.subst_event_string}}</p>
 		    {% endfor %}
 		  </div>
 		  <div class="mui-col-xs-10 mui-col-xs-offset-1">
@@ -134,14 +134,14 @@
 		  </div>
 		  <div id="home-events" class="mui-col-xs-4 mui-col-xs-offset-1">
 		    {% for player in fixture.lineups.home_subs %}
-		    <p>{{player.name}} {{player.number}}</p>
+		    <p>{{player.name}} {{player.number}} {{player.subst_event_string}}</p>
 		    {% endfor %}
 		  </div>
 		  <div class="mui-col-xs-2">
 		  </div>
 		  <div id="away-events" class="mui-col-xs-4">
 		    {% for player in fixture.lineups.away_subs %}
-		    <p>{{player.number}} {{player.name}}</p>
+		    <p>{{player.number}} {{player.name}} {{player.subst_event_string}}</p>
 		    {% endfor %}
 		  </div>
 		</div>
