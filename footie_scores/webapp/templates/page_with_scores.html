@@ -76,7 +76,9 @@
 		<div id="events-row" class="mui-row">
 		  <div id="home-events" class="mui-col-xs-4 mui-col-xs-offset-1">
 		    {% for event in events.home %}
+		    {% if event.type == "goal" %}
 		    <p>{{event.player}} {{event.time}}</p>
+		    {% endif %}
 		    {% endfor %}
 		  </div>
 		  <div id="status" class="mui-col-xs-2">
@@ -89,7 +91,9 @@
 		  </div>
 		  <div id="away-events" class="mui-col-xs-4">
 		    {% for event in events.away %}
+		    {% if event.type == "goal" %}
 			<p>{{event.time}} {{event.player}}</p>
+		    {% endif %}
 		    {% endfor %}
 		  </div>
 		</div>
@@ -122,7 +126,7 @@
 		  </div>
 		  <div id="away-events" class="mui-col-xs-4">
 		    {% for player in fixture.lineups.away %}
-		    <p>{{player.number}} {{player.name}}</p>
+		    <p>{{player.number}} {{player.name}} </p>
 		    {% endfor %}
 		  </div>
 		  <div class="mui-col-xs-10 mui-col-xs-offset-1">
