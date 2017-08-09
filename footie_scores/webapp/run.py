@@ -93,10 +93,23 @@ def future_fixtures(comp_id, month_index=TODAY.month):
 @app.route("/details_<fixture_id>")
 def match_details(fixture_id):
     with db.session_scope() as session:
-        fixture = db_to_web.get_fixture_by_id(session, fixture_id)
-        lineups = fixture.lineups
-        template = details_template(fixture, lineups)
-    return template 
+        all_comps = db_to_web.get_competitions_by_id(session, COMPS_FOR_PAGE)
+        fixtures = db_to_web.get_comp_grouped_fixtures(session, TODAY, COMPS_FOR_PAGE)
+        comps_with_games = [f['name'] for f in fixtures if f['fixtures']]
+        web_date = utils.time.custom_strftime(settings.WEB_DATEFORMAT_SHORT, TODAY)
+        todays_games_with_details = games_template(
+            'details.html',
+            'details',
+            all_comps,
+            fixtures,
+            utils.time.today(),
+            'Live Scores - ' + web_date,
+            competitions_with_games_today=comps_with_games,
+        )
+        # fixture = db_to_web.get_fixture_by_id(session, fixture_id)
+        # lineups = fixture.lineups
+        # template = details_template([fixture,], lineups)
+    return todays_games_with_details 
 
 
 def games_template(
@@ -113,6 +126,7 @@ def games_template(
             'games_today_link': True,
             'months': month_list_define_last(TODAY.month),
             'short_months': month_list_define_last(TODAY.month, month_list=SHORT_MONTHS),
+            'display_lineups': False,
         },
         'fixtures': {
             'display_todays_games_sublist': 'none',
@@ -122,6 +136,7 @@ def games_template(
             'games_today_link': True,
             'months': month_list_define_first(TODAY.month),
             'short_months': month_list_define_first(TODAY.month, month_list=SHORT_MONTHS),
+            'display_lineups': False,
         },
         'scores': {
             'display_todays_games_sublist': 'block',
@@ -131,6 +146,17 @@ def games_template(
             'games_today_link': False,
             'months': None,
             'short_months': None,
+            'display_lineups': False,
+        },
+        'details': {
+            'display_todays_games_sublist': 'block',
+            'display_results_sublist': 'none',
+            'display_fixtures_sublist': 'none',
+            'games_today_filter': True,
+            'games_today_link': False,
+            'months': None,
+            'short_months': None,
+            'display_lineups': True,
         }
     }
 
@@ -141,6 +167,7 @@ def games_template(
     games_today_link = options[page]['games_today_link']
     months = options[page]['months']
     short_months = options[page]['short_months']
+    display_lineups = options[page]['display_lineups']
 
     return render_template(
         template,
@@ -158,13 +185,14 @@ def games_template(
         months=months,
         short_months=short_months,
         time=utils.time.now().strftime(settings.DB_DATETIMEFORMAT),
+        display_lineups=display_lineups,
     )
 
 
-def details_template(fixture, lineups):
+def details_template(fixtures, lineups):
     return render_template(
         'details.html',
-        fixture=fixture,
+        fixtures=fixtures,
         lineups=lineups,
     )
 

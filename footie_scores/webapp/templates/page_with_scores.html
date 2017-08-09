@@ -94,7 +94,7 @@
 		  </div>
 		</div>
 		{% endif %}
-		{% if fixture.lineups %}
+		{% if fixture.lineups and not display_lineups %}
 		<div id="details-row" class="mui-row">
 		  <div id="match-details" class="mui=col-xs-6">
 		    <a href= {{ url_for('match_details', fixture_id=fixture.api_fixture_id) }} >match details</a>
@@ -104,6 +104,30 @@
 	      </div>
 	    </div>
 	  </div>
+		{% if display_lineups %}
+		<div id="lineups-row" class="mui-row">
+		  <div class="mui-col-xs-10 mui-col-xs-offset-1">
+		    <div id="lineups-panel" class="mui-panel">
+		      {% if fixture.lineups.home %}
+		      <div id="events-row" class="mui-row">
+			<div id="home-events" class="mui-col-xs-4 mui-col-xs-offset-1">
+			  {% for player in fixture.lineups.home %}
+			  <p>{{player.number}} {{player.name}}</p>
+			  {% endfor %}
+			</div>
+			<div class="mui-col-xs-2">
+			</div>
+			<div id="away-events" class="mui-col-xs-4">
+			  {% for player in fixture.lineups.away %}
+			  <p>{{player.number}} {{player.name}}</p>
+			  {% endfor %}
+			</div>
+		      </div>
+		      {% endif %}
+		    </div>
+		  </div>
+		</div>
+		{% endif %}
 	  {% endfor %}
 	</div>
       </div>
