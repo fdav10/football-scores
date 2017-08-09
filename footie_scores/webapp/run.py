@@ -94,9 +94,20 @@ def future_fixtures(comp_id, month_index=TODAY.month):
 def match_details(fixture_id):
     with db.session_scope() as session:
         fixture = db_to_web.get_fixture_by_id(session, fixture_id)
-        lineups = fixture.lineups
-        template = details_template(fixture, lineups)
-    return template 
+        grouped_fixtures = [{'name': fixture.competition.name, 'fixtures': (fixture,)},]
+        comps_with_games = [f['name'] for f in grouped_fixtures if f['fixtures']]
+        web_date = utils.time.custom_strftime(settings.WEB_DATEFORMAT_SHORT, TODAY)
+        determine_substitutions(fixture.lineups, fixture.events)
+        todays_games_with_details = games_template(
+            'details.html',
+            'details',
+            all_comps,
+            grouped_fixtures,
+            utils.time.today(),
+            'Live Scores - ' + web_date,
+            competitions_with_games_today=comps_with_games,
+        )
+    return todays_games_with_details 
 
 
 def games_template(
@@ -169,14 +180,30 @@ def details_template(fixture, lineups):
     )
 
 
-def page_comps_only(competitions):
-    to_keep = COMPS_FOR_PAGE
-    return filter_comps(competitions, to_keep)
+def determine_substitutions(lineups, events):
+    sides = ('home', 'away')
+    for side in sides:
+        lineup = getattr(lineups, side)
+        subs = getattr(lineups, side+'_subs')
+        sub_events = [e for e in events[side] if e['type'] == 'subst']
+        players_off = [s['assist_id'] for s in sub_events]
+        players_on = [s['player_id'] for s in sub_events]
+        print(players_off)
+        for player in lineup:
+            try:
+                index_ = players_off.index(player['id'])
+                player['subst_event_string'] = '\u2935  ({}\')'.format(sub_events[index_]['minute'])
+            except:
+                player['subst_event_string'] = None
+        for player in subs:
+            try:
+                index_ = players_on.index(player['id'])
+                player['subst_event_string'] = '\u2934  ({}\')'.format(sub_events[index_]['minute'])
+            except:
+                player['subst_event_string'] = None
 
-
-def filter_comps(competitions, to_keep):
-    return [comp for comp in competitions if comp.api_id in to_keep]
-    
+        for player in lineup+subs:
+            print(player['name'], player['subst_event_string'])
 
 
 if __name__ == '__main__':
