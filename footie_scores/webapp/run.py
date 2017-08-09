@@ -94,21 +94,19 @@ def future_fixtures(comp_id, month_index=TODAY.month):
 def match_details(fixture_id):
     with db.session_scope() as session:
         all_comps = db_to_web.get_competitions_by_id(session, COMPS_FOR_PAGE)
-        fixtures = db_to_web.get_comp_grouped_fixtures(session, TODAY, COMPS_FOR_PAGE)
-        comps_with_games = [f['name'] for f in fixtures if f['fixtures']]
+        fixture = db_to_web.get_fixture_by_id(session, fixture_id)
+        grouped_fixtures = [{'name': fixture.competition.name, 'fixtures': (fixture,)},]
+        comps_with_games = [f['name'] for f in grouped_fixtures if f['fixtures']]
         web_date = utils.time.custom_strftime(settings.WEB_DATEFORMAT_SHORT, TODAY)
         todays_games_with_details = games_template(
             'details.html',
             'details',
             all_comps,
-            fixtures,
+            grouped_fixtures,
             utils.time.today(),
             'Live Scores - ' + web_date,
             competitions_with_games_today=comps_with_games,
         )
-        # fixture = db_to_web.get_fixture_by_id(session, fixture_id)
-        # lineups = fixture.lineups
-        # template = details_template([fixture,], lineups)
     return todays_games_with_details 
 
 
@@ -186,14 +184,6 @@ def games_template(
         short_months=short_months,
         time=utils.time.now().strftime(settings.DB_DATETIMEFORMAT),
         display_lineups=display_lineups,
-    )
-
-
-def details_template(fixtures, lineups):
-    return render_template(
-        'details.html',
-        fixtures=fixtures,
-        lineups=lineups,
     )
 
 
