@@ -84,8 +84,8 @@ def filter_fixtures_with_override_time(fixtures):
 def filter_fixture_with_override_time(fixture):
     f = fixture
     fixture_ko = dt.datetime.combine(f.date, f.time)
-    minutes_elapsed = (utils.time.now() - fixture_ko).total_seconds() / 60
-    gametime_elapsed = minutes_elapsed - (15 if minutes_elapsed > 45 else 0)
+    mins_elapsed = (utils.time.now() - fixture_ko).total_seconds() / 60
+    gametime_elapsed = mins_elapsed if mins_elapsed < 45 else 45 if mins_elapsed < 60 else mins_elapsed - 15
     time_filtered_events = {'home': [], 'away': []}
 
     if gametime_elapsed < 0:
