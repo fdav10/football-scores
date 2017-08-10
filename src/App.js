@@ -6,22 +6,11 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {};
-    this.fetchDataPeriodically = this.fetchDataPeriodically.bind(this);
-    this.onFetch = this.onFetch.bind(this);
-    this.setState = this.setState.bind(this);
   }
 
   setState(state) {
     console.log('setState(): ' + state);
     React.Component.prototype.setState(state);
-  }
-
-  onFetch(data) {
-    this.setState(data);
-  }
-
-  fetchDataPeriodically() {
-    this.props.fetchDataPeriodically((data) => this.onFetch(data))
   }
 
   render() {
