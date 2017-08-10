@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import App from './App';
 import Score from './Score';
 
 
@@ -14,9 +15,17 @@ function fetchFixtureData(success) {
 }
 
 
+function fetchFixtureDataPeriodically(success) {
+  fetchFixtureData(success);
+  setTimeout(() => fetchFixtureDataPeriodically(success), 1000 * 5);
+}
+
+
 function createScoreComponents() {
   // Attach a Score component to each score mount point
   var fixtures = document.getElementsByClassName('fixture-row');
+
+  var scoreComponents = []
 
   for(var i=0; i < fixtures.length; i++) {
 
@@ -29,30 +38,25 @@ function createScoreComponents() {
     scoreMount.innerHTML = '';
 
     // Attach Score component
-    ReactDOM.render(
+    var score = ReactDOM.render(
       <Score fixtureID={fixture.id.replace('fixture-', '')} />,
       scoreMount
     );
+    scoreComponents.push(score);
   }
-}
 
-// Subsequently: just fetch fixture data
-function fetchFixtureDataPeriodically() {
-  fetchFixtureData((data) => {
-    /* console.log('fetchFixtureData callback');*/
-    document.fixtureData = data;
-    // FIXME: Don't know how to make existing components re-render
-    createScoreComponents()
-  });
-  setTimeout(fetchFixtureDataPeriodically, 1000 * 5);
+  var app = ReactDOM.render(
+    <App scoreComponents={scoreComponents} />,
+    document.getElementById('app-mount'),
+  );
+
+  fetchFixtureDataPeriodically(app.setState);
 }
 
 // First time: fetch fixture data and create Score components
 document.addEventListener('DOMContentLoaded', () => {
   fetchFixtureData((data) => {
     console.log('fetchFixtureData callback (on page load)');
-    document.fixtureData = data;
     createScoreComponents();
-    fetchFixtureDataPeriodically();
   })
 });
