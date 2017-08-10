@@ -9,6 +9,7 @@ from sqlalchemy import and_
 
 from footie_scores import settings
 from footie_scores import utils
+from footie_scores.utils.footie import score_from_events
 from footie_scores.utils.generic import query_list_of_dicts
 from footie_scores.db import queries
 from footie_scores.db.schema import Competition, Fixture
