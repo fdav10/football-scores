@@ -1,6 +1,7 @@
 
 import datetime as dt
 from collections import defaultdict
+from itertools import chain
 import logging
 from difflib import get_close_matches, SequenceMatcher
 
@@ -30,7 +31,7 @@ def get_comp_grouped_fixtures(
     grouped_fixtures = []
     for id_ in comp_ids:
         competition = queries.get_competition_by_id(session, id_)
-        fixtures = get_fixtures_by_date_and_comp(session, start_date, id_, end_date)
+        fixtures = queries.get_fixtures_by_date_and_comp(session, start_date, id_, end_date)
         if TIME_OVERRIDE:
             fixtures = filter_fixtures_with_override_time(fixtures)
         grouped_fixtures.append({'name': competition.name,
@@ -44,7 +45,7 @@ def get_date_grouped_fixtures(
     grouped_fixtures = []
     date_keyed_dict = defaultdict(list)
 
-    fixtures = get_fixtures_by_date_and_comp(session, start_date, comp_id, end_date)
+    fixtures = queries.get_fixtures_by_date_and_comp(session, start_date, comp_id, end_date)
     if TIME_OVERRIDE:
         fixtures = filter_fixtures_with_override_time(fixtures)
     for fixture in fixtures:
@@ -58,11 +59,14 @@ def get_date_grouped_fixtures(
     return grouped_fixtures
 
 
-def get_fixtures_by_date_and_comp(
-        session, start_date, comp_id, end_date=None):
+def get_fixtures_by_dates_and_comps(
+        session, start_date, comp_ids, end_date=None):
 
-    end_date = start_date if end_date is None else end_date
-    return queries.get_fixtures_by_date_and_comp(session, start_date, comp_id, end_date)
+    fixtures = []
+    for comp_id in comp_ids:
+        fixtures.append(queries.get_fixtures_by_date_and_comp(
+            session, start_date, comp_id, end_date))
+    return list(chain(*fixtures))
 
 
 def get_competitions_by_id(session, ids):

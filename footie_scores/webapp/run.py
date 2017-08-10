@@ -25,10 +25,10 @@ SHORT_MONTHS = constants.SHORT_MONTHS
 @app.route("/json/fixture_updates")
 def fixture_updates():
     with db.session_scope() as session:
-        grouped_fixtures = db_to_web.get_comp_grouped_fixtures(session, TODAY, COMPS_FOR_PAGE)
-        for group in grouped_fixtures:
-            group['fixtures'] = [f.to_python() for f in group['fixtures']]
-    return jsonify(grouped_fixtures)
+        fixtures = db_to_web.get_fixtures_by_dates_and_comps(
+            session, TODAY, COMPS_FOR_PAGE)
+        id_keyed_fixtures = {fixture.api_fixture_id: fixture.to_python() for fixture in fixtures}
+    return jsonify(id_keyed_fixtures)
     
 
 @app.route("/todays_games")
