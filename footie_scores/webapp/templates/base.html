@@ -31,13 +31,13 @@
 	  <strong>Games Today</strong>
 	  <!-- <div style="display: {{todays_games_sublist_display}}" class="sub-list"> -->
 	  <div style="display: none" class="sub-list">
-	      <ul id="todays-games" class="mui-list--unstyled">
-		<li id="all-comps-button">All Competitions</li>
-		{% for comp in competitions_with_games %}
-		<li class="individual-competitions">{{comp}}</li>
-		{% endfor %}
-	      </ul>
-	    </div>
+	    <ul id="todays-games" class="mui-list--unstyled">
+	      <li id="all-comps-button">All Competitions</li>
+	      {% for comp in competitions_with_games %}
+	      <li class="individual-competitions">{{comp}}</li>
+	      {% endfor %}
+	    </ul>
+	  </div>
 	</li>
 	{% endblock games_today_filter %}
 	{% block games_today_link %}
@@ -100,13 +100,13 @@
 	{% endblock filter_row %}
 	{% block main_row_content %}
 	{% endblock main_row_content %}
-	<div id="update-timer-mount"></div>
 	<div class="time-footer">
-	  <p>
-	    {{time}}
-	  </p>
-	</div>
+	<div id="update-timer-mount"></div>
+	<p>
+	  {{time}}
+	</p>
       </div>
+    </div>
     </div>
   </body>
 </html>
