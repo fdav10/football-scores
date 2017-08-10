@@ -92,8 +92,10 @@ class FootballAPI(FootballAPICaller):
         for events in (h_events, a_events):
             for e in events:
                 if e['extra_min'] != '':
+                    e['minutes_since_ko'] = int(e['minute']) + int(e['extra_min'])
                     e['time'] = e['minute'] + ' + ' + e['extra_min']
                 else:
+                    e['minutes_since_ko'] = int(e['minute'])
                     e['time'] = e['minute']
         return {'home': h_events, 'away': a_events}
 
