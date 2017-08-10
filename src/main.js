@@ -15,12 +15,9 @@ function fetchFixtureData(success) {
 }
 
 
-function fetchFixtureDataPeriodically(app) {
-  fetchFixtureData((data) => {
-    console.log('calling setState(): ' + data);
-    app.setState(data);
-  });
-  setTimeout(() => fetchFixtureDataPeriodically(app), 1000 * 5);
+function fetchFixtureDataPeriodically(success) {
+  fetchFixtureData(success);
+  setTimeout(() => fetchFixtureDataPeriodically(success), 1000 * 5);
 }
 
 
@@ -53,7 +50,10 @@ function createScoreComponents() {
     document.getElementById('app-mount'),
   );
 
-  fetchFixtureDataPeriodically(app);
+  fetchFixtureDataPeriodically((data) => {
+    console.log('calling app.setState(): ' + data);
+    app.setState(data);
+  });
 }
 
 // First time: fetch fixture data and create Score components
