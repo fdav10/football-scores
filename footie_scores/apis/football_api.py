@@ -1,6 +1,6 @@
 ''' Interfaces to football score APIs '''
 
-import os
+import os, re
 import logging
 import datetime as dt
 
@@ -66,7 +66,7 @@ class FootballAPI(FootballAPICaller):
             'score': self._format_fixture_score(f),
             'date': self._make_date_db_ready(f['formatted_date']),
             'time': self._format_fixture_time(f['time']),
-            'status': f['status'],
+            'status': self._format_status(f),
             'events': self._format_events(f)
             } for f in fixtures]
         return formatted_fixtures
@@ -83,6 +83,11 @@ class FootballAPI(FootballAPICaller):
                 'home_subs': commentary['subs']['localteam'],
                 'away_subs': commentary['subs']['visitorteam'],
         }
+
+    def _format_status(self, fixture):
+        if re.match('[0-9]+:[0-9]+', fixture['status']):
+            logger.warning(fixture['status'])
+        return fixture['status']
 
     def _format_events(self, fixture):
         events = fixture['events']
