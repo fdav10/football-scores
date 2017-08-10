@@ -6,7 +6,15 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.props.fetchDataPeriodically((data) => this.setState(data));
+    this.props.fetchDataPeriodically((data) => {
+      var now = (new Date).getTime();
+      data.lastUpdatedTime = now;
+      this.setState(data);
+      this.props.updateTimerComponent.setState({
+        currentTime: now,
+        lastUpdatedTime: now
+      })
+    });
   }
 
   componentWillUpdate() {

@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import Score from './Score';
+import UpdateTimer from './UpdateTimer';
 
 
 function fetchFixtureData(success) {
@@ -45,8 +46,18 @@ function createScoreComponents() {
     scoreComponents.push(score);
   }
 
+  var updateTimer = ReactDOM.render(
+    <UpdateTimer tickPeriod={1 * 1000} />,
+    document.getElementById('update-timer-mount'),
+  )
+  updateTimer.tick();
+
   var app = ReactDOM.render(
-    <App scoreComponents={scoreComponents} fetchDataPeriodically={fetchFixtureDataPeriodically} />,
+    <App
+      scoreComponents={scoreComponents}
+      updateTimerComponent={updateTimer}
+      fetchDataPeriodically={fetchFixtureDataPeriodically}
+    />,
     document.getElementById('app-mount'),
   );
 
