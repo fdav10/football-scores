@@ -46,11 +46,14 @@ function createScoreComponents() {
   }
 
   var app = ReactDOM.render(
-    <App scoreComponents={scoreComponents} />,
+    <App scoreComponents={scoreComponents} fetchDataPeriodically={fetchFixtureDataPeriodically} />,
     document.getElementById('app-mount'),
   );
 
-  fetchFixtureDataPeriodically(app.setState);
+  console.log('v2');
+
+  app.fetchDataPeriodically()
+
 }
 
 // First time: fetch fixture data and create Score components
