@@ -6,8 +6,8 @@ module.exports = {
     './main.js',
   ],
   output: {
-    path: path.join(__dirname, 'www'),
-    filename: 'bundle.js',
+    path: path.join(__dirname, 'footie_scores', 'webapp', 'static', 'js'),
+    filename: 'webpack-bundle.js',
   },
   module: {
     rules: [

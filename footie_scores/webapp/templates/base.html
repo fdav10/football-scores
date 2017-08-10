@@ -10,6 +10,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript" src="//cdn.muicss.com/mui-0.9.16/js/mui.min.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/webpack-bundle.js') }}"></script>
   </head>
   <body>
     <header id="header">
@@ -102,6 +103,8 @@
 	  <p>
 	    {{time}}
 	  </p>
+      React mount point:
+      <div id="mount"></div>
 	</div>
       </div>
     </div>

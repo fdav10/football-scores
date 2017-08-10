@@ -13,3 +13,4 @@ profile.txt
 footie_scores/app/static/scores_trial.html
 node_modules
 www/bundle.js
+footie_scores/webapp/static/js/webpack-bundle.js
