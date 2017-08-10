@@ -98,9 +98,7 @@ def filter_fixture_with_override_time(fixture):
 
             if time_filtered_events != f.events or gametime_elapsed < 115:
                 f.override_events = time_filtered_events
-                home_goals = len([e for e in f.override_events['home'] if e['type'] == 'goal'])
-                away_goals = len([e for e in f.override_events['away'] if e['type'] == 'goal'])
-                f.override_score = ' - '.join((str(home_goals), str(away_goals)))
+                f.override_score = score_from_events(f.override_events)
 
                 # TODO this is unreliable, e.g. delayed games or games with ET
                 f.override_status = int(gametime_elapsed) if gametime_elapsed <= 115 else 'FT'
