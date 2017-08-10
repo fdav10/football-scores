@@ -48,7 +48,7 @@
 	    </div>
 	  </div>
 	  {% for fixture in group.fixtures %}
-	  <div id="game-row" class="mui-row">
+	  <div id="fixture-{{fixture.api_fixture_id}}" class="fixture-row mui-row">
 	    <div class="mui-col-xs-10 mui-col-xs-offset-1">
 	      <div id="game-panel" class="mui-panel">
 		<div id="scoreline-row" class="mui-row">
@@ -60,9 +60,11 @@
 		    {% else %}
 			{% set score = fixture.score %}
 		    {% endif %}
-		  <div class="score mui-col-xs-2">
-		    <h4>{{score}}</h4>
-		  </div>
+		  <div class="score-mount">
+            <div class="score mui-col-xs-2">
+		      <h4>{{score}}</h4>
+		    </div>
+          </div>
 		  <div id="away-team" class="mui-col-xs-4">
 		    <h4>{{fixture.team_away}}</h4>
 		  </div>
