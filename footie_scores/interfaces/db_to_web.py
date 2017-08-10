@@ -66,7 +66,10 @@ def get_fixtures_by_dates_and_comps(
     for comp_id in comp_ids:
         fixtures.append(queries.get_fixtures_by_date_and_comp(
             session, start_date, comp_id, end_date))
-    return list(chain(*fixtures))
+    fixtures = list(chain(*fixtures))
+    if TIME_OVERRIDE:
+        return filter_fixtures_with_override_time(fixtures)
+    return fixtures
 
 
 def get_competitions_by_id(session, ids):
