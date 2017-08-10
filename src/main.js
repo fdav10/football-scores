@@ -36,6 +36,16 @@ function createScoreComponents() {
   }
 }
 
+// Subsequently: just fetch fixture data
+function fetchFixtureDataPeriodically() {
+  fetchFixtureData((data) => {
+    /* console.log('fetchFixtureData callback');*/
+    document.fixtureData = data;
+    // FIXME: Don't know how to make existing components re-render
+    createScoreComponents()
+  });
+  setTimeout(fetchFixtureDataPeriodically, 1000 * 5);
+}
 
 // First time: fetch fixture data and create Score components
 document.addEventListener('DOMContentLoaded', () => {
@@ -43,17 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('fetchFixtureData callback (on page load)');
     document.fixtureData = data;
     createScoreComponents();
+    fetchFixtureDataPeriodically();
   })
 });
-
-
-// Subsequently: just fetch fixture data
-(function fetchFixtureDataPeriodally() {
-  fetchFixtureData((data) => {
-    console.log('fetchFixtureData callback');
-    document.fixtureData = data;
-    // FIXME: Don't know how to make existing components re-render
-    createScoreComponents()
-  });
-  setTimeout(fetchFixtureDataPeriodally, 1000 * 5);
-})()
