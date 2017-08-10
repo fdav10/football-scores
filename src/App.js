@@ -9,8 +9,8 @@ class App extends React.Component {
     this.props.fetchDataPeriodically((data) => this.setState(data));
   }
 
-  render() {
-    console.log('App.render()');
+  componentWillUpdate() {
+    console.log('Pre App.render()');
 
     // For each score component, find the score for that fixture in the newly
     // fetched data and set it in the component's state.
@@ -21,6 +21,10 @@ class App extends React.Component {
         score.setState({score: fixture.score});
       }
     }
+  }
+
+  render() {
+    console.log('App.render()');
     return null;
   }
 
