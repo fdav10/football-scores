@@ -18,6 +18,8 @@ function createScoreComponents() {
   // Attach a Score component to each score mount point
   var fixtures = document.getElementsByClassName('fixture-row');
 
+  document.scoreComponents = [];
+
   for(var i=0; i < fixtures.length; i++) {
 
     var fixture = fixtures[i];
@@ -29,10 +31,21 @@ function createScoreComponents() {
     scoreMount.innerHTML = '';
 
     // Attach Score component
+    var score = <Score fixtureID={fixture.id.replace('fixture-', '')} />;
+    document.scoreComponents.push(score);
     ReactDOM.render(
-      <Score fixtureID={fixture.id.replace('fixture-', '')} />,
+      score,
       scoreMount
     );
+  }
+}
+
+
+function renderAll() {
+  // FIXME: This doesn't work
+  for(var i=0; i < document.scoreComponents.length; i++) {
+    console.log('renderAll() ' + document.scoreComponents[i].fixtureID);
+    document.scoreComponents[i].render();
   }
 }
 
@@ -53,6 +66,9 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchFixtureData((data) => {
     console.log('fetchFixtureData callback');
     document.fixtureData = data;
+    // FIXME: Don't know how to make existing components re-render
+    // renderAll();
+    createScoreComponents()
   });
   setTimeout(fetchFixtureDataPeriodally, 1000 * 5);
 })()
