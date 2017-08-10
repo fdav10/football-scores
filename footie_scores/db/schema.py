@@ -164,7 +164,7 @@ class Fixture(Base, Updatable):
         return self.time_to_kickoff() <= seconds_from_now
 
     def to_python(self):
-        keys = ('team_home', 'team_away', 'score', 'events', 'status')
+        keys = ('team_home', 'team_away', 'score', 'events', 'status', 'api_fixture_id')
         return {k: getattr(self, k) for k in keys}
 
 
