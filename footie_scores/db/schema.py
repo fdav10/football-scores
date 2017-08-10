@@ -163,6 +163,10 @@ class Fixture(Base, Updatable):
     def kicks_off_within(self, seconds_from_now):
         return self.time_to_kickoff() <= seconds_from_now
 
+    def to_python(self):
+        keys = ('team_home', 'team_away', 'score', 'events', 'status')
+        return {k: getattr(self, k) for k in keys}
+
 
 def create_tables_if_not_present():
     # TODO this probably isn't very good
