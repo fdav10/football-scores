@@ -11,3 +11,5 @@ profile.txt
 *.egg-info/
 
 footie_scores/app/static/scores_trial.html
+node_modules
+www/bundle.js
