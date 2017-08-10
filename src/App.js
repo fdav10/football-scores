@@ -26,6 +26,9 @@ class App extends React.Component {
       var score = this.props.scoreComponents[i];
       var fixture = this.state[score.props.fixtureID];
       if(fixture) {
+	if(fixture.override_score){
+	  fixture.score = fixture.override_score;
+	}
         score.setState({score: fixture.score});
       }
     }

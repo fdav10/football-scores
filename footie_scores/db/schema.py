@@ -164,7 +164,12 @@ class Fixture(Base, Updatable):
         return self.time_to_kickoff() <= seconds_from_now
 
     def to_python(self):
-        keys = ('team_home', 'team_away', 'score', 'events', 'status', 'api_fixture_id')
+        keys = ['team_home', 'team_away', 'score', 'events', 'status', 'api_fixture_id']
+        try:
+            getattr(self, 'override_score')
+            keys += ['override_score', 'override_status', 'override_events']
+        except AttributeError:
+            pass
         return {k: getattr(self, k) for k in keys}
 
 
