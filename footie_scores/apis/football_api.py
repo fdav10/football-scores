@@ -85,9 +85,6 @@ class FootballAPI(FootballAPICaller):
         }
 
     def _format_events(self, fixture):
-        ko_date = dt.datetime.strptime(fixture['formatted_date'], settings.DB_DATEFORMAT)
-        ko_time = dt.datetime.strptime(fixture['time'], settings.DB_TIMEFORMAT).time()
-        fixture_ko = dt.datetime.combine(ko_date, ko_time)
         events = fixture['events']
         filter_keys = ('goal', 'subst')
         h_events = [e for e in events if e['team'] == 'localteam' and e['type'] in filter_keys]
@@ -96,14 +93,8 @@ class FootballAPI(FootballAPICaller):
             for e in events:
                 if e['extra_min'] != '':
                     e['time'] = e['minute'] + ' + ' + e['extra_min']
-                    time_elapsed =  int(e['time']) + int(e['extra_min'])
                 else:
                     e['time'] = e['minute']
-                    time_elapsed =  int(e['time'])
-                e['real_time'] = dt.datetime.strftime(
-                    fixture_ko
-                    + dt.timedelta(minutes=time_elapsed),
-                    settings.DB_DATETIMEFORMAT)
         return {'home': h_events, 'away': a_events}
 
     def _format_fixture_score(self, fixture):
