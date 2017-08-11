@@ -1,6 +1,7 @@
 
 import datetime as dt
 from collections import defaultdict
+from itertools import chain
 import logging
 from difflib import get_close_matches, SequenceMatcher
 
@@ -28,7 +29,6 @@ def get_comp_grouped_fixtures(
         session, start_date, comp_ids=settings.COMPS, end_date=None):
 
     grouped_fixtures = []
-    end_date = start_date if end_date is None else end_date
     for id_ in comp_ids:
         competition = queries.get_competition_by_id(session, id_)
         fixtures = queries.get_fixtures_by_date_and_comp(session, start_date, id_, end_date)
@@ -43,7 +43,6 @@ def get_date_grouped_fixtures(
 
     grouped_fixtures = []
     date_keyed_dict = defaultdict(list)
-    end_date = start_date if end_date is None else end_date
 
     fixtures = queries.get_fixtures_by_date_and_comp(session, start_date, comp_id, end_date)
     fixtures = filter_fixtures_with_override_time(fixtures)
@@ -60,6 +59,17 @@ def get_date_grouped_fixtures(
     return grouped_fixtures
 
 
+def get_fixtures_by_dates_and_comps(
+        session, start_date, comp_ids, end_date=None):
+
+    fixtures = []
+    for comp_id in comp_ids:
+        fixtures.append(queries.get_fixtures_by_date_and_comp(
+            session, start_date, comp_id, end_date))
+    fixtures = list(chain(*fixtures))
+    return filter_fixtures_with_override_time(fixtures)
+
+
 def get_competitions_by_id(session, ids):
     return queries.get_competitions_by_id(session, ids)
 
@@ -69,9 +79,7 @@ def get_competition_by_id(session, id_):
 
 
 def filter_fixtures_with_override_time(fixtures):
-    if TIME_OVERRIDE:
-        return [filter_fixture_with_override_time(f) for f in fixtures]
-    return fixtures
+    return [filter_fixture_with_override_time(f) for f in fixtures]
 
 
 def filter_fixture_with_override_time(fixture):

@@ -3,8 +3,9 @@
 ''' Make webpage from API requests '''
 
 import datetime as dt
+import json
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 
 from footie_scores import settings, constants, db, utils
 from footie_scores.utils.log import start_logging
@@ -13,7 +14,6 @@ from footie_scores.interfaces import db_to_web
 
 
 app = Flask(__name__)
-WEBDATEFORMAT = "%A %d %B %y" # e.g. Sunday 16 April 2017
 COMPS_FOR_PAGE = settings.COMPS
 
 TODAY = utils.time.today()
@@ -21,6 +21,15 @@ THIS_YEAR = TODAY.year
 MONTHS = constants.MONTHS
 SHORT_MONTHS = constants.SHORT_MONTHS
 
+
+@app.route("/json/fixture_updates")
+def fixture_updates():
+    with db.session_scope() as session:
+        fixtures = db_to_web.get_fixtures_by_dates_and_comps(
+            session, TODAY, COMPS_FOR_PAGE)
+        id_keyed_fixtures = {fixture.api_fixture_id: fixture.to_python() for fixture in fixtures}
+    return jsonify(id_keyed_fixtures)
+    
 
 @app.route("/todays_games")
 def todays_fixtures():
@@ -171,7 +180,7 @@ def games_template(
     return render_template(
         template,
         title=title,
-        date=date_.strftime(WEBDATEFORMAT),
+        date=date_.strftime(settings.WEB_DATEFORMAT),
         competitions=page_competitions,
         competitions_with_games=competitions_with_games_today,
         grouped_fixtures=grouped_fixtures,
