@@ -35,12 +35,12 @@ function createScoreComponents() {
     // get score elements
     var scoreMount = fixture.getElementsByClassName('score-mount')[0]
 
-    // Delete existing score
-    scoreMount.innerHTML = '';
-
     // Attach Score component
     var score = ReactDOM.render(
-      <Score fixtureID={fixture.id.replace('fixture-', '')} />,
+      <Score
+	fixtureID={fixture.id.replace('fixture-', '')}
+	initial_score={scoreMount.innerText}
+      />,
       scoreMount
     );
     scoreComponents.push(score);

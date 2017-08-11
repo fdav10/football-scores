@@ -2,10 +2,10 @@ import React from 'react';
 
 class Score extends React.Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      score: ''
+      score: this.props.initial_score
     };
   }
 
