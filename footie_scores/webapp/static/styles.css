@@ -136,10 +136,15 @@ body {
     margin-right: 15px;
 }
 
-.time-footer {
+.time-footer  {
     font-size: 10px;
-    position: absolute;
+    line-height: 0.5;
+    position: fixed;
     bottom: 0;
+}
+
+.time-footer p  {
+    padding-left: 10px;
 }
 
 p.subbed_on {
