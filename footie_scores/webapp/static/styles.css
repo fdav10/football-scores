@@ -94,7 +94,7 @@ body {
 }
 #game-row.mui-row,
 #comp-header-row.mui-row,
-#lineups-row.mui-row {
+.lineups-row .mui-row {
     margin-left: -50px; margin-right: -50px;
 }
 
