@@ -1,19 +1,23 @@
 #!/usr/bin/env python
 
+import sys
 import logging
+import datetime as dt
 
 from footie_scores import db
-from footie_scores import utils
+from footie_scores import settings
 from footie_scores.utils.log import start_logging
-from footie_scores.db.schema import create_tables_if_not_present
 from footie_scores.interfaces import api_to_db
 from footie_scores.apis.football_api import FootballAPI
 
 logger = logging.getLogger(__name__)
 
 start_logging()
-create_tables_if_not_present()
-date_ = utils.time.today()
-fixtures = FootballAPI().get_fixtures_for_date(start_date=date_)
+start_date = dt.datetime.strptime(sys.argv[1], settings.DB_DATEFORMAT).date()
+end_date = dt.datetime.strptime(sys.argv[2], settings.DB_DATEFORMAT).date()
+logger.info('Fetching fixtures for date range %s to %s', start_date, end_date)
+fixtures = FootballAPI().get_fixtures_for_date(start_date=start_date, end_date=end_date)
+logger.info('Saving to db...')
 with db.session_scope() as session:
     api_to_db.save_fixtures(session, fixtures)
+logger.info('Done')
