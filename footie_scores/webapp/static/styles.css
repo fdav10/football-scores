@@ -86,15 +86,15 @@ body {
     overflow: hidden;
 }
 
-#game-panel.mui-panel,
-#lineups-panel.mui-panel
+.game-panel.mui-panel,
+.lineups-panel.mui-panel
 {
     margin-bottom: 0px;
     white-space: nowrap;
 }
-#game-row.mui-row,
+.fixture-row.mui-row,
 #comp-header-row.mui-row,
-.lineups-row .mui-row {
+.lineups-row.mui-row {
     margin-left: -50px; margin-right: -50px;
 }
 
@@ -111,10 +111,10 @@ body {
     margin-bottom: 0;
 }
 
-#home-team, #away-team {white-space: initial; }
-#home-team, #home-events {text-align: right;}
-#away-team, #away-events {text-align: left;}
-p, #home-events, #away-events {
+.home-team, .away-team {white-space: initial;}
+.home-team, .home-events {text-align: right;}
+.away-team, .away-events {text-align: left;}
+.home-events p, .away-events p {
     font-size: 10px;
     line-height: 1.5;
     margin-bottom: 0px;
@@ -125,13 +125,13 @@ p, #home-events, #away-events {
     min-width: 50px;
 }
 
-#status {
+.status {
     font-size: 10px;
     text-align: center;
     min-width: 50px;
 }
 
-#match-details {
+.match-details {
     text-align: right;
     margin-right: 15px;
 }
