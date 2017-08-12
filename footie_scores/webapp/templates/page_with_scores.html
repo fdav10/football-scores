@@ -75,7 +75,7 @@
 		{% set events = fixture.events %}
 		{% endif %}
 		{% if events %}
-		<div id="events-row mui-row">
+		<div class="events-row mui-row">
 		  <div class="home-events mui-col-xs-4 mui-col-xs-offset-1">
 		    {% for event in events.home %}
 		    {% if event.type == "goal" %}
@@ -122,7 +122,7 @@
 		    </div>
 		  </div>
 		</div>
-		<div id="events-row" class="mui-row">
+		<div class="events-row" class="mui-row">
 		  <div class="home-events mui-col-xs-4 mui-col-xs-offset-1">
 		    {% for player in fixture.lineups.home %}
 		    <p class="{{player.subbed}}">{{player.name}} {{player.number}} {{player.subst_event_string}}</p>
