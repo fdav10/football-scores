@@ -27,6 +27,10 @@ sublistToShow = {
   '/todays_games': '#todays-games'
 }
 
+function toggleSidebar() {
+  $(".sidebar").animate({width: "toggle"});
+}
+
 
 $( document ).ready(function() {
   var htmlName = location.pathname;
@@ -34,5 +38,6 @@ $( document ).ready(function() {
   $(".sidebar strong").on("click", showClickedSublist);
   $(".sidebar .sub-list #todays-games li.individual-competitions").on("click", filterCompetitions);
   $(".sidebar .sub-list #todays-games li#all-comps-button").on("click", showAllCompetitions);
+  $(".sidebar-hide-button").on("click", toggleSidebar);
 });
 

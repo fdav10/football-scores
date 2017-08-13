@@ -25,6 +25,15 @@ body {
     background-color: white;
 }
 
+.sidebar-hide-button {
+    position: fixed;
+    top: 0;
+    width: 40px;
+    height: 40px;
+    background-color: red;
+}
+
+
 .sidebar li strong {
     color: rgba(0, 0, 0, .87);
     display: block;
