@@ -18,7 +18,7 @@ function fetchFixtureData(success) {
 
 function fetchFixtureDataPeriodically(success) {
   fetchFixtureData(success);
-  setTimeout(() => fetchFixtureDataPeriodically(success), 1000 * 5);
+  setTimeout(() => fetchFixtureDataPeriodically(success), 1000 * 30);
 }
 
 
