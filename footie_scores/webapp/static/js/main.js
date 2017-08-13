@@ -27,8 +27,13 @@ sublistToShow = {
   '/todays_games': '#todays-games'
 }
 
+function toggleMainPanel () {
+  marginLeft = $(".sidebar").css('display') == 'none' ? "0px" : "200px";
+  $(".main-panel").css({'margin-left': marginLeft});
+}
+
 function toggleSidebar() {
-  $(".sidebar").animate({width: "toggle"});
+  $(".sidebar").animate({width: "toggle"}, complete=toggleMainPanel);
 }
 
 
