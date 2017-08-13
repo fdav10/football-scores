@@ -1,3 +1,4 @@
+
 function showClickedSublist () {
   var slideUp = $(this).next().css('display') === 'block';
   $(".sub-list").slideUp(150);
@@ -28,7 +29,8 @@ sublistToShow = {
 }
 
 function toggleMainPanel () {
-  marginLeft = $(".sidebar").css('display') == 'none' ? "0px" : "200px";
+  mainPanelMargin = document.isMobileView ? '0px' : '200px';
+  marginLeft = $(".sidebar").css('display') == 'none' ? "0px" : mainPanelMargin;
   $(".main-panel").css({'margin-left': marginLeft});
 }
 
@@ -39,6 +41,7 @@ function toggleSidebar() {
 
 $( document ).ready(function() {
   var htmlName = location.pathname;
+  document.isMobileView = $(".sidebar").css('display') === 'none';
   showNamedSublist(sublistToShow[htmlName]);
   $(".sidebar strong").on("click", showClickedSublist);
   $(".sidebar .sub-list #todays-games li.individual-competitions").on("click", filterCompetitions);
