@@ -35,16 +35,18 @@ function toggleMainPanel () {
 }
 
 function toggleSidebar() {
-  sidebarLeftValue = parseInt($(".sidebar").css("left"))
-  strScreenWidth = String(screen.width)
-  leftAnimTarget = sidebarLeftValue < 0 ? "+=" + strScreenWidth : "-=" + strScreenWidth
-  $(".sidebar").animate({left: leftAnimTarget});
+  if (document.isMobileView) {
+    sidebarLeftValue = parseInt($(".sidebar").css("left"));
+    sidebarWidth = parseInt($(".sidebar").css("width"));
+    leftAnimTarget = sidebarLeftValue < 0 ? "+=" + sidebarWidth : "-=" + sidebarWidth;
+    $(".sidebar").animate({"left": leftAnimTarget});
+  }
 }
 
 
 $( document ).ready(function() {
   var htmlName = location.pathname;
-  document.isMobileView = $(".sidebar").css('display') === 'none';
+  document.isMobileView = parseInt($(".sidebar").width()) > 200;
   showNamedSublist(sublistToShow[htmlName]);
   $(".sidebar strong").on("click", showClickedSublist);
   $(".sidebar .sub-list #todays-games li.individual-competitions").on("click", filterCompetitions);

@@ -32,6 +32,7 @@ body {
     }
     .main-panel {
 	margin-left: 0px;
+	width: 100%;
     }
 }
 
