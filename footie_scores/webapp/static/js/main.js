@@ -29,13 +29,16 @@ sublistToShow = {
 }
 
 function toggleMainPanel () {
-  mainPanelMargin = document.isMobileView ? '0px' : '200px';
+  mainPanelMargin = document.isMobileView ? '500px' : '-500px';
   marginLeft = $(".sidebar").css('display') == 'none' ? "0px" : mainPanelMargin;
   $(".main-panel").css({'margin-left': marginLeft});
 }
 
 function toggleSidebar() {
-  $(".sidebar").animate({width: "toggle"}, complete=toggleMainPanel);
+  sidebarLeftValue = parseInt($(".sidebar").css("left"))
+  strScreenWidth = String(screen.width)
+  leftAnimTarget = sidebarLeftValue < 0 ? "+=" + strScreenWidth : "-=" + strScreenWidth
+  $(".sidebar").animate({left: leftAnimTarget});
 }
 
 

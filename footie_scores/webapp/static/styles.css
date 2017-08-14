@@ -27,7 +27,7 @@ body {
 
 @media only screen and (max-width: 800px) {
     .sidebar {
-	display: none;
+	left: 0px;
 	width: 100%;
     }
     .main-panel {
