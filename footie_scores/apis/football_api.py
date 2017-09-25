@@ -10,7 +10,6 @@ from footie_scores.apis.base import FootballAPICaller
 from footie_scores.utils.exceptions import *
 
 logger = logging.getLogger(__name__)
-TODAY = utils.time.today()
 
 
 class FootballAPI(FootballAPICaller):
@@ -36,9 +35,12 @@ class FootballAPI(FootballAPICaller):
         logger.info('Competitions retrieved from football-api API')
         return self._format_competitions(competitions)
 
-    def get_fixtures_for_date(self, start_date=TODAY,
-            competitions=settings.COMPS, end_date=None):
+    def get_fixtures_for_date(self, start_date=None,
+                              competitions=settings.COMPS,
+                              end_date=None):
 
+        if not start_date:
+            start_date = utils.time.today()
         end_date = start_date if end_date is None else end_date
         str_start, str_end = [d.strftime(self.api_date_format) for d in (start_date, end_date)]
         fixtures_url = 'matches?from_date={}&to_date={}&'.format(str_start, str_end)
