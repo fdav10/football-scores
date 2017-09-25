@@ -1,3 +1,6 @@
+function isMobileView() {
+  return parseInt($(".sidebar").width()) > 200;
+}
 
 function showClickedSublist () {
   var slideUp = $(this).next().css('display') === 'block';
@@ -29,13 +32,13 @@ sublistToShow = {
 }
 
 function toggleMainPanel () {
-  mainPanelMargin = document.isMobileView ? '500px' : '-500px';
+  mainPanelMargin = isMobileView() ? '500px' : '-500px';
   marginLeft = $(".sidebar").css('display') == 'none' ? "0px" : mainPanelMargin;
   $(".main-panel").css({'margin-left': marginLeft});
 }
 
 function toggleSidebar() {
-  if (document.isMobileView) {
+  if (isMobileView()) {
     sidebarLeftValue = parseInt($(".sidebar").css("left"));
     sidebarWidth = parseInt($(".sidebar").css("width"));
     leftAnimTarget = sidebarLeftValue < 0 ? "+=" + sidebarWidth : "-=" + sidebarWidth;
@@ -43,10 +46,8 @@ function toggleSidebar() {
   }
 }
 
-
 $( document ).ready(function() {
   var htmlName = location.pathname;
-  document.isMobileView = parseInt($(".sidebar").width()) > 200;
   showNamedSublist(sublistToShow[htmlName]);
   $(".sidebar strong").on("click", showClickedSublist);
   $(".sidebar .sub-list #todays-games li.individual-competitions").on("click", filterCompetitions);
