@@ -24,20 +24,22 @@ SHORT_MONTHS = constants.SHORT_MONTHS
 
 @app.route("/json/fixture_updates")
 def fixture_updates():
+    today = utils.time.today()
     with db.session_scope() as session:
         fixtures = db_to_web.get_fixtures_by_dates_and_comps(
-            session, TODAY, COMPS_FOR_PAGE)
+            session, today, COMPS_FOR_PAGE)
         id_keyed_fixtures = {fixture.api_fixture_id: fixture.to_python() for fixture in fixtures}
     return jsonify(id_keyed_fixtures)
     
 
 @app.route("/todays_games")
 def todays_fixtures():
+    today = utils.time.today()
     with db.session_scope() as session:
         all_comps = db_to_web.get_competitions_by_id(session, COMPS_FOR_PAGE)
-        fixtures = db_to_web.get_comp_grouped_fixtures(session, TODAY, COMPS_FOR_PAGE)
+        fixtures = db_to_web.get_comp_grouped_fixtures(session, today, COMPS_FOR_PAGE)
         comps_with_games = [f['name'] for f in fixtures if f['fixtures']]
-        web_date = utils.time.custom_strftime(settings.WEB_DATEFORMAT_SHORT, TODAY)
+        web_date = utils.time.custom_strftime(settings.WEB_DATEFORMAT_SHORT, today)
         todays_games = games_template(
             'scores.html',
             'scores',
@@ -57,8 +59,9 @@ def past_results(comp_id, month_index=TODAY.month):
     end_day = (dt.date(year=THIS_YEAR, month=int(month_index) % 12 + 1, day=1)
                - dt.timedelta(days=1))
 
+    today = utils.time.today()
     with db.session_scope() as session:
-        fixtures_today = db_to_web.get_comp_grouped_fixtures(session, TODAY, COMPS_FOR_PAGE)
+        fixtures_today = db_to_web.get_comp_grouped_fixtures(session, today, COMPS_FOR_PAGE)
         comps_with_games = [f['name'] for f in fixtures_today if f['fixtures']]
         all_comps = db_to_web.get_competitions_by_id(session, COMPS_FOR_PAGE)
         selected_comp = db_to_web.get_competition_by_id(session, int(comp_id))
@@ -77,12 +80,13 @@ def past_results(comp_id, month_index=TODAY.month):
 
 @app.route("/fixtures_<comp_id>_<month_index>")
 def future_fixtures(comp_id, month_index=TODAY.month):
+    today = utils.time.today()
     start_day = dt.date(year=THIS_YEAR, month=int(month_index), day=1)
     end_day = (dt.date(year=THIS_YEAR, month=int(month_index) % 12 + 1, day=1)
                - dt.timedelta(days=1))
 
     with db.session_scope() as session:
-        fixtures_today = db_to_web.get_comp_grouped_fixtures(session, TODAY, COMPS_FOR_PAGE)
+        fixtures_today = db_to_web.get_comp_grouped_fixtures(session, today, COMPS_FOR_PAGE)
         comps_with_games = [f['name'] for f in fixtures_today if f['fixtures']]
         all_comps = db_to_web.get_competitions_by_id(session, COMPS_FOR_PAGE)
         selected_comp = db_to_web.get_competition_by_id(session, int(comp_id))
@@ -101,12 +105,13 @@ def future_fixtures(comp_id, month_index=TODAY.month):
 
 @app.route("/details_<fixture_id>")
 def match_details(fixture_id):
+    today = utils.time.today()
     with db.session_scope() as session:
         all_comps = db_to_web.get_competitions_by_id(session, COMPS_FOR_PAGE)
         fixture = db_to_web.get_fixture_by_id(session, fixture_id)
         grouped_fixtures = [{'name': fixture.competition.name, 'fixtures': (fixture,)},]
         comps_with_games = [f['name'] for f in grouped_fixtures if f['fixtures']]
-        web_date = utils.time.custom_strftime(settings.WEB_DATEFORMAT_SHORT, TODAY)
+        web_date = utils.time.custom_strftime(settings.WEB_DATEFORMAT_SHORT, today)
         fixture.lineups = db_to_web.determine_substitutions(fixture.lineups, fixture.events)
         todays_games_with_details = games_template(
             'details.html',
@@ -125,6 +130,7 @@ def games_template(
         comp_id='', competitions_with_games_today=None,
         ):
 
+    today = utils.time.today()
     options = {
         'results': {
             'display_todays_games_sublist': 'none',
@@ -132,8 +138,8 @@ def games_template(
             'display_fixtures_sublist': 'none',
             'games_today_filter': False,
             'games_today_link': True,
-            'months': month_list_define_last(TODAY.month),
-            'short_months': month_list_define_last(TODAY.month, month_list=SHORT_MONTHS),
+            'months': month_list_define_last(today.month),
+            'short_months': month_list_define_last(today.month, month_list=SHORT_MONTHS),
             'display_lineups': False,
         },
         'fixtures': {
@@ -142,7 +148,7 @@ def games_template(
             'display_fixtures_sublist': 'block',
             'games_today_filter': False,
             'games_today_link': True,
-            'months': month_list_define_first(TODAY.month),
+            'months': month_list_define_first(today.month),
             'short_months': month_list_define_first(TODAY.month, month_list=SHORT_MONTHS),
             'display_lineups': False,
         },
