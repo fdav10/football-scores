@@ -82,6 +82,12 @@ class Lineups(Base, Updatable):
         self.home_subs = home_subs
         self.away_subs = away_subs
 
+    def is_complete(self):
+        return all((self.home, self.away, self.home_subs, self.away_subs))
+
+    def is_partially_complete(self):
+        return any((self.home, self.away))
+
     def __repr__(self):
         return "<Lineups(for match id %s)>" %self.api_fixture_id
 
@@ -153,7 +159,7 @@ class Fixture(Base, Updatable):
             return self.status in ('HT', 'Pen', 'ET') or timer_re.match(self.status)
 
     def has_lineups(self):
-        return self.lineups is not None
+        return self.lineups.is_complete()
 
     def time_to_kickoff(self):
         kick_off_time = dt.datetime.combine(self.date, self.time)

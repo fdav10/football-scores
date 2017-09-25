@@ -100,7 +100,7 @@
 		  </div>
 		</div>
 		{% endif %}
-		{% if fixture.lineups and not display_lineups %}
+		{% if (fixture.lineups.home or fixture.lineups.away) and not display_lineups %}
 		<div class="details-row mui-row">
 		  <div class="match-details mui=col-xs-6">
 		    <a href= {{ url_for('match_details', fixture_id=fixture.api_fixture_id) }} >match details</a>
