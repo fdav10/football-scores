@@ -16,6 +16,10 @@ body {
     right: 0px;
 }
 
+.header-text {
+    display: inline;
+}
+
 .sidebar {
     position: fixed;
     overflow: auto;
@@ -37,12 +41,14 @@ body {
 }
 
 .sidebar-hide-button {
-    position: fixed;
+    display: inline;
     top: 0;
     width: 40px;
     height: 40px;
-    font-size: 40pt;
-    color: black;
+    font-size: 20pt;
+    color: orange;
+    cursor: pointer;
+    text-align: center;
 }
 
 
