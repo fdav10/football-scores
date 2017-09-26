@@ -6,14 +6,23 @@ Contains logic for indefinitely updating active fixtures
 
 import time
 import logging
+import datetime as dt
 
 from footie_scores import db, settings, utils
+from footie_scores.utils.time import chop_microseconds
 from footie_scores.interfaces import api_to_db
-from footie_scores.utils.log import start_logging, log_list, log_time_util_next_fixture
+from footie_scores.utils.log import start_logging, log_list
 from footie_scores.apis.football_api import FootballAPI
 
 
 logger = logging.getLogger(__name__)
+
+
+def log_time_util_next_fixture(tdelta, sleeptime):
+    logger.info('Next game in: %s (time now %s)',
+                chop_microseconds(dt.timedelta(seconds=tdelta)),
+                utils.time.today())
+    logger.info('Sleeping for: %s', chop_microseconds(dt.timedelta(seconds=sleeptime)))
 
 
 def start_updater():

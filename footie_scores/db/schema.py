@@ -159,6 +159,8 @@ class Fixture(Base, Updatable):
             return self.status in ('HT', 'Pen', 'ET') or timer_re.match(self.status)
 
     def has_lineups(self):
+        if not self.lineups:
+            return False
         return self.lineups.is_complete()
 
     def time_to_kickoff(self):
