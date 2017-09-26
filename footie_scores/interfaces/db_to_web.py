@@ -121,6 +121,8 @@ def determine_substitutions(lineups, events):
     for side in sides:
         lineup = getattr(lineups, side)
         subs = getattr(lineups, side+'_subs')
+        if not subs:
+            subs = []
         sub_events = [e for e in events[side] if e['type'] == 'subst']
         for player in lineup:
             sub_event = query_list_of_dicts(

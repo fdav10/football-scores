@@ -79,11 +79,12 @@ class FootballAPI(FootballAPICaller):
         return [self._format_lineups(c) for c in commentaries]
 
     def _format_lineups(self, commentary):
-        return {'api_fixture_id': commentary['match_id'],
-                'home_lineup': commentary['lineup']['localteam'],
-                'away_lineup': commentary['lineup']['visitorteam'],
-                'home_subs': commentary['subs']['localteam'],
-                'away_subs': commentary['subs']['visitorteam'],
+        c = commentary
+        return {'api_fixture_id': c['match_id'],
+                'home_lineup': c['lineup']['localteam'],
+                'away_lineup': c['lineup']['visitorteam'],
+                'home_subs': c['subs']['localteam'] if c['subs']['localteam'] else [],
+                'away_subs': c['subs']['visitorteam'] if c['subs']['visitorteam'] else [],
         }
 
     def _format_status(self, fixture):
