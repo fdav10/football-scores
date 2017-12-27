@@ -2,6 +2,7 @@
 
 ''' Make webpage from API requests '''
 
+import logging
 import datetime as dt
 import json
 
@@ -13,14 +14,29 @@ from footie_scores.utils.time import month_list_define_first, month_list_define_
 from footie_scores.interfaces import db_to_web
 
 
+logger = logging.getLogger(__name__)
 app = Flask(__name__)
-COMPS_FOR_PAGE = settings.COMPS
 
+
+COMPS_FOR_PAGE = settings.COMPS
 TODAY = utils.time.today()
 THIS_YEAR = TODAY.year
 MONTHS = constants.MONTHS
 SHORT_MONTHS = constants.SHORT_MONTHS
 
+
+class ResponseTracker():
+    def __init__(self):
+        self.previous = 'dummy'
+    def is_different_to_last(self, current):
+        previous = self.previous
+        self.previous = current
+        response_differs = current != previous
+        logger.info('ResponseTracker: current response differs to last? %s', response_differs)
+        return response_differs
+
+
+response_tracker = ResponseTracker()
 
 @app.route("/json/fixture_updates")
 def fixture_updates():
@@ -50,6 +66,12 @@ def todays_fixtures():
             competitions_with_games_today=comps_with_games,
         )
     return todays_games
+    # if response_tracker.is_different_to_last(todays_games):
+    #     logger.info('todays_fixtures: returning updated response')
+    #     return todays_games
+    # else:
+    #     logger.info('todays_fixtures: returning nil')
+    #     return ''
 
 
 @app.route("/past_results_<comp_id>_<month_index>")
