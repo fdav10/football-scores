@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import pytz
 
 from footie_scores import constants
-from footie_scores.settings import OVERRIDE_TIME, OVERRIDE_DAY, START_TIME
+from footie_scores.settings import OVERRIDE_TIME, OVERRIDE_DAY, START_TIME, DB_DATEFORMAT
 
 
 logger = logging.getLogger(__name__)
@@ -81,6 +81,13 @@ def month_list_define_last(first_month_num, month_list=constants.MONTHS):
     head = month_list[first_month_num:]
     tail = month_list[:first_month_num-1] + (first_month,)
     return head + tail
+
+def validate_date_str(date_str, dateformat=DB_DATEFORMAT):
+    try:
+        dt.datetime.strptime(date_str, dateformat)
+    except ValueError:
+        example_format = dt.datetime.strftime(today(), dateformat)
+        print('Incorrect date format. Should be in form, e.g.: {}'.format(example_format))
 
 
 if OVERRIDE_DAY:
