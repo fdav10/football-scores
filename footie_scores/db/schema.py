@@ -147,7 +147,10 @@ class Fixture(Base, Updatable):
         if self.time:
             stime = self.time.strftime(self.time_format)
         else:
-            stime = self.stime
+            try:
+                stime = self.stime
+            except:
+                stime = 'Err'
         return "<Fixture(%s vs %s on %s at %s id %s)>" %(
             self.team_home, self.team_away, sdate, stime, self.api_fixture_id)
 
