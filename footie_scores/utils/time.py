@@ -1,6 +1,6 @@
 ''' Utilities for time and datetime operations '''
 
-import logging
+import logging, sys
 import datetime as dt
 from datetime import datetime, timedelta
 
@@ -82,12 +82,15 @@ def month_list_define_last(first_month_num, month_list=constants.MONTHS):
     tail = month_list[:first_month_num-1] + (first_month,)
     return head + tail
 
+
 def validate_date_str(date_str, dateformat=DB_DATEFORMAT):
     try:
         dt.datetime.strptime(date_str, dateformat)
-    except ValueError:
+    except ValueError as e:
         example_format = dt.datetime.strftime(today(), dateformat)
-        print('Incorrect date format. Should be in form, e.g.: {}'.format(example_format))
+        sys.tracebacklimit = None
+        raise ValueError(
+            'Incorrect date format. Should be in form, e.g.: {}'.format(example_format)) from None
 
 
 if OVERRIDE_DAY:
