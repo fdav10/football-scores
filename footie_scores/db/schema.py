@@ -167,7 +167,8 @@ class Fixture(Base, Updatable):
         return self.lineups.is_complete()
 
     def time_to_kickoff(self):
-        kick_off_time = dt.datetime.combine(self.date, self.time)
+        tz = dt.timezone.utc
+        kick_off_time = dt.datetime.combine(self.date, self.time, tzinfo=tz)
         timedelta_to_kickoff = kick_off_time - utils.time.now()
         return timedelta_to_kickoff.total_seconds()
 

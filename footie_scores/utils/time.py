@@ -24,30 +24,23 @@ def today(override_day=OVERRIDE_DAY):
 
 def now(override_time=OVERRIDE_TIME):
     if override_time:
-        time_elapsed = dt.datetime.now() - START_TIME
+        time_elapsed = dt.datetime.utcnow(tz) - START_TIME
         return dt.datetime.combine(today(), override_time) + time_elapsed
     else:
-        return dt.datetime.now()
+        return dt.datetime.utcnow()
 
 
 def datetime_string_make_aware(datetime_string, dt_format):
     return datetime.strptime(datetime_string, dt_format).astimezone()
 
 
-def naive_utc_to_uk_tz(stime, time_format, desired_time_format='%H:%M'):
-    ''' Convert a UTC time string to UK timezone. '''
-    f_date = dt.date(2017, 5, 1)
-    f_time = dt.datetime.strptime(stime, time_format).time()
-    dt_ = dt.datetime.combine(f_date, f_time)
-    utc_time = pytz.utc.localize(dt_)
-    local_tz = pytz.timezone('Europe/London')
-    local_time = utc_time.astimezone(local_tz)
-    return local_time.strftime(desired_time_format)
+def reformat_datetime(sdatetime, format_in, format_as='%H:%M'):
+    date_and_time = dt.datetime.strptime(sdatetime, format_as)
+    return dt.datetime.strftime(date_and_time, format_as)
 
 
 def chop_microseconds(tdelta):
     return tdelta - dt.timedelta(microseconds=tdelta.microseconds)
-
 
 
 def custom_strftime(dt_format, t):

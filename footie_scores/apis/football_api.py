@@ -126,10 +126,8 @@ class FootballAPI(FootballAPICaller):
         '''
         if fixture_time == 'TBA':
             return fixture_time
-        formatted_time = utils.time.naive_utc_to_uk_tz(
-            fixture_time,
-            self.api_time_format,
-            self.db_time_format)
+        formatted_time = utils.time.reformat_datetime(
+            fixture_time, self.api_time_format, self.db_time_format)
         return self._make_time_db_ready(formatted_time)
 
     def _filter_by_competition(self, fixtures, comp_ids):
