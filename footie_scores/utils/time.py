@@ -24,10 +24,10 @@ def today(override_day=OVERRIDE_DAY):
 
 def now(override_time=OVERRIDE_TIME):
     if override_time:
-        time_elapsed = dt.datetime.utcnow(tz) - START_TIME
+        time_elapsed = dt.datetime.now(dt.timezone.utc) - START_TIME
         return dt.datetime.combine(today(), override_time) + time_elapsed
     else:
-        return dt.datetime.utcnow()
+        return dt.datetime.now(dt.timezone.utc)
 
 
 def datetime_string_make_aware(datetime_string, dt_format):
