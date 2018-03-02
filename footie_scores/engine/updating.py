@@ -39,9 +39,11 @@ class _UpdaterState():
     '''
     def __init__(self):
         self.api = FootballAPI()
+        logger.info('%s initialised' %self.__class__.__name__)
+        self.run()
 
     def run(self):
-        pass
+        raise NotImplementedError
 
     def update_fixtures_lineups(self, session, fixtures):
         needs_lineups = [f for f in fixtures if not f.has_lineups()]
@@ -68,9 +70,6 @@ class _StartupState(_UpdaterState):
     today's fixtures and determining whether active or idle state
     should be entered.
     '''
-    def __init__(self):
-        super().__init__()
-        logger.info('Entered startup state')
 
     def run(self):
         with db.session_scope() as session:
@@ -88,9 +87,6 @@ class _StartupState(_UpdaterState):
 
 class _IdleState(_UpdaterState):
     ''' Checks when next game kicks off and sleeps until closer to then '''
-    def __init__(self):
-        super().__init__()
-        logger.info('Entered idle state')
 
     def run(self):
         with db.session_scope() as session:
@@ -116,9 +112,6 @@ class _IdleState(_UpdaterState):
 
 class _PreparationState(_UpdaterState):
     ''' Try and get lineups in the period leading up to kick-offs '''
-    def __init__(self):
-        super().__init__()
-        logger.info('Entered preparation state')
 
     def run(self):
         active_fixtures = False
@@ -142,10 +135,6 @@ class _PreparationState(_UpdaterState):
 
 class _ActiveState(_UpdaterState):
     ''' Update fixture scores periodically when games are ongoing'''
-    def __init__(self):
-        super().__init__()
-        logger.info('Entered active state')
-        self.run()
 
     def run(self):
         active_fixtures, fixtures_soon = True, True
