@@ -151,6 +151,25 @@ class _ActiveState(_UpdaterState):
         return _IdleState
 
 
+class _MaintenanceState(_UpdaterState):
+    '''Perform maintenance on the database during idle hours'''
+
+    def run(self):
+        return _IdleState
+
+    def _get_week_fixtures(self):
+        pass
+
+    def _appraise_db_results(self):
+        pass
+
+    def _appraise_db_fixtures(self):
+        pass
+
+    def _appraise_db_lineups(self):
+        pass
+
+
 if __name__ == '__main__':
     start_logging()
     start_updater()
