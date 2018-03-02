@@ -89,7 +89,7 @@ class FootballAPI(FootballAPICaller):
 
     def _format_status(self, fixture):
         if re.match('[0-9]+:[0-9]+', fixture['status']):
-            logger.warning(fixture['status'])
+            # Status is kick off time so don't store as status.
             return ''
         return fixture['status']
 

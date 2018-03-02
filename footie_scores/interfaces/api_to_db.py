@@ -44,7 +44,6 @@ def save_lineups(session, api_lineups):
             logger.info('%s added to db', db_lineup.api_fixture_id)
         else:
             fixture.lineups.update_from_equivalent(db_lineup)
-            logger.info('%s updated in db', fixture.lineups)
 
 
 def save_competitions():

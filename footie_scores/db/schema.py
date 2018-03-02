@@ -89,7 +89,7 @@ class Lineups(Base, Updatable):
         return any((self.home, self.away))
 
     def __repr__(self):
-        return "<Lineups(for match id %s)>" %self.api_fixture_id
+        return "<Lineups for {}>".format(self.fixture.short_repr())
 
 
 class Fixture(Base, Updatable):
@@ -154,6 +154,10 @@ class Fixture(Base, Updatable):
         return "<Fixture(%s vs %s on %s at %s id %s)>" %(
             self.team_home, self.team_away, sdate, stime, self.api_fixture_id)
 
+    def short_repr(self):
+        # return "<Fixture(%s vs %s)>" %(self.team_home, self.team_away)
+        return "{} vs {}".format(self.team_home, self.team_away)
+
     def is_active(self):
         timer_re = re.compile(r'\d+$')
         if TIME_OVERRIDE:
@@ -173,7 +177,7 @@ class Fixture(Base, Updatable):
         return timedelta_to_kickoff.total_seconds()
 
     def kicks_off_within(self, seconds_from_now):
-        return self.time_to_kickoff() <= seconds_from_now
+        return 0. < self.time_to_kickoff() <= seconds_from_now
 
     def to_python(self):
         keys = ['team_home', 'team_away', 'score', 'events', 'status', 'api_fixture_id']

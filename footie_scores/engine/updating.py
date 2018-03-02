@@ -46,19 +46,16 @@ class _UpdaterState():
     def update_fixtures_lineups(self, session, fixtures):
         needs_lineups = [f for f in fixtures if not f.has_lineups()]
         if needs_lineups:
-            logger.info('%d fixtures kicking off soon do not have lineups:\n%s',
-                        len(needs_lineups), needs_lineups)
+            log_list(needs_lineups, '{} fixtures kicking off soon do not have complete lineups:'.format(len(needs_lineups)))
             fixture_ids = [f.api_fixture_id for f in needs_lineups]
             lineups = self.api.fixture_lineups(fixture_ids)
             api_to_db.save_lineups(session, lineups)
 
     def refresh_and_get_todays_fixtures(self, session):
-        todays_fixtures = self.api.todays_fixtures(settings.COMPS)
-        logger.info('API fixtures: %d', len(todays_fixtures))
-        api_to_db.save_fixtures(session, todays_fixtures)
-        todays_fixtures_from_db = db.queries.get_fixtures_by_date(session, utils.time.today())
-        logger.info('db fixtures: %d', len(todays_fixtures_from_db))
-        return todays_fixtures_from_db
+        todays_api_fixtures = self.api.todays_fixtures(settings.COMPS)
+        api_to_db.save_fixtures(session, todays_api_fixtures)
+        todays_fixtures = db.queries.get_fixtures_by_date(session, utils.time.today())
+        return todays_fixtures
 
     def time_to_next_kickoff(self, fixtures):
         times_to_kickoff = [f.time_to_kickoff() for f in fixtures]
@@ -79,10 +76,10 @@ class _StartupState(_UpdaterState):
         with db.session_scope() as session:
             fixtures_today = self.refresh_and_get_todays_fixtures(session)
             self.update_fixtures_lineups(session, fixtures_today)
-            fixtures_active = [f.is_active() for f in fixtures_today]
+            fixtures_active = [f for f in fixtures_today if f.is_active()]
             fixtures_soon = [f for f in fixtures_today if f.kicks_off_within(settings.PRE_GAME_PREP_PERIOD)]
-            logger.info('fixtures: %d, active: %d, soon: %d',
-                        len(fixtures_today), len(fixtures_active), len(fixtures_soon))
+            logger.info('%d fixtures today, %d active, %d in prep state (KO within %.0f minutes)',
+                        len(fixtures_today), len(fixtures_active), len(fixtures_soon), settings.PRE_GAME_PREP_PERIOD / 60)
         if fixtures_active or fixtures_soon:
             return _ActiveState
         else:
