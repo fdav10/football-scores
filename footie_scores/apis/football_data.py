@@ -1,11 +1,13 @@
 #!usr/bin/env python3
 ''' Interfaces to football score APIs '''
 
-import os
+import os, logging
 from datetime import date, datetime
 
 from footie_scores.utils.log import start_logging
 from footie_scores.apis.base import FootballAPICaller
+
+logger = logging.getLogger(__name__)
 
 
 class FootballData(FootballAPICaller):
@@ -32,21 +34,32 @@ class FootballData(FootballAPICaller):
             'time_elapsed': 'status',
         }
 
+    def get_competitions(self):
+        comps_url = 'competitions'
+        competitions = self.request(comps_url)
+        logger.info('Competitions retrieved from football-data API')
+        return _format_competitions(competitions)
+
+    def get_competition_teams(self):
+        comp_teams_url = 'competitions/445/teams'
+        teams = self.request(comp_teams_url)
+        logger.info('Teams for competition id %d retrieved from football-data API',
+                    445)
+        return _format_teams(teams['teams'])
+
     def _get_season_fixtures(self, season_id=426):
         '''
         Return all fixtures for a season. This is an expensive
         call so don't do often
         '''
-        minutes_to_cache_expiry = 0.2
+        raise NotImplementedError
         fixtures_url = 'competitions/{id}/fixtures'.format(id=season_id)
-        fixtures = self.check_cache_else_request(
-            fixtures_url,
-            minutes_to_cache_expiry,
-        )
+        fixtures = None
         return fixtures
 
     def _get_fixtures_for_date(self, date_):
         ''' Return list of today's fixtures '''
+        raise NotImplementedError
         fixtures = self._get_season_fixtures()['fixtures']
         dates = [self._fixture_date(fix) for fix in fixtures]
         todays_fixtures = [f for f, fdate_ in zip(fixtures, dates) if fdate_ == date_]
@@ -81,6 +94,48 @@ class FootballData(FootballAPICaller):
 
     def _is_valid_response(self, response):
         return 'error' not in response.keys()
+
+
+def _format_teams(raw_teams):
+    formatted_teams = [{
+        'team_name': team['name'],
+        'short_name': team['code'],
+        'api_id': _team_id_from_url(team['_links']['self']['href']),
+    } for team in raw_teams]
+    return formatted_teams
+
+
+def _format_competitions(raw_comps):
+    comp = raw_comps[0]
+    ckeys = comp.keys()
+    formatted_comps = [{
+        'api_id': c['id'],
+        'name': comp_remove_formatting(c['caption']),
+        'short_name': c['league'],
+        'n_teams': c['numberOfTeams'],
+        'n_fixtures': c['numberOfGames'],
+        'n_matchdays': c['numberOfMatchdays'],
+    } for c in raw_comps]
+    return formatted_comps
+
+
+def _team_id_from_url(team_url):
+    return team_url.split('/')[-1]
+
+
+def comp_remove_formatting(string):
+    def not_punc(char):
+        o = ord(char)
+        if 58 <= o <= 64:
+            return False
+        if 91 <= o <= 96:
+            return False
+        if 123 <= o <= 127:
+            return False
+        return True
+    no_punct = ''.join([c for c in string if not_punc(c)])
+    no_date = no_punct[:len(no_punct)-no_punct[::-1].find(' ')-1]
+    return no_date
 
 
 if __name__ == '__main__':

@@ -1,0 +1,178 @@
+[
+    {
+        "region": "International",
+        "name": "UEFA Champions League",
+        "football-api_api_id": "1005",
+        "football-data_api_id": 464,
+        "number_of_fixtures": 112,
+        "number_of_teams": 32
+    },
+    {
+        "region": "International",
+        "name": "UEFA Europa League",
+        "football-api_api_id": "1007",
+        "football-data_api_id": null,
+        "number_of_fixtures": null,
+        "number_of_teams": null
+    },
+    {
+        "region": "Austria",
+        "name": "Bundesliga",
+        "football-api_api_id": "1093",
+        "football-data_api_id": null,
+        "number_of_fixtures": null,
+        "number_of_teams": null
+    },
+    {
+        "region": "Belgium",
+        "name": "Pro League",
+        "football-api_api_id": "1102",
+        "football-data_api_id": null,
+        "number_of_fixtures": null,
+        "number_of_teams": null
+    },
+    {
+        "region": "Czech Republic",
+        "name": "Czech Liga",
+        "football-api_api_id": "1184",
+        "football-data_api_id": null,
+        "number_of_fixtures": null,
+        "number_of_teams": null
+    },
+    {
+        "region": "England",
+        "name": "Fa Cup",
+        "football-api_api_id": "1198",
+        "football-data_api_id": null,
+        "number_of_fixtures": null,
+        "number_of_teams": null
+    },
+    {
+        "region": "England",
+        "name": "EFL Cup",
+        "football-api_api_id": "1199",
+        "football-data_api_id": null,
+        "number_of_fixtures": null,
+        "number_of_teams": null
+    },
+    {
+        "region": "England",
+        "name": "Premier League",
+        "football-api_api_id": "1204",
+        "football-data_api_id": 445,
+        "number_of_fixtures": 380,
+        "number_of_teams": 20
+    },
+    {
+        "region": "England",
+        "name": "Championship",
+        "football-api_api_id": "1205",
+        "football-data_api_id": 447,
+        "number_of_fixtures": 552,
+        "number_of_teams": 24
+    },
+    {
+        "region": "France",
+        "name": "Ligue 1",
+        "football-api_api_id": "1221",
+        "football-data_api_id": 450,
+        "number_of_fixtures": 380,
+        "number_of_teams": 20
+    },
+    {
+        "region": "Germany",
+        "name": "Bundesliga",
+        "football-api_api_id": "1229",
+        "football-data_api_id": 452,
+        "number_of_fixtures": 306,
+        "number_of_teams": 18
+    },
+    {
+        "region": "Greece",
+        "name": "Super League",
+        "football-api_api_id": "1232",
+        "football-data_api_id": 449,
+        "number_of_fixtures": 306,
+        "number_of_teams": 18
+    },
+    {
+        "region": "Italy",
+        "name": "Serie B",
+        "football-api_api_id": "1265",
+        "football-data_api_id": 459,
+        "number_of_fixtures": 462,
+        "number_of_teams": 22
+    },
+    {
+        "region": "Italy",
+        "name": "Serie A",
+        "football-api_api_id": "1269",
+        "football-data_api_id": 456,
+        "number_of_fixtures": 380,
+        "number_of_teams": 20
+    },
+    {
+        "region": "Netherlands",
+        "name": "Eredivisie",
+        "football-api_api_id": "1322",
+        "football-data_api_id": null,
+        "number_of_fixtures": null,
+        "number_of_teams": null
+    },
+    {
+        "region": "Portugal",
+        "name": "Primeira Liga",
+        "football-api_api_id": "1352",
+        "football-data_api_id": 457,
+        "number_of_fixtures": 306,
+        "number_of_teams": 18
+    },
+    {
+        "region": "Spain",
+        "name": "Copa Del Rey",
+        "football-api_api_id": "1397",
+        "football-data_api_id": 455,
+        "number_of_fixtures": 380,
+        "number_of_teams": 20
+    },
+    {
+        "region": "Spain",
+        "name": "Primera División",
+        "football-api_api_id": "1399",
+        "football-data_api_id": null,
+        "number_of_fixtures": null,
+        "number_of_teams": null
+    },
+    {
+        "region": "Switzerland",
+        "name": "Super League",
+        "football-api_api_id": "1408",
+        "football-data_api_id": null,
+        "number_of_fixtures": null,
+        "number_of_teams": null
+    },
+    {
+        "region": "Turkey",
+        "name": "Süper Lig",
+        "football-api_api_id": "1425",
+        "football-data_api_id": null,
+        "number_of_fixtures": null,
+        "number_of_teams": null
+    },
+    {
+        "region": "Ukraine",
+        "name": "Premier League",
+        "football-api_api_id": "1428",
+        "football-data_api_id": null,
+        "number_of_fixtures": null,
+        "number_of_teams": null
+    },
+    {
+        "region": "Russia",
+        "name": "Premier League",
+        "football-api_api_id": "1457",
+        "football-data_api_id": null,
+        "number_of_fixtures": null,
+        "number_of_teams": null
+    }
+]

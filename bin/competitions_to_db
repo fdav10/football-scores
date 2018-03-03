@@ -10,5 +10,4 @@ from footie_scores.db.schema import create_tables_if_not_present
 logger = logging.getLogger(__name__)
 
 start_logging()
-create_tables_if_not_present()
 api_to_db.save_competitions()

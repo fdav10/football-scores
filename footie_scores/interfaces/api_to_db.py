@@ -9,7 +9,8 @@ import logging
 
 from footie_scores import db
 from footie_scores.apis.football_api import FootballAPI
-from footie_scores.db.schema import Fixture, Competition, Lineups
+from footie_scores.apis.football_data import FootballData
+from footie_scores.db.schema import Fixture, Competition, Lineups, Team
 from footie_scores.db.queries import row_exists
 
 logger = logging.getLogger(__name__)
@@ -54,3 +55,12 @@ def save_competitions():
             if not row_exists(session, Competition, Competition.api_id, comp['api_id']):
                 db_comp = Competition(**comp)
                 session.add(db_comp)
+
+def save_teams():
+    api = FootballData()
+    api_teams = api.get_competition_teams()
+    with db.session_scope() as session:
+        for team in api_teams:
+            db_team = Team(**team)
+            session.add(db_team)
+            print('{} saved in db'.format(team['team_name']))
