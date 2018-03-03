@@ -190,12 +190,6 @@ class Fixture(Base, Updatable):
         return {k: getattr(self, k) for k in keys}
 
 
-def create_tables_if_not_present():
-    # TODO this probably isn't very good
-    if not db.engine.table_names() == ['fixtures', 'competitions']:
-        Base.metadata.create_all(db.engine)
-
-
 def create_db():
     Base.metadata.create_all(db.engine)
 
