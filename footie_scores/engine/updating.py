@@ -72,6 +72,7 @@ class _StartupState(_UpdaterState):
     '''
 
     def run(self):
+        return _MaintenanceState
         with db.session_scope() as session:
             fixtures_today = self.refresh_and_get_todays_fixtures(session)
             self.update_fixtures_lineups(session, fixtures_today)
@@ -155,7 +156,11 @@ class _MaintenanceState(_UpdaterState):
     '''Perform maintenance on the database during idle hours'''
 
     def run(self):
-        return _IdleState
+        self._log_db_status()
+        # return _StartupState
+
+    def _log_db_status(self):
+        db.maintenance.log_db_status()
 
     def _get_week_fixtures(self):
         pass

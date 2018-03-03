@@ -14,7 +14,7 @@ Base = declarative_base()
 
 def row_exists(session, row_class, id_, value):
     session_query = session.query(row_class, id_)
-    occurences = session_query.filter(id_==value).count()
+    occurences = session_query.filter(id_ == value).count()
     return occurences > 0
 
 
@@ -31,6 +31,11 @@ def get_competitions_by_id(session, ids):
 def get_competition_by_id(session, id_):
     comp = session.query(Competition).filter(Competition.api_id == id_).one()
     return comp
+
+
+def count_fixtures_for_competition(session, comp_id):
+    n_fixtures = session.query(Fixture).filter(Fixture.comp_api_id == comp_id).count()
+    return n_fixtures
 
 
 def get_fixture_by_id(session, id_):
