@@ -4,7 +4,6 @@ import logging
 
 from footie_scores.interfaces import api_to_db
 from footie_scores.utils.log import start_logging
-from footie_scores.db.schema import create_tables_if_not_present
 
 
 logger = logging.getLogger(__name__)
