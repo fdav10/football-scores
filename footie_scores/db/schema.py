@@ -65,10 +65,12 @@ class Team(Base):
 
     id = sqla.Column(sqla.Integer, primary_key=True)
     name = sqla.Column(sqla.String)
+    short_name = sqla.Column(sqla.String)
     api_id = sqla.Column(sqla.Integer)
 
-    def __init__(self, team_name, api_id):
+    def __init__(self, team_name, short_name, api_id):
         self.name = team_name
+        self.short_name = short_name
         self.api_id = api_id
 
 
