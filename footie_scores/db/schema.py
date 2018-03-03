@@ -59,6 +59,7 @@ class Competition(Base):
         return "<Competition(%s %s (api id %s) (db id %s))>" %(
             self.region, self.name, self.api_id, self.id)
 
+
 class Lineups(Base, Updatable):
     # TODO make name singular
     __tablename__ = 'lineups'
