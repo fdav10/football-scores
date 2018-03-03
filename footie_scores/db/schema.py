@@ -60,6 +60,18 @@ class Competition(Base):
             self.region, self.name, self.api_id, self.id)
 
 
+class Team(Base):
+    __tablename__ = 'teams'
+
+    id = sqla.Column(sqla.Integer, primary_key=True)
+    name = sqla.Column(sqla.String)
+    api_id = sqla.Column(sqla.Integer)
+
+    def __init__(self, team_name, api_id):
+        self.name = team_name
+        self.api_id = api_id
+
+
 class Lineups(Base, Updatable):
     # TODO make name singular
     __tablename__ = 'lineups'
