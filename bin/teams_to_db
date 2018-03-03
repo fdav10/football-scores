@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+
+import logging
+
+from footie_scores.apis.football_data import FootballData
+from footie_scores.interfaces import api_to_db
+from footie_scores.utils.log import start_logging
+
+
+logger = logging.getLogger(__name__)
+
+start_logging()
+api_to_db.save_teams()
