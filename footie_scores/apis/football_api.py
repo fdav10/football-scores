@@ -29,12 +29,12 @@ class FootballAPI(FootballAPICaller):
         self.api_date_format = '%d.%m.%Y'
         self.api_time_format = '%H:%M'
 
-    def get_competitions(self):
+    def get_competitions(self, source_competitions=settings.COMPS):
         competitions_url = 'competitions?'
         raw_competitions = self.request(competitions_url)
-        competitions = self._format_competitions(raw_competitions)
+        competitions = _format_competitions(raw_competitions)
         logger.info('Competitions retrieved from football-api API')
-        return self._filter_competition_by_competition(competitions)
+        return _filter_competition_by_competition(competitions, source_competitions)
 
     def get_fixtures_for_date(self, start_date=None,
                               competitions=settings.COMPS,
@@ -51,14 +51,6 @@ class FootballAPI(FootballAPICaller):
         logger.info('Fixtures for all competitions for %s to %s retrieved (%d fixtures)',
                     str_start, str_end, len(fixtures))
         return self._format_fixtures(fixtures)
-
-    def _format_competitions(self, competitions):
-        formatted_competitions = [{
-            'api_id': int(c['id']),
-            'region': c['region'],
-            'name': c['name']
-        } for c in competitions]
-        return formatted_competitions
 
     def _format_fixtures(self, fixtures):
         formatted_fixtures = [{
@@ -134,9 +126,6 @@ class FootballAPI(FootballAPICaller):
     def _filter_fixture_by_competition(self, fixtures, comp_ids):
         return [f for f in fixtures if int(f['comp_id']) in comp_ids]
 
-    def _filter_competition_by_competition(self, competitions, comp_ids=settings.COMPS):
-        return [c for c in competitions if c['api_id'] in comp_ids]
-
     def _is_valid_response(self, response):
         # TODO this is pretty ugly and unclear
         try:
@@ -150,3 +139,16 @@ class FootballAPI(FootballAPICaller):
                 raise NoCommentaryAvailable()
         except (AssertionError, KeyError):
             return True
+
+
+def _format_competitions(competitions):
+    formatted_competitions = [{
+        'api_id': int(c['id']),
+        'region': c['region'],
+        'name': c['name']
+    } for c in competitions]
+    return formatted_competitions
+
+def _filter_competition_by_competition(competitions, comp_ids):
+    return [c for c in competitions if c['api_id'] in comp_ids]
+
