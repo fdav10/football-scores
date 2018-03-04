@@ -48,6 +48,9 @@ class Competition(Base):
     name = sqla.Column(sqla.String)
     region = sqla.Column(sqla.String)
     fixtures = sqla.orm.relationship('Fixture', back_populates='competition')
+    games_in_season = sqla.Column(sqla.Integer)
+    teams_in_competition = sqla.Column(sqla.Integer)
+    shortcode =  sqla.Column(sqla.String)
 
     def __init__(self, api_id, name, region, **kwargs):
         self.api_id = api_id
