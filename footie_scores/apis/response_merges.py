@@ -1,20 +1,30 @@
 
 
 def merge_two_lists(primary_response, secondary_response, id_map, ensure_keys=False):
-    '''Merge two lists containing formatted responses from different
+    """ Merge two lists containing formatted responses from different
     football APIs.
 
+    Parameters
+    ----------
     primary_response : list
+
     secondary_response : list
+
     id_map : dict
         mapping object which maps ids of items in the first list to
         those in the second
+
     ensure_keys : bool
         if True ensure all instances of the resulting merged
         dictionaries have the same keys, else some items may have
         fewer keys due to there not being a one-to-one relationship
         between items in the two response lists.
-    '''
+
+    Returns
+    -------
+    out : dict
+
+    """
 
     r2_lookup = {row['api_id']: row for row in secondary_response}
     ids1 = [f['api_id'] for f in primary_response]
