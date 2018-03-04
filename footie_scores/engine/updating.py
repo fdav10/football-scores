@@ -72,7 +72,7 @@ class _StartupState(_UpdaterState):
     '''
 
     def run(self):
-        return _MaintenanceState
+        # return _MaintenanceState
         with db.session_scope() as session:
             fixtures_today = self.refresh_and_get_todays_fixtures(session)
             self.update_fixtures_lineups(session, fixtures_today)
