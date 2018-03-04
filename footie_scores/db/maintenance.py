@@ -11,7 +11,7 @@ log_template = '''
 {underline}
 Number of fixtures in db: {n_db_fixtures}
 Number of fixtures in season: {n_season_fixtures}
-Completeness score: 0
+Completeness score: {completeness:.1f}%
 '''
 
 
@@ -25,11 +25,17 @@ def log_db_status(competition_ids=settings.COMPS):
     with session_scope() as session:
         competitions = queries.get_competitions_by_id(session, competition_ids)
         for competition in competitions:
-            status['n_db_fixtures'] = queries.count_fixtures_for_competition(
+            n_fixtures_in_db = queries.count_fixtures_for_competition(
                 session, competition.api_id)
+            n_fixtures_in_season = competition.games_in_season
+            status['n_db_fixtures'] = n_fixtures_in_db
             status['comp_name'] = competition.name
-            status['n_season_fixtures'] = 0
+            status['n_season_fixtures'] = n_fixtures_in_season
             status['underline'] = '-' * len(competition.name)
+            if n_fixtures_in_season:
+                status['completeness'] = n_fixtures_in_db / n_fixtures_in_season * 100
+            else:
+                status['completeness'] = 0
             print(log_template.format(**status))
 
 
