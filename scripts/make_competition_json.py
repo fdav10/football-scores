@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os, json, logging
+from collections import defaultdict
 
 from footie_scores import db
 from footie_scores.db import queries
@@ -65,21 +66,13 @@ def load_football_data_comps():
     return fd_comps
 
 def make_comps_json(fapi_comps, fdata_comps):
-    json_comps = {'football-api_api_id_lookup': {},
-                  'football-data_api_id_lookup': {}}
+    json_comps = defaultdict(dict)
     for comp in fapi_comps:
         fapi_id = comp['api_id']
         fdata_comp = lookup_fdata_comp_by_code(fdata_comps, fapi_code_map.get(fapi_id, None))
-        fdata_id = fdata_comp.get('football-data_api_id', None)
-        json_comps['football-api_api_id_lookup'][fapi_id] = {
-            'football-data_api_id': fdata_id,
-            'football-api_api_name': comp['name'],
-            'football-data_api_name': fdata_comp.get('name', None)}
-        json_comps['football-data_api_id_lookup'][fdata_id] = {
-            'football-api_api_id': fapi_id,
-            'football-api_api_name': comp['name'],
-            'football-data_api_name': fdata_comp.get('name', None)}
-
+        fdata_id = fdata_comp.get('api_id', None)
+        json_comps['football-api_to_football-data'][fapi_id] = fdata_id
+        json_comps['football-data_to_football-api'][fdata_id] = fapi_id
     return json_comps
 
 
@@ -100,4 +93,5 @@ def main(request_data=False):
 
 
 if __name__ == '__main__':
+    # main(True)
     main()

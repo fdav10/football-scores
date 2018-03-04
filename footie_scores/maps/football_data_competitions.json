@@ -1,6 +1,6 @@
 [
     {
-        "football-data_api_id": 444,
+        "api_id": 444,
         "name": "Campeonato Brasileiro da Série",
         "short_name": "BSA",
         "n_teams": 20,
@@ -8,7 +8,7 @@
         "n_matchdays": 38
     },
     {
-        "football-data_api_id": 445,
+        "api_id": 445,
         "name": "Premier League",
         "short_name": "PL",
         "n_teams": 20,
@@ -16,7 +16,7 @@
         "n_matchdays": 38
     },
     {
-        "football-data_api_id": 446,
+        "api_id": 446,
         "name": "Championship",
         "short_name": "ELC",
         "n_teams": 24,
@@ -24,7 +24,7 @@
         "n_matchdays": 46
     },
     {
-        "football-data_api_id": 447,
+        "api_id": 447,
         "name": "League One",
         "short_name": "EL1",
         "n_teams": 24,
@@ -32,7 +32,7 @@
         "n_matchdays": 46
     },
     {
-        "football-data_api_id": 448,
+        "api_id": 448,
         "name": "League Two",
         "short_name": "EL2",
         "n_teams": 24,
@@ -40,7 +40,7 @@
         "n_matchdays": 46
     },
     {
-        "football-data_api_id": 449,
+        "api_id": 449,
         "name": "Eredivisie",
         "short_name": "DED",
         "n_teams": 18,
@@ -48,7 +48,7 @@
         "n_matchdays": 34
     },
     {
-        "football-data_api_id": 450,
+        "api_id": 450,
         "name": "Ligue 1",
         "short_name": "FL1",
         "n_teams": 20,
@@ -56,7 +56,7 @@
         "n_matchdays": 38
     },
     {
-        "football-data_api_id": 451,
+        "api_id": 451,
         "name": "Ligue 2",
         "short_name": "FL2",
         "n_teams": 20,
@@ -64,7 +64,7 @@
         "n_matchdays": 38
     },
     {
-        "football-data_api_id": 452,
+        "api_id": 452,
         "name": "1. Bundesliga",
         "short_name": "BL1",
         "n_teams": 18,
@@ -72,7 +72,7 @@
         "n_matchdays": 34
     },
     {
-        "football-data_api_id": 453,
+        "api_id": 453,
         "name": "2. Bundesliga",
         "short_name": "BL2",
         "n_teams": 18,
@@ -80,7 +80,7 @@
         "n_matchdays": 34
     },
     {
-        "football-data_api_id": 455,
+        "api_id": 455,
         "name": "Primera Division",
         "short_name": "PD",
         "n_teams": 20,
@@ -88,7 +88,7 @@
         "n_matchdays": 38
     },
     {
-        "football-data_api_id": 456,
+        "api_id": 456,
         "name": "Serie A",
         "short_name": "SA",
         "n_teams": 20,
@@ -96,7 +96,7 @@
         "n_matchdays": 38
     },
     {
-        "football-data_api_id": 457,
+        "api_id": 457,
         "name": "Primeira Liga",
         "short_name": "PPL",
         "n_teams": 18,
@@ -104,7 +104,7 @@
         "n_matchdays": 34
     },
     {
-        "football-data_api_id": 458,
+        "api_id": 458,
         "name": "DFB-Pokal",
         "short_name": "DFB",
         "n_teams": 64,
@@ -112,7 +112,7 @@
         "n_matchdays": 6
     },
     {
-        "football-data_api_id": 459,
+        "api_id": 459,
         "name": "Serie B",
         "short_name": "SB",
         "n_teams": 22,
@@ -120,7 +120,7 @@
         "n_matchdays": 42
     },
     {
-        "football-data_api_id": 464,
+        "api_id": 464,
         "name": "Champions League",
         "short_name": "CL",
         "n_teams": 32,
@@ -128,7 +128,7 @@
         "n_matchdays": 10
     },
     {
-        "football-data_api_id": 466,
+        "api_id": 466,
         "name": "Australian",
         "short_name": "AAL",
         "n_teams": 10,
