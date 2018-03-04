@@ -31,9 +31,10 @@ class FootballAPI(FootballAPICaller):
 
     def get_competitions(self):
         competitions_url = 'competitions?'
-        competitions = self.request(competitions_url)
+        raw_competitions = self.request(competitions_url)
+        competitions = self._format_competitions(raw_competitions)
         logger.info('Competitions retrieved from football-api API')
-        return self._format_competitions(competitions)
+        return self._filter_competition_by_competition(competitions)
 
     def get_fixtures_for_date(self, start_date=None,
                               competitions=settings.COMPS,
@@ -45,7 +46,7 @@ class FootballAPI(FootballAPICaller):
         str_start, str_end = [d.strftime(self.api_date_format) for d in (start_date, end_date)]
         fixtures_url = 'matches?from_date={}&to_date={}&'.format(str_start, str_end)
         all_fixtures = self.request(fixtures_url)
-        fixtures = self._filter_by_competition(all_fixtures, competitions)
+        fixtures = self._filter_fixture_by_competition(all_fixtures, competitions)
 
         logger.info('Fixtures for all competitions for %s to %s retrieved (%d fixtures)',
                     str_start, str_end, len(fixtures))
@@ -53,7 +54,7 @@ class FootballAPI(FootballAPICaller):
 
     def _format_competitions(self, competitions):
         formatted_competitions = [{
-            'api_id': c['id'],
+            'api_id': int(c['id']),
             'region': c['region'],
             'name': c['name']
         } for c in competitions]
@@ -130,8 +131,11 @@ class FootballAPI(FootballAPICaller):
             fixture_time, self.api_time_format, self.db_time_format)
         return self._make_time_db_ready(formatted_time)
 
-    def _filter_by_competition(self, fixtures, comp_ids):
+    def _filter_fixture_by_competition(self, fixtures, comp_ids):
         return [f for f in fixtures if int(f['comp_id']) in comp_ids]
+
+    def _filter_competition_by_competition(self, competitions, comp_ids=settings.COMPS):
+        return [c for c in competitions if c['api_id'] in comp_ids]
 
     def _is_valid_response(self, response):
         # TODO this is pretty ugly and unclear
