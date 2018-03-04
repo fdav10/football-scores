@@ -49,7 +49,7 @@ class Competition(Base):
     region = sqla.Column(sqla.String)
     fixtures = sqla.orm.relationship('Fixture', back_populates='competition')
 
-    def __init__(self, api_id, name, region):
+    def __init__(self, api_id, name, region, **kwargs):
         self.api_id = api_id
         self.name = name
         self.region = region
