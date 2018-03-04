@@ -4,6 +4,7 @@
 import os, logging
 from datetime import date, datetime
 
+from footie_scores import settings
 from footie_scores.utils.log import start_logging
 from footie_scores.apis.base import FootballAPICaller
 
@@ -34,11 +35,11 @@ class FootballData(FootballAPICaller):
             'time_elapsed': 'status',
         }
 
-    def get_competitions(self):
+    def get_competitions(self, source_competitions=settings.COMPS):
         comps_url = 'competitions'
-        competitions = self.request(comps_url)
+        raw_competitions = self.request(comps_url)
         logger.info('Competitions retrieved from football-data API')
-        return _format_competitions(competitions)
+        return _format_competitions(raw_competitions)
 
     def get_competition_teams(self):
         comp_teams_url = 'competitions/445/teams'
@@ -138,7 +139,5 @@ def comp_remove_formatting(string):
     return no_date
 
 
-if __name__ == '__main__':
-    start_logging()
-    fd = FootballData()
-    print(fd.page_ready_todays_fixtures())
+def _filter_competition_by_competition(competitions, comp_ids):
+    return [c for c in competitions if c['api_id'] in comp_ids]

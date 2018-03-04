@@ -1,5 +1,6 @@
 import json, os
 
+from footie_scores import settings
 from footie_scores.apis.football_data import FootballData
 from footie_scores.apis.football_api import FootballAPI
 
@@ -18,11 +19,11 @@ def load_football_data_comps():
     return fd_comps
 
 
-def api_get_football_api_comps():
+def api_get_football_api_comps(comps=settings.COMPS):
     fa = FootballAPI()
-    return fa.get_competitions()
+    return fa.get_competitions(source_competitions=comps)
 
 
-def api_get_football_data_comps():
+def api_get_football_data_comps(comps=settings.COMPS):
     fd = FootballData()
-    return fd.get_competitions()
+    return fd.get_competitions(source_competitions=comps)

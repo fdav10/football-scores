@@ -1,5 +1,6 @@
 import logging
 
+from footie_scores import constants
 from footie_scores.db import queries
 from footie_scores.db import session_scope
 from footie_scores.utils.log import start_logging
@@ -9,6 +10,7 @@ from footie_scores.apis.football_api import FootballAPI
 from footie_scores.apis.football_data import FootballData
 
 from common import load_football_api_comps, load_football_data_comps
+from common import api_get_football_api_comps, api_get_football_data_comps
 
 logger = logging.getLogger(__name__)
 
@@ -22,8 +24,10 @@ API_DB_KEY_COL_MAP = {
 
 
 def get_update_competitions():
-    fapi_comps = load_football_api_comps()
-    fdata_comps = load_football_data_comps()
+    # fapi_comps = load_football_api_comps()
+    # fdata_comps = load_football_data_comps()
+    fapi_comps = api_get_football_api_comps()
+    fdata_comps = api_get_football_data_comps(constants.ALL_COMPS)
     competitions = response_merges.merge_two_lists(
         fapi_comps,
         fdata_comps,
@@ -42,11 +46,13 @@ def update_db_competitions(updated_comps):
         for dbc in db_comps:
             try:
                 api_comp = next(api_comps_id_match(updated_comps, dbc.api_id))
+                print('Vars updated on {}'.format(dbc))
                 for api_key, db_column in API_DB_KEY_COL_MAP.items():
                     setattr(dbc, db_column, api_comp.get(api_key))
-                    print('{} on {} set to {}'.format(db_column, dbc, api_comp.get(api_key)))
+                    print('\t{} on {} set to {}'.format(db_column, dbc, api_comp.get(api_key)))
             except StopIteration:
-                print('No id {} competion retrieved from APIs'.format(dbc.api_id))
+                pass
+                # print('No id {} competion retrieved from APIs'.format(dbc.api_id))
 
 
 def main():
