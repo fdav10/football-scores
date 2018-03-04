@@ -50,15 +50,13 @@ def save_lineups(session, api_lineups):
 
 
 def save_competitions():
-    fapi = FootballAPI()
-    fdata = FootballData()
-    fapi_comps = fapi.get_competitions()
-    fdata_comps = fdata.get_competitions()
+    fapi_comps = FootballAPI().get_competitions()
+    fdata_comps = FootballData().get_competitions()
     competitions = response_merges.merge_two_lists(
         fapi_comps,
         fdata_comps,
         id_map=competition_map['football-api_to_football-data'],
-    )
+        ensure_keys=True)
     with db.session_scope() as session:
         for comp in competitions:
             if not row_exists(session, Competition, Competition.api_id, comp['api_id']):
