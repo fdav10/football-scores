@@ -56,7 +56,7 @@ def save_competitions():
         fapi_comps,
         fdata_comps,
         id_map=competition_map['football-api_to_football-data'],
-        ensure_keys=True)
+        consistent_keys=True)
     with db.session_scope() as session:
         for comp in competitions:
             if not row_exists(session, Competition, Competition.api_id, comp['api_id']):
