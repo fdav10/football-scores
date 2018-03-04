@@ -109,7 +109,7 @@ def _format_competitions(raw_comps):
     comp = raw_comps[0]
     ckeys = comp.keys()
     formatted_comps = [{
-        'football-data_api_id': int(c['id']),
+        'api_id': int(c['id']),
         'name': comp_remove_formatting(c['caption']),
         'short_name': c['league'],
         'n_teams': c['numberOfTeams'],
