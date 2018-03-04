@@ -17,7 +17,7 @@ fapi_code_map = {
     1007: 'EL',
     1198: 'FAC',
     1204: 'PL',
-    1205: 'EL1',
+    1205: 'ELC',
     1221: 'FL1',
     1229: 'BL1',
     1232: 'GSL',
@@ -25,11 +25,20 @@ fapi_code_map = {
     1269: 'SA',
     1232: 'DED',
     1352: 'PPL',
-    1397: 'PD',
+    1397: 'CDR',
+    1399: 'PD',
 }
 
 fa = FootballAPI()
 fd = FootballData()
+
+
+def lookup_fdata_comp_by_code(comps, comp_code):
+    try:
+        return next((comp for comp in comps if comp['short_name'] == comp_code))
+    except StopIteration:
+        return {}
+
 
 def save_football_api_comps():
     fa_comps = fa.get_competitions()
@@ -55,18 +64,23 @@ def load_football_data_comps():
         fd_comps = json.loads(cjson.read())
     return fd_comps
 
-def specify_api_ids(fa_comps):
-    for comp in fa_comps:
-        comp['football-api_api_id'] = comp.pop('api_id')
-        comp['football-data_api_id'] = None
+def make_comps_json(fapi_comps, fdata_comps):
+    json_comps = {'football-api_api_id_lookup': {},
+                  'football-data_api_id_lookup': {}}
+    for comp in fapi_comps:
+        fapi_id = comp['api_id']
+        fdata_comp = lookup_fdata_comp_by_code(fdata_comps, fapi_code_map.get(fapi_id, None))
+        fdata_id = fdata_comp.get('football-data_api_id', None)
+        json_comps['football-api_api_id_lookup'][fapi_id] = {
+            'football-data_api_id': fdata_id,
+            'football-api_api_name': comp['name'],
+            'football-data_api_name': fdata_comp.get('name', None)}
+        json_comps['football-data_api_id_lookup'][fdata_id] = {
+            'football-api_api_id': fapi_id,
+            'football-api_api_name': comp['name'],
+            'football-data_api_name': fdata_comp.get('name', None)}
 
-
-def something_else():
-    fd_comps = fd.get_competitions()
-    fd_names = [comp['name'] for comp in fd_comps]
-
-    for comp in fd_comps:
-        print(comp['name'], comp['short_name'], comp['api_id'])
+    return json_comps
 
 
 def save_competition_json(comps):
@@ -75,33 +89,15 @@ def save_competition_json(comps):
         cjson.write(json.dumps(comps, indent=4, ensure_ascii=False))
 
 
-def add_football_data_data(comps, fd_comps):
-    def comp_from_code(code):
-        try:
-            return next((comp for comp in fd_comps if comp['short_name']==code))
-        except StopIteration:
-            return {}
-    for comp in comps:
-        fapi_id = int(comp['football-api_api_id'])
-        fd_code = fapi_code_map.get(fapi_id, None)
-        fd_comp = comp_from_code(fd_code)
-        fd_id = fd_comp.get('api_id', None)
-        n_teams = fd_comp.get('n_teams', None)
-        n_fixtures = fd_comp.get('n_fixtures', None)
-        comp['football-data_api_id'] = fd_id
-        comp['number_of_fixtures'] = n_fixtures
-        comp['number_of_teams'] = n_teams
-
-
-def main():
-    comps_json = load_football_api_comps()
+def main(request_data=False):
+    if request_data:
+        save_football_api_comps()
+        save_football_data_comps()
+    fapi_comps = load_football_api_comps()
     fdata_comps = load_football_data_comps()
-    specify_api_ids(comps_json)
-    add_football_data_data(comps_json, fdata_comps)
+    comps_json = make_comps_json(fapi_comps, fdata_comps)
     save_competition_json(comps_json)
-    
+
 
 if __name__ == '__main__':
-    # save_football_api_comps()
-    # save_football_data_comps()
     main()
