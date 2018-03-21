@@ -138,8 +138,8 @@ class _ActiveState(_UpdaterState):
     ''' Update fixture scores periodically when games are ongoing'''
 
     def run(self):
-        active_fixtures, fixtures_soon = True, True
-        while active_fixtures or fixtures_soon:
+        active_fixtures, needs_lineups = True, True
+        while active_fixtures or needs_lineups:
             with db.session_scope() as session:
                 fixtures = self.refresh_and_get_todays_fixtures(session)
                 active_fixtures = [f for f in fixtures if f.is_active()]
