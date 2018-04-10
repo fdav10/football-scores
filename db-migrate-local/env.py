@@ -1,4 +1,3 @@
-# from __future__ import with_statement
 import os
 from logging.config import fileConfig
 
@@ -27,7 +26,7 @@ target_metadata = schema.Base.metadata
 # ... etc.
 
 def get_url():
-    return os.getenv('DATABASE_URL')
+    return "postgresql://freddavison@localhost:5432/fs"
 
 
 def run_migrations_offline():
