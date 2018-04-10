@@ -23,11 +23,13 @@ API_DB_KEY_COL_MAP = {
 }
 
 
-def get_update_competitions():
-    # fapi_comps = load_football_api_comps()
-    # fdata_comps = load_football_data_comps()
-    fapi_comps = api_get_football_api_comps()
-    fdata_comps = api_get_football_data_comps(constants.ALL_COMPS)
+def get_update_competitions(request_data):
+    if request_data:
+        fapi_comps = api_get_football_api_comps()
+        fdata_comps = api_get_football_data_comps(constants.ALL_COMPS)
+    else:
+        fapi_comps = load_football_api_comps()
+        fdata_comps = load_football_data_comps()
     competitions = response_merges.merge_two_lists(
         fapi_comps,
         fdata_comps,
@@ -55,8 +57,8 @@ def update_db_competitions(updated_comps):
                 # print('No id {} competion retrieved from APIs'.format(dbc.api_id))
 
 
-def main():
-    latest_comps = get_update_competitions()
+def main(request_data=False):
+    latest_comps = get_update_competitions(request_data)
     update_db_competitions(latest_comps)
 
 

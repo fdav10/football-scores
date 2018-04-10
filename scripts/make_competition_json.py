@@ -9,6 +9,9 @@ from footie_scores.utils.log import start_logging
 from footie_scores.apis.football_data import FootballData
 from footie_scores.apis.football_api import FootballAPI
 
+from common import load_football_api_comps, load_football_data_comps
+from common import api_get_football_api_comps, api_get_football_data_comps
+
 logger = logging.getLogger(__name__)
 
 start_logging()
@@ -30,9 +33,6 @@ fapi_code_map = {
     1399: 'PD',
 }
 
-fa = FootballAPI()
-fd = FootballData()
-
 
 def lookup_fdata_comp_by_code(comps, comp_code):
     try:
@@ -42,34 +42,25 @@ def lookup_fdata_comp_by_code(comps, comp_code):
 
 
 def save_football_api_comps():
-    fa_comps = fa.get_competitions()
+    fa_comps = api_get_football_api_comps()
     with open(os.path.join(
-            'footie_scores', 'maps', 'football_api_competitions.json'), 'w') as cjson:
+            'data', 'football_api_competitions.json'), 'w') as cjson:
         cjson.write(json.dumps(fa_comps, indent=4, ensure_ascii=False))
 
+
 def save_football_data_comps():
-    fd_comps = fd.get_competitions()
+    fd_comps = api_get_football_data_comps()
     with open(os.path.join(
-            'footie_scores', 'maps', 'football_data_competitions.json'), 'w') as cjson:
+            'data', 'football_data_competitions.json'), 'w') as cjson:
         cjson.write(json.dumps(fd_comps, indent=4, ensure_ascii=False))
 
-def load_football_api_comps():
-    with open(os.path.join(
-            'footie_scores', 'maps', 'football_api_competitions.json'), 'r') as cjson:
-        fa_comps = json.loads(cjson.read())
-    return fa_comps
-
-def load_football_data_comps():
-    with open(os.path.join(
-            'footie_scores', 'maps', 'football_data_competitions.json'), 'r') as cjson:
-        fd_comps = json.loads(cjson.read())
-    return fd_comps
 
 def make_comps_json(fapi_comps, fdata_comps):
     json_comps = defaultdict(dict)
     for comp in fapi_comps:
         fapi_id = comp['api_id']
-        fdata_comp = lookup_fdata_comp_by_code(fdata_comps, fapi_code_map.get(fapi_id, None))
+        fdata_comp = lookup_fdata_comp_by_code(
+            fdata_comps, fapi_code_map.get(fapi_id, None))
         fdata_id = fdata_comp.get('api_id', None)
         json_comps['football-api_to_football-data'][fapi_id] = fdata_id
         json_comps['football-data_to_football-api'][fdata_id] = fapi_id
