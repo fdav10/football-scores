@@ -60,9 +60,9 @@ class FootballAPICaller(object):
                 responses.append(response)
         return responses
 
-    def fixture_lineups(self, fixture_ids):
-        lineups = self._get_lineups_for_fixtures(fixture_ids)
-        return lineups
+    def get_lineups_for_fixtures(self, fixture_ids):
+        raise NotImplementedError(
+            "Implemented in child classes - base class should not be instantiated")
 
     def get_competitions(self):
         raise NotImplementedError(
@@ -87,10 +87,6 @@ class FootballAPICaller(object):
             "Implemented in child classes - base class should not be instantiated")
 
     def _filter_by_competition(self, *args):
-        raise NotImplementedError(
-            "Implemented in child classes - base class should not be instantiated")
-
-    def _get_lineups_for_fixtures(self, *args):
         raise NotImplementedError(
             "Implemented in child classes - base class should not be instantiated")
 

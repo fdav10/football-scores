@@ -52,6 +52,11 @@ class FootballAPI(FootballAPICaller):
                     str_start, str_end, len(fixtures))
         return self._format_fixtures(fixtures)
 
+    def get_lineups_for_fixtures(self, fixture_ids):
+        urls = ['commentaries/{}?'.format(id_) for id_ in fixture_ids]
+        commentaries = self.batch_request(urls, correct_unicode=True)
+        return [self._format_lineups(c) for c in commentaries]
+
     def _format_fixtures(self, fixtures):
         formatted_fixtures = [{
             'team_home': f['localteam_name'],
@@ -65,11 +70,6 @@ class FootballAPI(FootballAPICaller):
             'events': self._format_events(f)
             } for f in fixtures]
         return formatted_fixtures
-
-    def _get_lineups_for_fixtures(self, fixture_ids):
-        urls = ['commentaries/{}?'.format(id_) for id_ in fixture_ids]
-        commentaries = self.batch_request(urls, correct_unicode=True)
-        return [self._format_lineups(c) for c in commentaries]
 
     def _format_lineups(self, commentary):
         c = commentary

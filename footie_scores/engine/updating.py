@@ -50,7 +50,7 @@ class _UpdaterState():
         if needs_lineups:
             log_list(needs_lineups, '{} fixtures kicking off soon do not have complete lineups:'.format(len(needs_lineups)))
             fixture_ids = [f.api_fixture_id for f in needs_lineups]
-            lineups = self.api.fixture_lineups(fixture_ids)
+            lineups = self.api.get_lineups_for_fixtures(fixture_ids)
             api_to_db.save_lineups(session, lineups)
 
     def refresh_and_get_todays_fixtures(self, session):
