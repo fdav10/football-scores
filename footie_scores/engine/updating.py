@@ -142,7 +142,7 @@ class _ActiveState(_UpdaterState):
                 fixtures = self.refresh_and_get_todays_fixtures(session)
                 active_fixtures = [f for f in fixtures if f.is_active()]
                 fixtures_soon = [f for f in fixtures if f.kicks_off_within(settings.PRE_GAME_PREP_PERIOD)]
-                needs_lineups = [f for f in fixtures_soon if not f.has_lineups()]
+                needs_lineups = [f for f in fixtures_soon + active_fixtures if not f.has_lineups()]
                 if needs_lineups:
                     self.update_fixtures_lineups(session, needs_lineups)
             logger.info('Active state pausing for %d seconds', settings.ACTIVE_STATE_PAUSE)
