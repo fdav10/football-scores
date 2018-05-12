@@ -19,9 +19,9 @@ logger = logging.getLogger(__name__)
 
 
 def log_time_util_next_fixture(tdelta, sleeptime):
-    logger.info('Next game in: %s (time now %s)',
+    logger.info('Next game in: %s (UTC time now %s)',
                 chop_microseconds(dt.timedelta(seconds=tdelta)),
-                utils.time.today())
+                dt.datetime.strftime(utils.time.now(), settings.DB_TIMEFORMAT))
     logger.info('Sleeping for: %s', chop_microseconds(dt.timedelta(seconds=sleeptime)))
 
 
@@ -40,7 +40,6 @@ class _UpdaterState():
     def __init__(self):
         self.api = FootballAPI()
         logger.info('%s initialised' %self.__class__.__name__)
-        self.run()
 
     def run(self):
         raise NotImplementedError
@@ -50,7 +49,7 @@ class _UpdaterState():
         if needs_lineups:
             log_list(needs_lineups, '{} fixtures kicking off soon do not have complete lineups:'.format(len(needs_lineups)))
             fixture_ids = [f.api_fixture_id for f in needs_lineups]
-            lineups = self.api.fixture_lineups(fixture_ids)
+            lineups = self.api.get_lineups_for_fixtures(fixture_ids)
             api_to_db.save_lineups(session, lineups)
 
     def refresh_and_get_todays_fixtures(self, session):
@@ -75,7 +74,6 @@ class _StartupState(_UpdaterState):
         # return _MaintenanceState
         with db.session_scope() as session:
             fixtures_today = self.refresh_and_get_todays_fixtures(session)
-            self.update_fixtures_lineups(session, fixtures_today)
             fixtures_active = [f for f in fixtures_today if f.is_active()]
             fixtures_soon = [f for f in fixtures_today if f.kicks_off_within(settings.PRE_GAME_PREP_PERIOD)]
             logger.info('%d fixtures today, %d active, %d in prep state (KO within %.0f minutes)',
@@ -144,7 +142,7 @@ class _ActiveState(_UpdaterState):
                 fixtures = self.refresh_and_get_todays_fixtures(session)
                 active_fixtures = [f for f in fixtures if f.is_active()]
                 fixtures_soon = [f for f in fixtures if f.kicks_off_within(settings.PRE_GAME_PREP_PERIOD)]
-                needs_lineups = [f for f in fixtures_soon if not f.has_lineups()]
+                needs_lineups = [f for f in fixtures_soon + active_fixtures if not f.has_lineups()]
                 if needs_lineups:
                     self.update_fixtures_lineups(session, needs_lineups)
             logger.info('Active state pausing for %d seconds', settings.ACTIVE_STATE_PAUSE)
