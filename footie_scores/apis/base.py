@@ -5,6 +5,7 @@ import logging
 import datetime as dt
 
 import requests
+import grequests as gr
 
 from footie_scores import utils
 from footie_scores import settings
@@ -42,7 +43,8 @@ class FootballAPICaller(object):
     def batch_request(self, urls, correct_unicode=False):
         utils.log.log_list(urls, 'Making batch request to:')
         urls = [self.base_url + url + self.url_suffix for url in urls]
-        responses = batch_request(urls)
+        request_list = (gr.get(url) for url in urls)
+        responses = gr.map(request_list)
         return self._process_responses(responses, correct_unicode)
 
     def _process_responses(self, raw_responses, correct_unicode=False):
