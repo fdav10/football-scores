@@ -6,7 +6,11 @@ from footie_scores import constants
 
 logger = logging.getLogger(__name__)
 
-DB_PATH = os.environ['DATABASE_URL']
+try:
+    DB_PATH = os.environ['DATABASE_URL']
+except:
+    raise KeyError("Environment variable 'DATABASE_URL' needs to be set.")
+
 SQLA_ECHO = False
 DB_DATEFORMAT = '%d.%m.%Y'
 DB_TIMEFORMAT = '%H:%M'
