@@ -7,8 +7,9 @@ __pycache__
 
 tmp/
 data/
-db-migrate/
+logs/
 profile.txt
+.projectile
 *.egg-info/
 
 footie_scores/app/static/scores_trial.html

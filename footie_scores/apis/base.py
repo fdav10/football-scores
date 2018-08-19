@@ -1,18 +1,33 @@
 ''' Interfaces to football score APIs '''
 
+import os
 import json
 import logging
 import datetime as dt
 
 import requests
+import grequests as gr
 
 from footie_scores import utils
 from footie_scores import settings
+from footie_scores import REPO_ROOT
 from footie_scores.utils.exceptions import *
-from footie_scores.utils.scheduling import batch_request
 from footie_scores.utils.generic import correct_unicode_to_bin
 
 logger = logging.getLogger(__name__)
+
+
+def log_request(f, *args, **kwargs):
+    log_file_name = os.path.join(REPO_ROOT, 'logs', 'hourly_requests.log')
+    def requests_wrapper(instance, urls, **kwargs):
+        log_urls = (urls,) if not isinstance(urls, (list, tuple)) else urls
+        mode = 'a' if os.path.exists(log_file_name) else 'w'
+        with open(log_file_name, mode) as log_file:
+            for url in log_urls:
+                log_file.write('{}\t{}\n'.format(instance.base_url + url, utils.time.now()))
+        output = f(instance, urls, **kwargs)
+        return output
+    return requests_wrapper
 
 
 class FootballAPICaller(object):
@@ -33,16 +48,19 @@ class FootballAPICaller(object):
         self.db_date_format = settings.DB_DATEFORMAT
         self.db_time_format = settings.DB_TIMEFORMAT
 
+    @log_request
     def request(self, url, correct_unicode=False):
         logger.info('Making request to %s', self.base_url + url)
         request_url = self.base_url + url + self.url_suffix
         raw_response = requests.get(request_url, headers=self.headers)
         return self._process_responses((raw_response,), correct_unicode)[0]
 
+    @log_request
     def batch_request(self, urls, correct_unicode=False):
         utils.log.log_list(urls, 'Making batch request to:')
         urls = [self.base_url + url + self.url_suffix for url in urls]
-        responses = batch_request(urls)
+        request_list = (gr.get(url) for url in urls)
+        responses = gr.map(request_list)
         return self._process_responses(responses, correct_unicode)
 
     def _process_responses(self, raw_responses, correct_unicode=False):
