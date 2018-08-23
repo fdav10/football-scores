@@ -16,7 +16,7 @@ class LogTable(list):
         pass
 
 
-def log_to_table():
+def convert_log_to_table():
     with open(os.path.join(REPO_ROOT, 'logs', 'hourly_requests.log'), 'r') as log_file:
         data = log_file.read()
     table = [LogRecord(*l.split('\t')) for l in data.splitlines()]
