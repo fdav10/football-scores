@@ -9,6 +9,7 @@ import asyncio
 import aiohttp
 
 from footie_scores import utils
+from footie_scores.utils.log import log_list
 from footie_scores import settings
 from footie_scores import REPO_ROOT
 from footie_scores.utils.exceptions import *
@@ -56,11 +57,12 @@ class FootballAPICaller(object):
                     try:
                         assert response.status == 200
                     except AssertionError:
-                        logger.exception(response.content)
-                    data = await response.content.read()
-            return data
+                        logger.exception(await response.content.read())
+                    else:
+                        data = await response.content.read()
+                        return data
 
-        utils.log.log_list(urls, logger, 'Making async batch request to:')
+        log_list(urls, logger, 'Making async batch request to:')
 
         urls = [self.base_url + url + self.url_suffix for url in urls]
         event_loop = asyncio.get_event_loop()
@@ -77,10 +79,9 @@ class FootballAPICaller(object):
     def _process_responses(self, raw_responses, correct_unicode=False):
         responses = []
         for raw_response in raw_responses:
-            if correct_unicode:
+            if raw_response and correct_unicode:
                 response = json.loads(correct_unicode_to_bin(raw_response))
             else:
-                # response = raw_response.json()
                 response = json.loads(raw_response)
             responses.append(response)
         return responses
