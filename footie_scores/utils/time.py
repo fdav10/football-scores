@@ -2,9 +2,7 @@
 
 import logging, sys
 import datetime as dt
-from datetime import datetime, timedelta
-
-import pytz
+from datetime import datetime
 
 from footie_scores import constants
 from footie_scores.settings import OVERRIDE_TIME, OVERRIDE_DAY, START_TIME, DB_DATEFORMAT

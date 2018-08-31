@@ -147,9 +147,8 @@ def match_details(fixture_id):
 
 
 def games_template(
-        template, page, page_competitions, grouped_fixtures, date_, title,
-        comp_id='', competitions_with_games_today=None,
-        ):
+        template, page, page_competitions, grouped_fixtures, date_,
+        title, comp_id='', competitions_with_games_today=None):
 
     today = utils.time.today()
     options = {
