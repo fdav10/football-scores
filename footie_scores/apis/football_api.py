@@ -38,14 +38,19 @@ class FootballAPI(FootballAPICaller):
 
     def get_fixtures_for_date(self, start_date=None,
                               competitions=settings.COMPS,
-                              end_date=None):
+                              end_date=None,
+                              split_requests=False):
 
         if not start_date:
             start_date = utils.time.today()
         end_date = start_date if end_date is None else end_date
         str_start, str_end = [d.strftime(self.api_date_format) for d in (start_date, end_date)]
-        fixtures_url = 'matches?from_date={}&to_date={}&'.format(str_start, str_end)
-        [all_fixtures] = self.request(fixtures_url)
+        if split_requests:
+            base_url =  'matches?comp_id={}&from_date={}&to_date={}&'
+            urls = [base_url.format(comp_id, str_start, str_end) for comp_id in competitions]
+        else:
+            urls = ['matches?from_date={}&to_date={}&'.format(str_start, str_end)]
+        [all_fixtures] = self.request(*urls)
         fixtures = self._filter_fixture_by_competition(all_fixtures, competitions)
 
         logger.info('Fixtures for all competitions for %s to %s retrieved (%d fixtures)',
