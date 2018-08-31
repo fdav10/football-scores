@@ -45,7 +45,7 @@ class FootballAPI(FootballAPICaller):
         end_date = start_date if end_date is None else end_date
         str_start, str_end = [d.strftime(self.api_date_format) for d in (start_date, end_date)]
         fixtures_url = 'matches?from_date={}&to_date={}&'.format(str_start, str_end)
-        all_fixtures = self.request(fixtures_url)
+        [all_fixtures] = self.request(fixtures_url)
         fixtures = self._filter_fixture_by_competition(all_fixtures, competitions)
 
         logger.info('Fixtures for all competitions for %s to %s retrieved (%d fixtures)',
@@ -54,7 +54,8 @@ class FootballAPI(FootballAPICaller):
 
     def get_lineups_for_fixtures(self, fixture_ids):
         urls = ['commentaries/{}?'.format(id_) for id_ in fixture_ids]
-        commentaries = self.batch_request(urls, correct_unicode=True)
+        # commentaries = self.batch_request(urls, correct_unicode=True)
+        commentaries = self.request(*urls, correct_unicode=True)
         return [self._format_lineups(c) for c in commentaries]
 
     def _format_fixtures(self, fixtures):
@@ -124,7 +125,11 @@ class FootballAPI(FootballAPICaller):
         return self._make_time_db_ready(formatted_time)
 
     def _filter_fixture_by_competition(self, fixtures, comp_ids):
-        return [f for f in fixtures if int(f['comp_id']) in comp_ids]
+        try:
+            return [f for f in fixtures if int(f['comp_id']) in comp_ids]
+        except:
+            import traceback; traceback.print_exc();
+            import ipdb; ipdb.set_trace()
 
     def _is_valid_response(self, response):
         # TODO this is pretty ugly and unclear

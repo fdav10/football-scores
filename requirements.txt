@@ -1,10 +1,6 @@
 alembic
 Flask
-gevent
-grequests
 gunicorn
-ipdb
-jedi
 psycopg2-binary
 pytz
 requests

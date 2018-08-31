@@ -4,9 +4,9 @@ import os
 import json
 import logging
 import datetime as dt
+import asyncio
 
-import requests
-import grequests as gr
+import aiohttp
 
 from footie_scores import utils
 from footie_scores import settings
@@ -19,13 +19,12 @@ logger = logging.getLogger(__name__)
 
 def log_request(f, *args, **kwargs):
     log_file_name = os.path.join(REPO_ROOT, 'logs', 'hourly_requests.log')
-    def requests_wrapper(instance, urls, **kwargs):
+    def requests_wrapper(instance, *urls, **kwargs):
         log_urls = (urls,) if not isinstance(urls, (list, tuple)) else urls
-        mode = 'a' if os.path.exists(log_file_name) else 'w'
-        with open(log_file_name, mode) as log_file:
+        with open(log_file_name, 'a') as log_file:
             for url in log_urls:
                 log_file.write('{}\t{}\n'.format(instance.base_url + url, utils.time.now()))
-        output = f(instance, urls, **kwargs)
+        output = f(instance, *urls, **kwargs)
         return output
     return requests_wrapper
 
@@ -49,33 +48,41 @@ class FootballAPICaller(object):
         self.db_time_format = settings.DB_TIMEFORMAT
 
     @log_request
-    def request(self, url, correct_unicode=False):
-        logger.info('Making request to %s', self.base_url + url)
-        request_url = self.base_url + url + self.url_suffix
-        raw_response = requests.get(request_url, headers=self.headers)
-        return self._process_responses((raw_response,), correct_unicode)[0]
+    def request(self, *urls, correct_unicode=False):
 
-    @log_request
-    def batch_request(self, urls, correct_unicode=False):
-        utils.log.log_list(urls, 'Making batch request to:')
+        async def fetch(url):
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as response:
+                    try:
+                        assert response.status == 200
+                    except AssertionError:
+                        logger.error(response.content)
+                    data = await response.content.read()
+            return data
+
+        utils.log.log_list(urls, 'Making async batch request to:')
+
         urls = [self.base_url + url + self.url_suffix for url in urls]
-        request_list = (gr.get(url) for url in urls)
-        responses = gr.map(request_list)
+        event_loop = asyncio.get_event_loop()
+        coros = [fetch(url) for url in urls]
+        future = asyncio.gather(*coros)
+
+        event_loop.run_until_complete(future)
+
+        responses = future.result()
+        logger.info('Done.')
+
         return self._process_responses(responses, correct_unicode)
 
     def _process_responses(self, raw_responses, correct_unicode=False):
         responses = []
         for raw_response in raw_responses:
-            try:
-                assert raw_response.status_code == 200
-            except AssertionError:
-                logger.error(raw_response.content)
+            if correct_unicode:
+                response = json.loads(correct_unicode_to_bin(raw_response))
             else:
-                if correct_unicode:
-                    response = json.loads(correct_unicode_to_bin(raw_response.content))
-                else:
-                    response = raw_response.json()
-                responses.append(response)
+                # response = raw_response.json()
+                response = json.loads(raw_response)
+            responses.append(response)
         return responses
 
     def get_lineups_for_fixtures(self, fixture_ids):
