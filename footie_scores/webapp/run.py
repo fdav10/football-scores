@@ -161,6 +161,7 @@ def games_template(
             'months': month_list_define_last(today.month),
             'short_months': month_list_define_last(today.month, month_list=SHORT_MONTHS),
             'display_lineups': False,
+            'first_month': today.month+1%12,
         },
         'fixtures': {
             'display_todays_games_sublist': 'none',
@@ -171,6 +172,7 @@ def games_template(
             'months': month_list_define_first(today.month),
             'short_months': month_list_define_first(TODAY.month, month_list=SHORT_MONTHS),
             'display_lineups': False,
+            'first_month': today.month,
         },
         'scores': {
             'display_todays_games_sublist': 'block',
@@ -191,6 +193,7 @@ def games_template(
             'months': None,
             'short_months': None,
             'display_lineups': True,
+            'first_month': None,
         }
     }
 
@@ -202,6 +205,7 @@ def games_template(
     months = options[page]['months']
     short_months = options[page]['short_months']
     display_lineups = options[page]['display_lineups']
+    first_month = options[page]['first_month']
 
     return render_template(
         template,
@@ -220,6 +224,7 @@ def games_template(
         short_months=short_months,
         time=utils.time.now().strftime(settings.DB_DATETIMEFORMAT),
         display_lineups=display_lineups,
+        first_month=first_month,
     )
 
 

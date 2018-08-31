@@ -23,7 +23,7 @@
     <div id="filter-container" class="mui-container-fluid">
     {% for month in short_months %}
     <div class="mui-col-xs-1">
-      <a href= {{ url_for('past_results', comp_id=comp_id, month_index=loop.index) }} >
+      <a href= {{ url_for('past_results', comp_id=comp_id, month_index=(loop.index0+first_month) % 12)}} >
 	{{month}}
       </a>
     </div>
