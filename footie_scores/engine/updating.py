@@ -47,7 +47,7 @@ class _UpdaterState():
     def update_fixtures_lineups(self, session, fixtures):
         needs_lineups = [f for f in fixtures if not f.has_lineups()]
         if needs_lineups:
-            log_list(needs_lineups, '{} fixtures kicking off soon do not have complete lineups:'.format(len(needs_lineups)))
+            log_list(needs_lineups, logger, '{} fixtures kicking off soon do not have complete lineups:'.format(len(needs_lineups)))
             fixture_ids = [f.api_fixture_id for f in needs_lineups]
             lineups = self.api.get_lineups_for_fixtures(fixture_ids)
             api_to_db.save_lineups(session, lineups)
@@ -96,7 +96,7 @@ class _IdleState(_UpdaterState):
                 time.sleep(settings.NO_GAMES_SLEEP)
                 return _IdleState
             else:
-                log_list(fixtures_today, intro='Todays fixtures:')
+                log_list(fixtures_today, logger, intro='Todays fixtures:')
                 time_to_next_game = self.time_to_next_kickoff(future_fixtures)
                 if time_to_next_game < settings.PRE_GAME_ACTIVE_PERIOD:
                     return _ActiveState

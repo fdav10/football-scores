@@ -60,7 +60,7 @@ class FootballAPICaller(object):
                     data = await response.content.read()
             return data
 
-        utils.log.log_list(urls, 'Making async batch request to:')
+        utils.log.log_list(urls, logger, 'Making async batch request to:')
 
         urls = [self.base_url + url + self.url_suffix for url in urls]
         event_loop = asyncio.get_event_loop()
