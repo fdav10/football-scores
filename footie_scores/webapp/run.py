@@ -4,9 +4,8 @@
 
 import logging
 import datetime as dt
-import json
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, jsonify
 
 from footie_scores import settings, constants, db, utils
 from footie_scores.utils.log import start_logging
