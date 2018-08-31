@@ -171,8 +171,3 @@ class _MaintenanceState(_UpdaterState):
 
     def _appraise_db_lineups(self):
         pass
-
-
-if __name__ == '__main__':
-    start_logging()
-    start_updater()
