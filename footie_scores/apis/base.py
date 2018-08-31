@@ -56,7 +56,7 @@ class FootballAPICaller(object):
                     try:
                         assert response.status == 200
                     except AssertionError:
-                        logger.error(response.content)
+                        logger.exception(response.content)
                     data = await response.content.read()
             return data
 
