@@ -4,6 +4,8 @@ import datetime as dt
 from footie_scores.db import session_scope
 from footie_scores.db import queries
 from footie_scores import settings, utils
+from footie_scores.apis.football_api import FootballAPI 
+from footie_scores.utils.log import start_logging
 
 
 log_template = '''
@@ -51,5 +53,25 @@ def log_db_status(competition_ids=settings.COMPS):
             print(log_template.format(**status))
 
 
+def update_all_fixtures(competition_ids=settings.COMPS):
+    """ Request fixtures for current date plus/minus 6 months.
+
+    Fixtures to be requested by competition and for a two month date
+    range."""
+
+    api = FootballAPI()
+
+    start_date = dt.datetime.today() - dt.timedelta(days=200)
+    end_date = dt.datetime.today() + dt.timedelta(days=200)
+    start_dates = [start_date + dt.timedelta(days=60 * i) for i in range(6)]
+    end_dates = [date + dt.timedelta(days=60) for date in start_dates]
+    date_chunks = zip(start_dates, end_dates)
+
+    for start_date, end_date in date_chunks:
+        api.get_fixtures_for_date(start_date, competition_ids,
+                                  end_date, split_requests=True)
+
+
 if __name__ == '__main__':
-    log_db_status()
+    start_logging()
+    update_all_fixtures()

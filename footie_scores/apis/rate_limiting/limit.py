@@ -24,4 +24,4 @@ def convert_log_to_table():
 
 
 if __name__ == '__main__':
-    log_to_table()
+    convert_log_to_table()
