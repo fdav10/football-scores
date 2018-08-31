@@ -183,6 +183,7 @@ def games_template(
             'months': None,
             'short_months': None,
             'display_lineups': False,
+            'first_month': None,
         },
         'details': {
             'display_todays_games_sublist': 'block',
