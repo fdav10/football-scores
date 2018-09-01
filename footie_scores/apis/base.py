@@ -79,11 +79,12 @@ class FootballAPICaller(object):
     def _process_responses(self, raw_responses, correct_unicode=False):
         responses = []
         for raw_response in raw_responses:
-            if raw_response and correct_unicode:
-                response = json.loads(correct_unicode_to_bin(raw_response))
-            else:
-                response = json.loads(raw_response)
-            responses.append(response)
+            if raw_response:
+                if correct_unicode:
+                    response = json.loads(correct_unicode_to_bin(raw_response))
+                else:
+                    response = json.loads(raw_response)
+                responses.append(response)
         return responses
 
     def get_lineups_for_fixtures(self, fixture_ids):
