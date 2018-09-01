@@ -57,10 +57,10 @@ class FootballAPICaller(object):
                     try:
                         assert response.status == 200
                     except AssertionError:
-                        logger.exception(await response.content.read())
+                        logger.info('%s: %s', url[:url.find(self.url_suffix)],
+                                    await response.content.read())
                     else:
-                        data = await response.content.read()
-                        return data
+                        return await response.content.read()
 
         log_list(urls, logger, 'Making async batch request to:')
 
