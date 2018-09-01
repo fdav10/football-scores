@@ -1,6 +1,6 @@
 import logging
 
-from sqlalchemy import and_#, in_
+from sqlalchemy import and_
 from sqlalchemy.ext.declarative import declarative_base
 
 from footie_scores import db
@@ -16,6 +16,13 @@ def row_exists(session, row_class, id_, value):
     session_query = session.query(row_class, id_)
     occurences = session_query.filter(id_ == value).count()
     return occurences > 0
+
+
+def rows_in_db(session, row_class, id_, values):
+    import ipdb; ipdb.set_trace()
+    session_query = session.query(row_class)
+    matches = session_query.filter(id_.in_(values)).all()
+    return matches
 
 
 def get_competitions(session):
