@@ -9,6 +9,7 @@ import logging
 import datetime as dt
 
 from footie_scores import db, settings, utils
+from footie_scores.db import maintenance
 from footie_scores.utils.time import chop_microseconds
 from footie_scores.interfaces import api_to_db
 from footie_scores.utils.log import start_logging, log_list
@@ -39,7 +40,7 @@ class _UpdaterState():
     '''
     def __init__(self):
         self.api = FootballAPI()
-        logger.info('%s initialised' %self.__class__.__name__)
+        logger.info('%s initialised', self.__class__.__name__)
 
     def run(self):
         raise NotImplementedError
@@ -71,7 +72,6 @@ class _StartupState(_UpdaterState):
     '''
 
     def run(self):
-        # return _MaintenanceState
         with db.session_scope() as session:
             fixtures_today = self.refresh_and_get_todays_fixtures(session)
             fixtures_active = [f for f in fixtures_today if f.is_active()]
@@ -81,7 +81,7 @@ class _StartupState(_UpdaterState):
         if fixtures_active or fixtures_soon:
             return _ActiveState
         else:
-            return _IdleState
+            return _MaintenanceState
 
 
 class _IdleState(_UpdaterState):
@@ -154,20 +154,5 @@ class _MaintenanceState(_UpdaterState):
     '''Perform maintenance on the database during idle hours'''
 
     def run(self):
-        self._log_db_status()
-        # return _StartupState
-
-    def _log_db_status(self):
-        db.maintenance.log_db_status()
-
-    def _get_week_fixtures(self):
-        pass
-
-    def _appraise_db_results(self):
-        pass
-
-    def _appraise_db_fixtures(self):
-        pass
-
-    def _appraise_db_lineups(self):
-        pass
+        maintenance.update_all_fixtures()
+        return _IdleState
