@@ -35,6 +35,8 @@ def save_fixture(session, api_fixture):
         existing_db_fixture = fq.filter(Fixture.api_fixture_id == db_fixture.api_fixture_id).first()
         if existing_db_fixture.update_from_equivalent(db_fixture):
             logger.info('%s updated in db', db_fixture)
+        else:
+            logger.info('%s already up to date in db', db_fixture)
 
 
 def save_lineups(session, api_lineups):
