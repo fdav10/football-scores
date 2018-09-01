@@ -23,7 +23,7 @@ def get_fixtures(start_date, end_date):
     fixtures = FootballAPI().get_fixtures_for_date(start_date=start_date, end_date=end_date)
     logger.info('Saving to db...')
     with db.session_scope() as session:
-        api_to_db.save_fixtures(session, fixtures)
+        api_to_db.save_fixtures(session, *fixtures)
     logger.info('Done')
 
 def main(*clargs):

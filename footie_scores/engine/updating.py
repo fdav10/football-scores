@@ -55,7 +55,7 @@ class _UpdaterState():
 
     def refresh_and_get_todays_fixtures(self, session):
         todays_api_fixtures = self.api.todays_fixtures(settings.COMPS)
-        api_to_db.save_fixtures(session, todays_api_fixtures)
+        api_to_db.save_fixtures(session, *todays_api_fixtures)
         todays_fixtures = db.queries.get_fixtures_by_date(session, utils.time.today())
         return todays_fixtures
 

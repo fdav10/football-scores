@@ -13,30 +13,37 @@ from footie_scores.maps import competition_map
 from footie_scores.apis.football_api import FootballAPI
 from footie_scores.apis.football_data import FootballData
 from footie_scores.db.schema import Fixture, Competition, Lineups, Team
-from footie_scores.db.queries import row_exists
+from footie_scores.db.queries import row_exists, check_rows_in_db
+from footie_scores.utils.log import log_list
 
 logger = logging.getLogger(__name__)
 
 
-def save_fixtures(session, api_fixtures):
-    for fixture in api_fixtures:
-        save_fixture(session, fixture)
+def save_fixtures(session, *api_fixtures):
+    fixture_map = {fix['api_fixture_id']: db.schema.Fixture(**fix)
+                   for fix in api_fixtures}
+    fixture_ids = fixture_map.keys()
 
+    logger.info('Checking if fixtures already in db')
+    fixtures_in_db = check_rows_in_db(session,
+                                      row_type=Fixture,
+                                      row_key=Fixture.api_fixture_id,
+                                      match_keys=fixture_ids)
+    missing_ids = set(fixture_ids).difference([f.api_fixture_id for f in fixtures_in_db])
+    missing_fixtures = [fixture_map[id_] for id_ in missing_ids]
 
-def save_fixture(session, api_fixture):
-    db_fixture = db.schema.Fixture(**api_fixture)
-    fq = session.query(Fixture)
     cq = session.query(Competition)
-    if not row_exists(session, Fixture, Fixture.api_fixture_id, db_fixture.api_fixture_id):
-        db_fixture.competition = cq.filter(Competition.api_id == db_fixture.comp_api_id).one()
-        session.add(db_fixture)
-        logger.info('%s added to db', db_fixture)
-    else:
-        existing_db_fixture = fq.filter(Fixture.api_fixture_id == db_fixture.api_fixture_id).first()
-        if existing_db_fixture.update_from_equivalent(db_fixture):
-            logger.info('%s updated in db', db_fixture)
+    for fixture in missing_fixtures:
+        fixture.competition = cq.filter(Competition.api_id == fixture.comp_api_id).one()
+    session.bulk_save_objects(missing_fixtures)
+    log_list(missing_fixtures, logger, template='%s added to db')
+
+    for db_fixture in fixtures_in_db:
+        api_fixture = fixture_map[db_fixture.api_fixture_id]
+        if db_fixture.update_from_equivalent(api_fixture):
+            logger.info('%s updated in db', api_fixture)
         else:
-            logger.info('%s already up to date in db', db_fixture)
+            logger.info('%s already up to date in db', api_fixture)
 
 
 def save_lineups(session, api_lineups):

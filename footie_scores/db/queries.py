@@ -18,10 +18,9 @@ def row_exists(session, row_class, id_, value):
     return occurences > 0
 
 
-def rows_in_db(session, row_class, id_, values):
-    import ipdb; ipdb.set_trace()
-    session_query = session.query(row_class)
-    matches = session_query.filter(id_.in_(values)).all()
+def check_rows_in_db(session, row_type, row_key, match_keys):
+    session_query = session.query(row_type)
+    matches = session_query.filter(row_key.in_(match_keys)).all()
     return matches
 
 

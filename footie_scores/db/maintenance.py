@@ -63,8 +63,8 @@ def update_all_fixtures(competition_ids=settings.COMPS):
     with session_scope() as session:
         api = FootballAPI()
 
-        start_date = dt.datetime.today() - dt.timedelta(days=0)
-        end_date = dt.datetime.today() + dt.timedelta(days=30)
+        start_date = dt.datetime.today() - dt.timedelta(days=200)
+        end_date = dt.datetime.today() + dt.timedelta(days=200)
         start_dates = [start_date + dt.timedelta(days=60 * i) for i in range(6)]
         end_dates = [date + dt.timedelta(days=60) for date in start_dates]
         date_chunks = zip(start_dates, end_dates)
@@ -73,7 +73,7 @@ def update_all_fixtures(competition_ids=settings.COMPS):
             fixtures = api.get_fixtures_for_date(
                 start_date, competition_ids, end_date,
                 split_requests=True)
-            api_to_db.save_fixtures(session, fixtures)
+            api_to_db.save_fixtures(session, *fixtures)
 
 
 if __name__ == '__main__':

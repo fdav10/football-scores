@@ -16,4 +16,4 @@ create_tables_if_not_present()
 date_ = utils.time.today()
 fixtures = FootballAPI().get_fixtures_for_date(start_date=date_)
 with db.session_scope() as session:
-    api_to_db.save_fixtures(session, fixtures)
+    api_to_db.save_fixtures(session, *fixtures)
