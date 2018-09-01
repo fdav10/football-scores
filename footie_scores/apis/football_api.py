@@ -3,6 +3,7 @@
 import os, re
 import logging
 import datetime as dt
+from itertools import chain
 
 from footie_scores import utils
 from footie_scores import settings
@@ -48,9 +49,10 @@ class FootballAPI(FootballAPICaller):
         if split_requests:
             base_url =  'matches?comp_id={}&from_date={}&to_date={}&'
             urls = [base_url.format(comp_id, str_start, str_end) for comp_id in competitions]
+            all_fixtures = list(chain(*self.request(*urls)))
         else:
             urls = ['matches?from_date={}&to_date={}&'.format(str_start, str_end)]
-        [all_fixtures] = self.request(*urls)
+            [all_fixtures] = self.request(*urls)
         fixtures = self._filter_fixture_by_competition(all_fixtures, competitions)
 
         logger.info('Fixtures for all competitions for %s to %s retrieved (%d fixtures)',
