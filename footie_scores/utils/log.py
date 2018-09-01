@@ -16,9 +16,9 @@ def start_logging():
 
 
 
-def log_list(list_, logger, intro=None):
+def log_list(list_, logger, intro=None, prefix='', suffix=''):
     if list_:
         if intro:
             logger.info(intro)
         for i in list_:
-            logger.info(i)
+            logger.info(prefix + i + suffix)
