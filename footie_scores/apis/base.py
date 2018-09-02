@@ -9,25 +9,13 @@ import asyncio
 import aiohttp
 
 from footie_scores import utils
-from footie_scores.utils.log import log_list
+from footie_scores.utils.log import log_list, log_request
 from footie_scores import settings
 from footie_scores import REPO_ROOT
 from footie_scores.utils.exceptions import *
 from footie_scores.utils.generic import correct_unicode_to_bin
 
 logger = logging.getLogger(__name__)
-
-
-def log_request(f, *args, **kwargs):
-    log_file_name = os.path.join(REPO_ROOT, 'logs', 'hourly_requests.log')
-    def requests_wrapper(instance, *urls, **kwargs):
-        log_urls = (urls,) if not isinstance(urls, (list, tuple)) else urls
-        with open(log_file_name, 'a') as log_file:
-            for url in log_urls:
-                log_file.write('{}\t{}\n'.format(instance.base_url + url, utils.time.now()))
-        output = f(instance, *urls, **kwargs)
-        return output
-    return requests_wrapper
 
 
 class FootballAPICaller(object):
