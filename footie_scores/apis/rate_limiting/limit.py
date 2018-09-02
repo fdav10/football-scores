@@ -36,7 +36,6 @@ class LogTable(list):
 
     def log_requests_rate(self):
         self._purge_old_records(older_than=PURGE_OLDER_THAN)
-        self._update_log()
         self._update_requests_rate_log()
 
     def _purge_old_records(self, older_than):
@@ -47,11 +46,6 @@ class LogTable(list):
 
         if ini_size != len(self):
             print(f'hourly log reduced from {ini_size} to {len(self)}')
-
-    def _update_log(self):
-        text = '\n'.join('\t'.join([r.url, r.time]) for r in self) + '\n'
-        with open(REQUESTS_LOG, 'w') as log_file:
-            log_file.write(text)
 
     def _update_requests_rate_log(self):
         rate = str(len(self))
