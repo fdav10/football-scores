@@ -30,6 +30,9 @@ class LogRecord:
 class LogTable:
     def __init__(self, records):
         self._records = records
+        self.times = [r.time for r in self._records]
+        self.urls = [r.url for r in self._records]
+        self.datetimes = [r.datetime for r in self._records]
 
     def log_requests_rate(self):
         self._purge_old_records(older_than=PURGE_OLDER_THAN)
@@ -63,8 +66,18 @@ def monitor_logs():
 
 
 def plot_request_rate():
-    pass
+    import matplotlib.pyplot as plt
+
+    with open(REQUESTS_RATE_LOG, 'r') as ratefile:
+        data = ratefile.read()
+    times_rates = [l.split('\t') for l in data.splitlines()]
+    times = [r[0] for r in times_rates]
+    rates = [int(r[1]) for r in times_rates]
+    plt.bar(times, rates)
+    plt.savefig(os.path.join('logs', 'requests_rate.png'))
+
 
 
 if __name__ == '__main__':
     monitor_logs()
+    # plot_request_rate()
