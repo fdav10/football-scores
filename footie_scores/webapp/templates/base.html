@@ -75,7 +75,7 @@
 		<li id="all-comps-button">All Competitions</li>
 	      </a>
 	      {% for comp in competitions %}
-	      <a href={{ url_for('future_fixtures', comp_id=comp.api_id, month_index=8) }}>
+	      <a href={{ url_for('future_fixtures', comp_id=comp.api_id) }}>
 		<li class="individual-competitions">{{comp.name}}</li>
 	      </a>
 	      {% endfor %}
