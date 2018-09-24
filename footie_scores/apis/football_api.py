@@ -125,7 +125,7 @@ class FootballAPI(FootballAPICaller):
         where changing the timezone offsets the minutes rather than
         hours.
         '''
-        if fixture_time == 'TBA' or fixture_time == 'Postp.':
+        if fixture_time in ('TBA', 'Postp.', 'Cancl.', 'Susp.'):
             return fixture_time
         formatted_time = utils.time.reformat_datetime(
             fixture_time, self.api_time_format, self.db_time_format)
