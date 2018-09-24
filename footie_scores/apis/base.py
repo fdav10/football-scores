@@ -40,15 +40,19 @@ class FootballAPICaller(object):
     def request(self, *urls, correct_unicode=False):
 
         async def fetch(url):
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url) as response:
-                    try:
-                        assert response.status == 200
-                    except AssertionError:
-                        logger.info('%s: %s', url[:url.find(self.url_suffix)],
-                                    await response.content.read())
-                    else:
-                        return await response.content.read()
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(url) as response:
+                        try:
+                            assert response.status == 200
+                        except AssertionError:
+                            logger.info('%s: %s', url[:url.find(self.url_suffix)],
+                                        await response.content.read())
+                        else:
+                            return await response.content.read()
+            except aiohttp.client_exceptions.ClientConnectorError as e:
+                logger.info(e)
+                return None
 
         log_list(urls, logger, 'Making async batch request to:')
 
@@ -57,7 +61,12 @@ class FootballAPICaller(object):
         coros = [fetch(url) for url in urls]
         future = asyncio.gather(*coros)
 
-        event_loop.run_until_complete(future)
+        try:
+            event_loop.run_until_complete(future)
+        except aiohttp.client_exceptions.ClientConnectorError:
+        # except Exception as e:
+            import ipdb; ipdb.set_trace()
+            responses = []
 
         responses = future.result()
         logger.info('Done.')
@@ -73,6 +82,8 @@ class FootballAPICaller(object):
                 else:
                     response = json.loads(raw_response)
                 responses.append(response)
+            else:
+                responses.append([])
         return responses
 
     def get_lineups_for_fixtures(self, fixture_ids):
