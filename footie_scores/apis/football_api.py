@@ -63,7 +63,7 @@ class FootballAPI(FootballAPICaller):
         urls = ['commentaries/{}?'.format(id_) for id_ in fixture_ids]
         # commentaries = self.batch_request(urls, correct_unicode=True)
         commentaries = self.request(*urls, correct_unicode=True)
-        return [self._format_lineups(c) for c in commentaries]
+        return [self._format_lineups(c) for c in commentaries if c]
 
     def _format_fixtures(self, fixtures):
         formatted_fixtures = [{
@@ -86,7 +86,7 @@ class FootballAPI(FootballAPICaller):
                 'away_lineup': c['lineup']['visitorteam'],
                 'home_subs': c['subs']['localteam'] if c['subs']['localteam'] else [],
                 'away_subs': c['subs']['visitorteam'] if c['subs']['visitorteam'] else [],
-        }
+                }
 
     def _format_status(self, fixture):
         if re.match('[0-9]+:[0-9]+', fixture['status']):
