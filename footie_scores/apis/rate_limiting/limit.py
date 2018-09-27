@@ -15,14 +15,14 @@ REQUESTS_RATE_LOG = os.path.join(REPO_ROOT, 'logs', 'requests_rate.log')
 SLEEP_TIME = 10 * 60 # ten minuts in seconds
 PURGE_OLDER_THAN = 60 * 60 # one hour in seconds
 
-TIME_FORMAT =  "%Y-%m-%d %H:%M:%S.%f%z"
+TIME_FORMAT =  "%Y-%m-%d %H:%M:%S.%f"
 
 
 class LogRecord:
     def __init__(self, url, time):
         self.url = url
-        self.time = time
-        self.datetime = dt.datetime.strptime(time, TIME_FORMAT).replace(tzinfo=None)
+        self.time = time[:time.find('+')] # ignore timezone offset info (don't have to do this with Py37)
+        self.datetime = dt.datetime.strptime(self.time, TIME_FORMAT).replace(tzinfo=None)
 
     def __repr__(self):
         return f"<LogRecord url='{self.url}' time='{self.time}'>"
