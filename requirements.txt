@@ -8,3 +8,4 @@ SQLAlchemy
 traitlets
 urllib3
 Werkzeug
+aiohttp
