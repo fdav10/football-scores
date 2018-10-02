@@ -13,9 +13,7 @@ def start_logging():
     logging.basicConfig(level=logging.DEBUG,
                         # format=format_,
                         format=format_,
-                        datefmt="%m-%d %H:%M:%S",
-                        filename='logs/app.log',
-                        filemode='a')
+                        datefmt="%m-%d %H:%M:%S")
     console = logging.StreamHandler()
     console.setLevel(logging.DEBUG)
     console.setFormatter(logging.Formatter(format_))
