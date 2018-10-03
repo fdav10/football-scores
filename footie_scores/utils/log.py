@@ -11,13 +11,10 @@ from . import time
 def start_logging():
     format_='%(asctime)s:' + logging.BASIC_FORMAT
     logging.basicConfig(level=logging.DEBUG,
-                        # format=format_,
                         format=format_,
                         datefmt="%m-%d %H:%M:%S")
-    console = logging.StreamHandler()
-    console.setLevel(logging.DEBUG)
-    console.setFormatter(logging.Formatter(format_))
-    logging.getLogger().addHandler(console)
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
 
 
 def log_list(list_, logger, intro=None, template='%s'):
