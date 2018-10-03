@@ -92,7 +92,8 @@ class _IdleState(_UpdaterState):
             fixtures_today = db.queries.get_fixtures_by_date(session, utils.time.today())
             future_fixtures = [f for f in fixtures_today if f.status != 'FT']
             if not future_fixtures:
-                logger.info('No games today, sleeping for %d seconds (time is %s)', settings.NO_GAMES_SLEEP, utils.time.now())
+                logger.info('No games today, sleeping for %d seconds (time is %s)',
+                            settings.NO_GAMES_SLEEP, utils.time.now())
                 time.sleep(settings.NO_GAMES_SLEEP)
                 return _IdleState
             else:
@@ -106,6 +107,7 @@ class _IdleState(_UpdaterState):
                     sleeptime = time_to_next_game - settings.PRE_GAME_PREP_PERIOD
                     log_time_util_next_fixture(time_to_next_game, sleeptime)
                     time.sleep(sleeptime)
+                    logger.info('Awoken')
                     return _PreparationState
 
 
@@ -118,7 +120,8 @@ class _PreparationState(_UpdaterState):
             fixtures_today = self.refresh_and_get_todays_fixtures(session)
             while not active_fixtures:
                 active_fixtures = [f for f in fixtures_today if f.is_active()]
-                fixtures_soon = [f for f in fixtures_today if f.kicks_off_within(settings.PRE_GAME_PREP_PERIOD)]
+                fixtures_soon = [f for f in fixtures_today
+                                 if f.kicks_off_within(settings.PRE_GAME_PREP_PERIOD)]
                 needs_lineups = [f for f in fixtures_soon if not f.has_lineups()]
                 if needs_lineups:
                     self.update_fixtures_lineups(session, needs_lineups)
