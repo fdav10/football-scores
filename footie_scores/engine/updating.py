@@ -26,6 +26,21 @@ def log_time_util_next_fixture(tdelta, sleeptime):
     logger.info('Sleeping for: %s', chop_microseconds(dt.timedelta(seconds=sleeptime)))
 
 
+def lineup_check_gen():
+    last_request = utils.time.now()
+    while True:
+        if (utils.time.now() - last_request).total_seconds() > 120:
+            last_request = utils.time.now()
+            yield True
+        else:
+            yield False
+
+
+LINEUP_CHECK = lineup_check_gen()
+def lineup_requests_due():
+    return next(LINEUP_CHECK)
+
+
 def start_updater():
     next_state = _StartupState
     while True:
@@ -47,6 +62,9 @@ class _UpdaterState():
 
     def update_fixtures_lineups(self, session, fixtures):
         needs_lineups = [f for f in fixtures if not f.has_lineups()]
+        if not lineup_requests_due():
+            logger.info('Lineups not requested due to cooldown timer')
+            return
         if needs_lineups:
             log_list(needs_lineups, logger, '{} fixtures kicking off soon do not have complete lineups:'.format(len(needs_lineups)))
             fixture_ids = [f.api_fixture_id for f in needs_lineups]
