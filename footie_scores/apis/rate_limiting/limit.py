@@ -12,7 +12,7 @@ from footie_scores import utils
 REQUESTS_LOG = os.path.join(REPO_ROOT, 'logs', 'hourly_requests.log')
 REQUESTS_RATE_LOG = os.path.join(REPO_ROOT, 'logs', 'requests_rate.log')
 
-SLEEP_TIME = 10 * 60 # ten minuts in seconds
+SLEEP_TIME = 2 * 60 # two minutes in seconds
 PURGE_OLDER_THAN = 60 * 60 # one hour in seconds
 
 TIME_FORMAT =  "%Y-%m-%d %H:%M:%S.%f"
