@@ -15,13 +15,13 @@ REQUESTS_RATE_LOG = os.path.join(REPO_ROOT, 'logs', 'requests_rate.log')
 SLEEP_TIME = 2 * 60 # two minutes in seconds
 PURGE_OLDER_THAN = 60 * 60 # one hour in seconds
 
-TIME_FORMAT =  "%Y-%m-%d %H:%M:%S.%f"
+TIME_FORMAT =  "%Y-%m-%d %H:%M:%S"
 
 
 class LogRecord:
     def __init__(self, url, time):
         self.url = url
-        self.time = time[:time.find('+')] # ignore timezone offset info (don't have to do this with Py37)
+        self.time = time
         self.datetime = dt.datetime.strptime(self.time, TIME_FORMAT).replace(tzinfo=None)
 
     def __repr__(self):
@@ -46,6 +46,12 @@ class LogTable:
 
         if ini_size != len(self._records):
             print(f'hourly log reduced from {ini_size} to {len(self._records)}')
+
+        recent_records = '\n'.join(['{}\t{}'.format(r.url, r.time)
+                                    for r in self._records])
+
+        with open(REQUESTS_LOG, 'w') as log_file:
+            log_file.write(recent_records+'\n')
 
     def _update_requests_rate_log(self):
         rate = str(len(self._records))
@@ -80,4 +86,3 @@ def plot_request_rate():
 
 if __name__ == '__main__':
     monitor_logs()
-    # plot_request_rate()
