@@ -29,7 +29,8 @@ def log_time_util_next_fixture(tdelta, sleeptime):
 def lineup_check_gen():
     last_request = utils.time.now()
     while True:
-        if (utils.time.now() - last_request).total_seconds() > 120:
+        seconds_elapsed = (utils.time.now() - last_request).total_seconds()
+        if seconds_elapsed > settings.LINEUP_CHECK_COOLDOWN:
             last_request = utils.time.now()
             yield True
         else:
@@ -113,6 +114,7 @@ class _IdleState(_UpdaterState):
                 logger.info('No games today, sleeping for %d seconds (time is %s)',
                             settings.NO_GAMES_SLEEP, utils.time.now())
                 time.sleep(settings.NO_GAMES_SLEEP)
+                logger.info('Awoken')
                 return _IdleState
             else:
                 log_list(fixtures_today, logger, intro='Todays fixtures:')
@@ -125,7 +127,6 @@ class _IdleState(_UpdaterState):
                     sleeptime = time_to_next_game - settings.PRE_GAME_PREP_PERIOD
                     log_time_util_next_fixture(time_to_next_game, sleeptime)
                     time.sleep(sleeptime)
-                    logger.info('Awoken')
                     return _PreparationState
 
 
