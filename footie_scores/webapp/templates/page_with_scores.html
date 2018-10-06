@@ -63,7 +63,7 @@
 		  <div class="score-mount">
 		    <div class="score mui-col-xs-2">
 		      <h4 style="color:white">
-			{% if score == " - " %}
+			{% if score == " - " and fixture.time %}
 			{{fixture.time}}
 			{% else %}
 			{{score}}
