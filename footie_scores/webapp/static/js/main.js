@@ -67,16 +67,6 @@ function convertUtcToLocal(scoreOrTime) {
 }
 
 
-function setLocalTime(scoreOrTime, fixtureID){
-  newTimeString = convertUtcToLocal(scoreOrTime)
-  console.log('HTML setting time from:', scoreOrTime, 'to', newTimeString)
-  fixture = $("#" + fixtureID)
-  score = fixture.find(".score")
-  inner = score.find('h4')
-  inner.text(newTimeString)
-}
-
-
 $( document ).ready(function() {
   var htmlName = location.pathname;
   showNamedSublist(sublistToShow[htmlName]);
