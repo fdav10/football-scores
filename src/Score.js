@@ -11,10 +11,11 @@ class Score extends React.Component {
 
   render() {
     console.log('Score.render() for fixtureID = ' + this.props.fixtureID);
+    this.scoreOrLocalTime = convertUtcToLocal(this.state.score)
     return (
         <div className="score mui-col-xs-2">
-          <h4>{this.state.score}</h4>
-        </div>
+	    <h4 style={{color: "black"}}>{this.scoreOrLocalTime}</h4>
+	</div>
     )
   }
 

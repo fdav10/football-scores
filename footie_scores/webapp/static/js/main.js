@@ -46,6 +46,37 @@ function toggleSidebar() {
   }
 }
 
+function convertUtcToLocal(scoreOrTime) {
+  match = scoreOrTime.match("([0-9]{2}):([0-9]{2})")
+  if (match !== null)
+    {
+      hours = parseInt(match[1])
+      minutes = parseInt(match[2])
+      minutesSinceMidnight = hours * 60 + minutes
+      minutesOffset = new Date().getTimezoneOffset()
+      newMinutesSinceMidnight = minutesSinceMidnight - minutesOffset
+      newMinutes = newMinutesSinceMidnight % 60
+      newHours = (newMinutesSinceMidnight - newMinutes) / 60 % 24
+      newTimeString = String(newHours).padStart(2, '0') + ':' + String(newMinutes).padStart(2, '0')
+    }
+  else
+    {
+      newTimeString = scoreOrTime
+    }
+  return newTimeString
+}
+
+
+function setLocalTime(scoreOrTime, fixtureID){
+  newTimeString = convertUtcToLocal(scoreOrTime)
+  console.log('HTML setting time from:', scoreOrTime, 'to', newTimeString)
+  fixture = $("#" + fixtureID)
+  score = fixture.find(".score")
+  inner = score.find('h4')
+  inner.text(newTimeString)
+}
+
+
 $( document ).ready(function() {
   var htmlName = location.pathname;
   showNamedSublist(sublistToShow[htmlName]);

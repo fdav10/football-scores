@@ -9795,7 +9795,7 @@ function fetchFixtureDataPeriodically(success) {
   fetchFixtureData(success);
   setTimeout(function () {
     return fetchFixtureDataPeriodically(success);
-  }, 1000 * 5);
+  }, 1000 * 30);
 }
 
 function createScoreComponents() {
@@ -22583,13 +22583,14 @@ var Score = function (_React$Component) {
     key: 'render',
     value: function render() {
       console.log('Score.render() for fixtureID = ' + this.props.fixtureID);
+      this.scoreOrLocalTime = convertUtcToLocal(this.state.score);
       return _react2.default.createElement(
         'div',
         { className: 'score mui-col-xs-2' },
         _react2.default.createElement(
           'h4',
-          null,
-          this.state.score
+          { style: { color: "black" } },
+          this.scoreOrLocalTime
         )
       );
     }
