@@ -93,7 +93,8 @@ class Lineups(Base, Updatable):
     fixture_id = sqla.Column(sqla.Integer, sqla.ForeignKey('fixtures.id'))
     fixture = sqla.orm.relationship('Fixture', back_populates='lineups')
 
-    atts_to_update = ('home', 'away')
+    atts_to_update = ('home', 'away', 'home_subs',
+                      'away_subs')
 
     def __init__(self, api_fixture_id, home_lineup, away_lineup, home_subs, away_subs):
         self.api_fixture_id = api_fixture_id
