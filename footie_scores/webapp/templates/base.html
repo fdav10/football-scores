@@ -56,7 +56,7 @@
 	  <strong id="past-results">Results</strong>
 	  <div style="display: {{past_results_sublist_display}}" class="sub-list">
 	    <ul class="mui-list--unstyled">
-	      <a href="#">
+	      <a href={{ url_for('past_results', comp_id='all', month_index=8) }}>
 		<li id="all-comps-button">All Competitions</li>
 	      </a>
 	      {% for comp in competitions %}
@@ -71,7 +71,7 @@
 	  <strong id="future-fixtures">Fixtures</strong>
 	  <div style="display: {{future_fixtures_sublist_display}}" class="sub-list">
 	    <ul class="mui-list--unstyled">
-	      <a href="#">
+	      <a href={{ url_for('future_fixtures', comp_id='all') }}>
 		<li id="all-comps-button">All Competitions</li>
 	      </a>
 	      {% for comp in competitions %}

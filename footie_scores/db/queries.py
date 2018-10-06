@@ -56,7 +56,8 @@ def get_lineups_by_id(session, id_):
 
 def get_fixtures_by_date(session, dt_date):
     fq = session.query(Fixture)
-    fixtures = fq.filter(Fixture.date == dt_date).all()
+    fixtures = fq.filter(Fixture.date == dt_date)\
+                 .order_by(Fixture.team_home).all()
     return fixtures
 
 
@@ -66,8 +67,9 @@ def get_fixtures_by_date_and_comp(
     end_date = start_date if end_date is None else end_date
     cfq = session.query(Fixture).join(Competition)
 
-    fixtures = cfq.filter(and_(
-        start_date <= Fixture.date,
-        Fixture.date <= end_date)).filter(Competition.api_id == comp_id).all()
+    fixtures = cfq.filter(and_(start_date <= Fixture.date,
+                               Fixture.date <= end_date))\
+                  .filter(Competition.api_id == comp_id)\
+                  .order_by(Fixture.team_home).all()
 
     return fixtures

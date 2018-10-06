@@ -39,12 +39,12 @@ def get_comp_grouped_fixtures(
 
 
 def get_date_grouped_fixtures(
-        session, start_date, comp_id, end_date=None):
+        session, start_date, comp_ids, end_date=None):
 
     grouped_fixtures = []
     date_keyed_dict = defaultdict(list)
 
-    fixtures = queries.get_fixtures_by_date_and_comp(session, start_date, comp_id, end_date)
+    fixtures = get_fixtures_by_dates_and_comps(session, start_date, comp_ids, end_date)
     fixtures = filter_fixtures_with_override_time(fixtures)
     for fixture in fixtures:
         date_keyed_dict[fixture.date].append(fixture)

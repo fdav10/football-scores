@@ -65,16 +65,11 @@ def todays_fixtures():
             competitions_with_games_today=comps_with_games,
         )
     return todays_games
-    # if response_tracker.is_different_to_last(todays_games):
-    #     logger.info('todays_fixtures: returning updated response')
-    #     return todays_games
-    # else:
-    #     logger.info('todays_fixtures: returning nil')
-    #     return ''
 
 
 @app.route("/past_results_<comp_id>_<month_index>")
 def past_results(comp_id, month_index=TODAY.month):
+    comp_ids = settings.COMPS if comp_id == 'all' else [comp_id] 
 
     start_day = dt.date(year=THIS_YEAR, month=int(month_index), day=1)
     end_day = (dt.date(year=THIS_YEAR, month=int(month_index) % 12 + 1, day=1)
@@ -85,15 +80,22 @@ def past_results(comp_id, month_index=TODAY.month):
         fixtures_today = db_to_web.get_comp_grouped_fixtures(session, today, COMPS_FOR_PAGE)
         comps_with_games = [f['name'] for f in fixtures_today if f['fixtures']]
         all_comps = db_to_web.get_competitions_by_id(session, COMPS_FOR_PAGE)
-        selected_comp = db_to_web.get_competition_by_id(session, int(comp_id))
-        fixtures = db_to_web.get_date_grouped_fixtures(session, start_day, int(comp_id), end_day)
+        fixtures = db_to_web.get_date_grouped_fixtures(session,
+                                                       start_day,
+                                                       comp_ids,
+                                                       end_day)
+        if comp_id == 'all':
+            selected_comp = 'All Competitions'
+        else:
+            selected_comp = db_to_web.get_competition_by_id(session, int(comp_id)).name
+
         past_games = games_template(
             'fixtures_results.html',
             'results',
             all_comps,
             fixtures,
             utils.time.today(),
-            selected_comp.name + ' - Results / Fixtures',
+            selected_comp + ' - Results / Fixtures',
             comp_id,
             comps_with_games)
     return past_games
@@ -101,6 +103,7 @@ def past_results(comp_id, month_index=TODAY.month):
 
 @app.route("/fixtures_<comp_id>")
 def future_fixtures(comp_id):
+    comp_ids = settings.COMPS if comp_id == 'all' else [comp_id]
     today = utils.time.today()
     start_day = (dt.date(year=THIS_YEAR, month=today.month % 12, day=today.day)
                  + dt.timedelta(days=1))
@@ -111,15 +114,21 @@ def future_fixtures(comp_id):
         fixtures_today = db_to_web.get_comp_grouped_fixtures(session, today, COMPS_FOR_PAGE)
         comps_with_games = [f['name'] for f in fixtures_today if f['fixtures']]
         all_comps = db_to_web.get_competitions_by_id(session, COMPS_FOR_PAGE)
-        selected_comp = db_to_web.get_competition_by_id(session, int(comp_id))
-        fixtures = db_to_web.get_date_grouped_fixtures(session, start_day, int(comp_id), end_day)
+        fixtures = db_to_web.get_date_grouped_fixtures(session,
+                                                       start_day,
+                                                       comp_ids, end_day)
+        if comp_id == 'all':
+            selected_comp = 'All Competitions'
+        else:
+            selected_comp = db_to_web.get_competition_by_id(session, int(comp_id)).name
+
         future_games = games_template(
             'fixtures_results.html',
             'fixtures',
             all_comps,
             fixtures,
             utils.time.today(),
-            selected_comp.name + ' - Results / Fixtures',
+            selected_comp + ' - Results / Fixtures',
             comp_id,
             comps_with_games)
     return future_games
