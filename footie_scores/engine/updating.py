@@ -27,7 +27,8 @@ def log_time_util_next_fixture(tdelta, sleeptime):
 
 
 def lineup_check_gen():
-    last_request = utils.time.now()
+    last_request = (utils.time.now()
+                    - dt.timedelta(seconds=settings.LINEUP_CHECK_COOLDOWN + 1))
     while True:
         seconds_elapsed = (utils.time.now() - last_request).total_seconds()
         if seconds_elapsed > settings.LINEUP_CHECK_COOLDOWN:
