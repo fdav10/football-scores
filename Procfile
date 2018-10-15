@@ -1,3 +1,3 @@
 init: bin/restart_db
-web: gunicorn footie_scores.webapp.run:app
+web: bin/heroku_fs_start_webapp.sh
 worker: footie_scores/engine/updating.py
