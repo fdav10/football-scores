@@ -1,6 +1,8 @@
 {
   "name": "footie_scores",
   "version": "1.0.0",
+  "engines": {
+    "node": "10.12.0"}
   "description": "",
   "main": "index.js",
   "directories": {
