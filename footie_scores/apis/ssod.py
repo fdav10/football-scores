@@ -24,7 +24,7 @@ class SoccerSportsOpenData(FootballAPICaller):
     '''
 
     def __init__(self, id_league, id_season):
-        raise Exception, "This class deprecated because API calls are expensive when above limit of 3000/month"
+        raise Exception("This class deprecated because API calls are expensive when above limit of 3000/month")
         self.id_league = id_league
         self.id_season = id_season
         self.base_url = 'https://sportsop-soccer-sports-open-data-v1.p.mashape.com/v1/'
